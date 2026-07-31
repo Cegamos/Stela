@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -25,8 +25,8 @@ public class Trajectories extends Mod {
 
         int targetSlot = -1;
 
-        if (preferSlot.isToggled()) {
-            int preferredSlot = (int) hotbarSlotPreference.getInput() - 1;
+        if (preferSlot.getValue()) {
+            int preferredSlot = (int) hotbarSlotPreference.getValue() - 1;
             if (isThrowable(preferredSlot)) {
                 targetSlot = preferredSlot;
             }

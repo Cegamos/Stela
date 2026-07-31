@@ -8,11 +8,10 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -65,7 +64,7 @@ public class HitBox extends Mod {
     
     @SubscribeEvent
     public void r1(final RenderWorldLastEvent e) {
-        if (b.isToggled() && Utils.Player.isPlayerInGame()) {
+        if (b.getValue() && Utils.Player.isPlayerInGame()) {
             for (final Entity en : mc.theWorld.loadedEntityList) {
                 if (en != mc.thePlayer && en instanceof EntityLivingBase && ((EntityLivingBase)en).deathTime == 0 && !(en instanceof EntityArmorStand) && !en.isInvisible()) {
                     this.rh(en, Color.WHITE);
@@ -76,8 +75,7 @@ public class HitBox extends Mod {
     
     public double exp(final Entity en) {
         final Mod hitBox = Raven.moduleManager.getModuleByClazz(HitBox.class);
-        final AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
-        return (hitBox != null && isEnabled() && !bot.bot(en)) ? a.getInput() : 1.0;
+        return (hitBox != null && isEnabled()) ? a.getValue() : 1.0;
     }
     
     public void gmo(final float partialTicks) {
@@ -148,7 +146,7 @@ public class HitBox extends Mod {
             final double x = e.lastTickPosX + (e.posX - e.lastTickPosX) * ReflectUtil.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosX;
             final double y = e.lastTickPosY + (e.posY - e.lastTickPosY) * ReflectUtil.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosY;
             final double z = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * ReflectUtil.getTimer().renderPartialTicks - mc.getRenderManager().viewerPosZ;
-            final float ex = (float)(e.getCollisionBorderSize() * a.getInput());
+            final float ex = (float)(e.getCollisionBorderSize() * a.getValue());
             final AxisAlignedBB bbox = e.getEntityBoundingBox().expand((double)ex, (double)ex, (double)ex);
             final AxisAlignedBB axis = new AxisAlignedBB(bbox.minX - e.posX + x, bbox.minY - e.posY + y, bbox.minZ - e.posZ + z, bbox.maxX - e.posX + x, bbox.maxY - e.posY + y, bbox.maxZ - e.posZ + z);
             GL11.glBlendFunc(770, 771);

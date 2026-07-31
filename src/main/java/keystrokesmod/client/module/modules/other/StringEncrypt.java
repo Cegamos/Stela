@@ -3,8 +3,8 @@ package keystrokesmod.client.module.modules.other;
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -23,7 +23,7 @@ public class StringEncrypt extends Mod {
 
     @Override
     public void onEnable() {
-        if (value.getInput() == 3.0) {
+        if (value.getValue() == 3.0) {
             m3s = Utils.Java.rand().nextInt(10) - 5;
             if (m3s == 0) {
                 m3s = 1;
@@ -33,7 +33,7 @@ public class StringEncrypt extends Mod {
     
     @Override
     public void guiUpdate() {
-        switch ((int)value.getInput()) {
+        switch ((int)value.getValue()) {
             case 1: {
                 this.m3t = false;
                 moduleDesc.setDesc("Mode: &k");
@@ -67,15 +67,15 @@ public class StringEncrypt extends Mod {
     public void onRenderText(RenderTextEvent event) {
         if (mc.currentScreen instanceof ClickGui) return;
 
-        if (ignoreDebug.isToggled() && mc.gameSettings.showDebugInfo) return;
+        if (ignoreDebug.getValue() && mc.gameSettings.showDebugInfo) return;
 
-        if (ignoreAllGui.isToggled() && mc.currentScreen != null) return;
+        if (ignoreAllGui.getValue() && mc.currentScreen != null) return;
 
         String originalText = event.getText();
 
         String newText = "";
 
-        if (value.getInput() == 1.0) {
+        if (value.getValue() == 1.0) {
             StringBuilder result = new StringBuilder();
             StringBuilder formatting = new StringBuilder();
             boolean inFormat = false;
@@ -95,9 +95,9 @@ public class StringEncrypt extends Mod {
             }
 
             newText = result.toString();
-        } else if (value.getInput() == 2.0) {
+        } else if (value.getValue() == 2.0) {
             newText = originalText.length() > 3 ? originalText.substring(0, 3) : originalText;
-        } else if (value.getInput() == 3.0) {
+        } else if (value.getValue() == 3.0) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < originalText.length(); i++) {
                 char shifted = (char)(originalText.charAt(i) + m3s);

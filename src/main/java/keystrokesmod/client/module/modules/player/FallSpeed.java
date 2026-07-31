@@ -2,8 +2,8 @@ package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.movement.Fly;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
@@ -29,8 +29,8 @@ public class FallSpeed extends Mod {
             if (mc.thePlayer.isOnLadder() || mc.thePlayer.isInWater() || mc.thePlayer.isInLava()) {
                 return;
             }
-            mc.thePlayer.motionY = -a.getInput();
-            if (b.isToggled()) {
+            mc.thePlayer.motionY = -a.getValue();
+            if (b.getValue()) {
                 mc.thePlayer.motionZ = 0.0;
                 mc.thePlayer.motionX = 0.0;
             }

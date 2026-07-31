@@ -3,10 +3,10 @@ package keystrokesmod.client.module.modules.combat;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
@@ -33,7 +33,7 @@ public class AutoBlock extends Mod {
             }
             return;
         }
-        if (Mouse.isButtonDown(0) && mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.thePlayer.getDistanceToEntity(mc.objectMouseOver.entityHit) >= distance.getInputMin() && mc.objectMouseOver.entityHit != null && mc.thePlayer.getDistanceToEntity(mc.objectMouseOver.entityHit) <= distance.getInputMax() && (chance.getInput() == 100.0 || Math.random() <= chance.getInput() / 100.0)) {
+        if (Mouse.isButtonDown(0) && mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null && mc.thePlayer.getDistanceToEntity(mc.objectMouseOver.entityHit) >= distance.getInputMin() && mc.objectMouseOver.entityHit != null && mc.thePlayer.getDistanceToEntity(mc.objectMouseOver.entityHit) <= distance.getInputMax() && (chance.getValue() == 100.0 || Math.random() <= chance.getValue() / 100.0)) {
             this.engaged = true;
             this.engagedTime.setCooldown((long)duration.getInputMax());
             this.engagedTime.start();

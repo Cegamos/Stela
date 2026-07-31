@@ -1,43 +1,49 @@
 package keystrokesmod.client.module.modules.player;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PostPlayerTickEvent;
+import keystrokesmod.client.event.impl.PrePlayerTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoJump", category = Category.Player)
 public class AutoJump extends Mod {
     private final BooleanValue b = new BooleanValue("Cancel when shifting", this, true);
-    private boolean c = false;
+    private boolean edge = false;
     
     @Override
     public void onDisable() {
-        this.ju(this.c = false);
+        super.onDisable();
+        legitJump(false);
+        this.edge = false;
     }
     
-    @SubscribeEvent
-    public void p(final TickEvent.PlayerTickEvent e) {
+    @EventLink
+    private Listener<PrePlayerTickEvent> prePlayerTick = event -> both();
+    
+    @EventLink
+    private Listener<PostPlayerTickEvent> postPlayerTick = event -> both();
+    
+    private void both() {
         if (Utils.Player.isPlayerInGame()) {
-            if (mc.thePlayer.onGround && (!b.isToggled() || !mc.thePlayer.isSneaking())) {
-                if (mc.theWorld.getCollidingBoundingBoxes((Entity)mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(mc.thePlayer.motionX / 3.0, -1.0, mc.thePlayer.motionZ / 3.0)).isEmpty()) {
-                    this.ju(this.c = true);
+            if (ground() && (!b.getValue() || !sneaking())) {
+                boolean overGap = getWorld().getCollidingBoundingBoxes(getPlayer(), getPlayer().getEntityBoundingBox().offset(motionX() / 3.0, -1.0, motionZ() / 3.0)).isEmpty();
+                
+                if (!this.edge && overGap) {
+                    legitJump(true);
+                    this.edge = true;
+                } else if (this.edge && !overGap) {
+                    legitJump(false);
+                    this.edge = false;
                 }
-                else if (this.c) {
-                    this.ju(this.c = false);
-                }
-            }
-            else if (this.c) {
-                this.ju(this.c = false);
+            } else if (this.edge) {
+                legitJump(false);
+                this.edge = false;
             }
         }
-    }
-    
-    private void ju(final boolean ju) {
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), ju);
     }
 }

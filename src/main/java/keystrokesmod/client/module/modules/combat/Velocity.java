@@ -7,11 +7,11 @@ import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.AttackEvent;
 import keystrokesmod.client.event.impl.PacketReceiveEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
-import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,17 +35,17 @@ public class Velocity extends Mod {
     	final Packet<?> packet = event.getPacket();
     	
         if (mode.is(Mode.MOTION)) {
-            if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
+            if (d.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
                 return;
             }
             
-            if (e.isToggled() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
+            if (e.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
             	return;
             }
             
-            if (chance.getInput() != 100) {
+            if (chance.getValue() != 100) {
                 final double ch = Math.random();
-                if (ch >= chance.getInput() / 100) {
+                if (ch >= chance.getValue() / 100) {
                 	return;
                 }
             }
@@ -53,9 +53,9 @@ public class Velocity extends Mod {
             if (packet instanceof S12PacketEntityVelocity) {
                 S12PacketEntityVelocity p = (S12PacketEntityVelocity) packet;
                 if (p.getEntityID() == mc.thePlayer.getEntityId()) {
-                	ReflectUtil.setMotionX(p, (int) (p.getMotionX() * horizontal.getInput() / 100.0));
-                	ReflectUtil.setMotionY(p, (int) (p.getMotionY() * vertical.getInput() / 100.0));
-                	ReflectUtil.setMotionZ(p, (int) (p.getMotionZ() * horizontal.getInput() / 100.0));
+                	ReflectUtil.setMotionX(p, (int) (p.getMotionX() * horizontal.getValue() / 100.0));
+                	ReflectUtil.setMotionY(p, (int) (p.getMotionY() * vertical.getValue() / 100.0));
+                	ReflectUtil.setMotionZ(p, (int) (p.getMotionZ() * horizontal.getValue() / 100.0));
                 }
             }
         }
@@ -65,17 +65,17 @@ public class Velocity extends Mod {
 	private Listener<AttackEvent> attackEvent = event -> {
 		if (mode.is(Mode.INTAVE)) {
     		
-            if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
+            if (d.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
                 return;
             }
             
-            if (e.isToggled() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
+            if (e.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
             	return;
             }
     		
-            if (chance.getInput() != 100) {
+            if (chance.getValue() != 100) {
                 final double ch = Math.random();
-                if (ch >= chance.getInput() / 100) {
+                if (ch >= chance.getValue() / 100) {
                 	return;
                 }
             }
@@ -103,17 +103,17 @@ public class Velocity extends Mod {
 	public void update() {
 		if (mode.is(Mode.JUMP)) {
 			
-            if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
+            if (d.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
                 return;
             }
             
-            if (e.isToggled() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
+            if (e.getValue() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
             	return;
             }
 			
-            if (chance.getInput() != 100) {
+            if (chance.getValue() != 100) {
                 final double ch = Math.random();
-                if (ch >= chance.getInput() / 100) {
+                if (ch >= chance.getValue() / 100) {
                 	return;
                 }
             }

@@ -7,8 +7,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -59,7 +59,7 @@ public class Xray extends Mod {
             public void run() {
                 renderList.clear();
 
-                int scanRange = (int) range.getInput();
+                int scanRange = (int) range.getValue();
                 for (int y = scanRange; y >= -scanRange; y--) {
                     for (int x = -scanRange; x <= scanRange; x++) {
                         for (int z = -scanRange; z <= scanRange; z++) {
@@ -102,14 +102,14 @@ public class Xray extends Mod {
     }
 
     private boolean shouldHighlight(Block block) {
-        return (iron.isToggled() && block.equals(Blocks.iron_ore)) ||
-               (gold.isToggled() && block.equals(Blocks.gold_ore)) ||
-               (diamond.isToggled() && block.equals(Blocks.diamond_ore)) ||
-               (emerald.isToggled() && block.equals(Blocks.emerald_ore)) ||
-               (lapis.isToggled() && block.equals(Blocks.lapis_ore)) ||
-               (redstone.isToggled() && block.equals(Blocks.redstone_ore)) ||
-               (coal.isToggled() && block.equals(Blocks.coal_ore)) ||
-               (spawner.isToggled() && block.equals(Blocks.mob_spawner));
+        return (iron.getValue() && block.equals(Blocks.iron_ore)) ||
+               (gold.getValue() && block.equals(Blocks.gold_ore)) ||
+               (diamond.getValue() && block.equals(Blocks.diamond_ore)) ||
+               (emerald.getValue() && block.equals(Blocks.emerald_ore)) ||
+               (lapis.getValue() && block.equals(Blocks.lapis_ore)) ||
+               (redstone.getValue() && block.equals(Blocks.redstone_ore)) ||
+               (coal.getValue() && block.equals(Blocks.coal_ore)) ||
+               (spawner.getValue() && block.equals(Blocks.mob_spawner));
     }
 
     private int[] getColorForBlock(Block block) {

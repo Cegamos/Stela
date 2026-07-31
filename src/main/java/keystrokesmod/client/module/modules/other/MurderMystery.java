@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PreTickEvent;
-import keystrokesmod.client.event.impl.RenderEvent;
+import keystrokesmod.client.event.impl.RenderWorldLastEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.render.RenderUtil;
@@ -63,7 +63,7 @@ public class MurderMystery extends Mod {
 	};
 
 	@EventLink
-	public final Listener<RenderEvent> onRender = event -> {
+	public final Listener<RenderWorldLastEvent> onRender = event -> {
 		if (!Utils.Player.isPlayerInGame()) return;
 
 		for (Entity entity : mc.theWorld.loadedEntityList) {
@@ -76,9 +76,9 @@ public class MurderMystery extends Mod {
 					RenderUtil.drawSimpleItemBox(entity, Color.CYAN);
 				}
 			} else if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
-				if (murderers.contains(entity) && drawMurder.isToggled()) {
+				if (murderers.contains(entity) && drawMurder.getValue()) {
 					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.RED.getRGB(), event.getPartialTicks());
-				} else if (detectives.contains(entity) && drawDetective.isToggled()) {
+				} else if (detectives.contains(entity) && drawDetective.getValue()) {
 					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.BLUE.getRGB(), event.getPartialTicks());
 				}
 			}

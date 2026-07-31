@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.DescriptionValue;

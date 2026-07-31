@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
 public class BooleanValue extends Value {
@@ -45,7 +45,7 @@ public class BooleanValue extends Value {
 	public JsonObject getConfigAsJson() {
 		final JsonObject data = new JsonObject();
 		data.addProperty("type", this.getSettingType());
-		data.addProperty("value", Boolean.valueOf(this.isToggled()));
+		data.addProperty("value", Boolean.valueOf(this.getValue()));
 		return data;
 	}
 
@@ -67,7 +67,7 @@ public class BooleanValue extends Value {
 		return null;
 	}
 
-	public boolean isToggled() {
+	public boolean getValue() {
 		return this.isEnabled;
 	}
 

@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
 public class NumberValue extends Value {
@@ -40,7 +40,7 @@ public class NumberValue extends Value {
     public JsonObject getConfigAsJson() {
         final JsonObject data = new JsonObject();
         data.addProperty("type", this.getSettingType());
-        data.addProperty("value", (Number)this.getInput());
+        data.addProperty("value", (Number)this.getValue());
         return data;
     }
     
@@ -62,8 +62,8 @@ public class NumberValue extends Value {
         return null;
     }
     
-    public double getInput() {
-        return r(this.value, 2);
+    public double getValue() {
+        return rounded(this.value, 2);
     }
     
     public double getMin() {
@@ -86,7 +86,7 @@ public class NumberValue extends Value {
         return v;
     }
     
-    public static double r(final double v, final int p) {
+    public static double rounded(final double v, final int p) {
         if (p < 0) {
             return 0.0;
         }

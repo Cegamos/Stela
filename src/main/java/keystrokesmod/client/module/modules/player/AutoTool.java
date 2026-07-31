@@ -6,8 +6,8 @@ import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -49,7 +49,7 @@ public class AutoTool extends Mod {
             return;
         }
         final LeftClicker autoClicker = (LeftClicker)Raven.moduleManager.getModuleByClazz(LeftClicker.class);
-        if (autoClicker.isEnabled() && !autoClicker.breakBlocks.isToggled()) {
+        if (autoClicker.isEnabled() && !autoClicker.breakBlocks.getValue()) {
             return;
         }
         final BlockPos lookingAtBlock = mc.objectMouseOver.getBlockPos();
@@ -87,7 +87,7 @@ public class AutoTool extends Mod {
     }
     
     public void finishMining() {
-        if (this.hotkeyBack.isToggled()) {
+        if (this.hotkeyBack.getValue()) {
             Utils.Player.hotkeyToSlot(previousSlot);
         }
         justFinishedMining = false;

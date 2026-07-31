@@ -7,14 +7,19 @@ import org.lwjgl.input.Mouse;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import keystrokesmod.client.Raven;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PrePlayerTickEvent;
+import keystrokesmod.client.event.impl.PreTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.value.impl.ModeValue;
-import keystrokesmod.client.module.value.impl.DescriptionValue;
-import keystrokesmod.client.module.value.impl.RangeValue;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.block.Block;
@@ -25,8 +30,6 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "LeftClicker", category = Category.Combat)
 public class LeftClicker extends Mod {
@@ -54,25 +57,27 @@ public class LeftClicker extends Mod {
 
     @Override
     public void onEnable() {
+    	super.onEnable();
         this.rand = new Random();
     }
     
     @Override
     public void onDisable() {
+    	super.onDisable();
         this.leftDownTime = 0L;
         this.leftUpTime = 0L;
     }
     
-    @SubscribeEvent
-    public void onTick(TickEvent event) {
+    @EventLink
+    private Listener<PreTickEvent> preTick = event -> {
         final Reach reach = (Reach) Raven.moduleManager.getModuleByClazz(Reach.class);
         if (!Mouse.isButtonDown(0) || !reach.call()) {
             mc.entityRenderer.getMouseOver(1.0f);
         }
-    }
+    };
     
-    @SubscribeEvent
-    public void onRenderTick(final TickEvent.RenderTickEvent ev) {
+    @EventLink
+    private Listener<PostRenderTickEvent> render = event -> {
         if (!Utils.Client.currentScreenMinecraft() && !(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof GuiChest)) {
             return;
         }
@@ -83,12 +88,13 @@ public class LeftClicker extends Mod {
             this.ravenClick();
         }
         else if (clickStyle.is("Skid")) {
-            this.skidClick(ev, null);
+            this.skidClick(event, null);
         }
-    }
+    };
 
-    @SubscribeEvent
-    public void onTick(final TickEvent.PlayerTickEvent ev) {
+
+    @EventLink
+    private Listener<PrePlayerTickEvent> prePlayerTick = event -> {
         if (!Utils.Client.currentScreenMinecraft() && !(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof GuiChest)) {
             return;
         }
@@ -99,11 +105,11 @@ public class LeftClicker extends Mod {
             this.ravenClick();
         }
         else if (clickStyle.is("Skid")) {
-            this.skidClick(null, ev);
+            this.skidClick(null, event);
         }
-    }
+    };
     
-    private void skidClick(final TickEvent.RenderTickEvent er, final TickEvent.PlayerTickEvent e) {
+    private void skidClick(final PostRenderTickEvent er, final PrePlayerTickEvent e) {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
@@ -118,11 +124,11 @@ public class LeftClicker extends Mod {
             if (this.breakBlock()) {
                 return;
             }
-            if (weaponOnly.isToggled() && !Utils.Player.isPlayerHoldingWeapon()) {
+            if (weaponOnly.getValue() && !Utils.Player.isPlayerHoldingWeapon()) {
                 return;
             }
-            if (jitterLeft.getInput() > 0.0) {
-                final double a = jitterLeft.getInput() * 0.45;
+            if (jitterLeft.getValue() > 0.0) {
+                final double a = jitterLeft.getValue() * 0.45;
                 if (this.rand.nextBoolean()) {
                     final EntityPlayerSP entityPlayer = mc.thePlayer;
                     entityPlayer.rotationYaw += (float)(this.rand.nextFloat() * a);
@@ -169,7 +175,7 @@ public class LeftClicker extends Mod {
             Utils.Client.setMouseButtonState(0, false);
         }
         if (Mouse.isButtonDown(0) || this.leftDown) {
-            if (weaponOnly.isToggled() && !Utils.Player.isPlayerHoldingWeapon()) {
+            if (weaponOnly.getValue() && !Utils.Player.isPlayerHoldingWeapon()) {
                 return;
             }
             this.leftClickExecute(mc.gameSettings.keyBindAttack.getKeyCode());
@@ -180,8 +186,8 @@ public class LeftClicker extends Mod {
         if (this.breakBlock()) {
             return;
         }
-        if (jitterLeft.getInput() > 0.0) {
-            final double a = jitterLeft.getInput() * 0.45;
+        if (jitterLeft.getValue() > 0.0) {
+            final double a = jitterLeft.getValue() * 0.45;
             if (this.rand.nextBoolean()) {
                 final EntityPlayerSP entityPlayer = mc.thePlayer;
                 entityPlayer.rotationYaw += (float)(this.rand.nextFloat() * a);
@@ -245,7 +251,7 @@ public class LeftClicker extends Mod {
     }
     
     public boolean breakBlock() {
-        if (breakBlocks.isToggled() && mc.objectMouseOver != null) {
+        if (breakBlocks.getValue() && mc.objectMouseOver != null) {
             final BlockPos p = mc.objectMouseOver.getBlockPos();
             if (p != null) {
                 final Block bl = mc.theWorld.getBlockState(p).getBlock();
@@ -267,7 +273,7 @@ public class LeftClicker extends Mod {
     }
     
     public void doInventoryClick() {
-        if (inventoryFill.isToggled() && (mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChest)) {
+        if (inventoryFill.getValue() && (mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiChest)) {
             if (!Mouse.isButtonDown(0) || (!Keyboard.isKeyDown(54) && !Keyboard.isKeyDown(42))) {
                 this.leftDownTime = 0L;
                 this.leftUpTime = 0L;

@@ -4,8 +4,8 @@ import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PreTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.client.settings.KeyBinding;
@@ -20,7 +20,7 @@ public class Sprint extends Mod {
     public final Listener<PreTickEvent> onTick = e -> {
         if (!Utils.Player.isPlayerInGame() || !mc.inGameHasFocus) return;
 
-        if (o.isToggled()) {
+        if (o.getValue()) {
             if (Utils.Player.isMoving() && mc.thePlayer.getFoodStats().getFoodLevel() > 6) {
                 mc.thePlayer.setSprinting(true);
             }

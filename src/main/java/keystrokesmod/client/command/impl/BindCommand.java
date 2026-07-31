@@ -3,7 +3,7 @@ package keystrokesmod.client.command.impl;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.command.Command;
 import keystrokesmod.client.command.CommandInfo;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.util.Utils;
 
 import org.lwjgl.input.Keyboard;

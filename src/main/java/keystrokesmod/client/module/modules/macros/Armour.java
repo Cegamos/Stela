@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.item.ItemArmor;
@@ -26,13 +26,13 @@ public class Armour extends Mod {
                 final ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(slot);
                 if (itemStack != null && itemStack.getItem() instanceof ItemArmor) {
                     final ItemArmor armorPiece = (ItemArmor)itemStack.getItem();
-                    if (!Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && ignoreIfAlreadyEquipped.isToggled()) {
+                    if (!Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && ignoreIfAlreadyEquipped.getValue()) {
                         if (armorPiece.getArmorMaterial().getDamageReductionAmount(armorType) > strength) {
                             strength = armorPiece.getArmorMaterial().getDamageReductionAmount(armorType);
                             index = slot;
                         }
                     }
-                    else if (Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && !ignoreIfAlreadyEquipped.isToggled()) {
+                    else if (Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && !ignoreIfAlreadyEquipped.getValue()) {
                         ItemArmor playerArmor;
                         if (armorType == 0) {
                             playerArmor = (ItemArmor)mc.thePlayer.getCurrentArmor(3).getItem();
@@ -54,7 +54,7 @@ public class Armour extends Mod {
                             index = slot;
                         }
                     }
-                    else if (!Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && !ignoreIfAlreadyEquipped.isToggled() && armorPiece.getArmorMaterial().getDamageReductionAmount(armorType) > strength) {
+                    else if (!Utils.Player.playerWearingArmor().contains(armorPiece.armorType) && armorPiece.armorType == armorType && !ignoreIfAlreadyEquipped.getValue() && armorPiece.getArmorMaterial().getDamageReductionAmount(armorType) > strength) {
                         strength = armorPiece.getArmorMaterial().getDamageReductionAmount(armorType);
                         index = slot;
                     }

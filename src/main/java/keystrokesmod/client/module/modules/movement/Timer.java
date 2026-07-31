@@ -2,8 +2,8 @@ package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.system.ReflectUtil;
@@ -16,11 +16,11 @@ public class Timer extends Mod {
     @Override
     public void update() {
         if (!(mc.currentScreen instanceof ClickGui)) {
-            if (b.isToggled() && mc.thePlayer.moveStrafing == 0.0f) {
+            if (b.getValue() && mc.thePlayer.moveStrafing == 0.0f) {
                 ReflectUtil.resetTimer();
                 return;
             }
-            ReflectUtil.getTimer().timerSpeed = (float)a.getInput();
+            ReflectUtil.getTimer().timerSpeed = (float)a.getValue();
         }
         else {
             ReflectUtil.resetTimer();

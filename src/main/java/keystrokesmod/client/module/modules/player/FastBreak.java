@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -27,7 +27,7 @@ public class FastBreak extends Mod {
         if (event.phase == TickEvent.Phase.START) {
         	if (mc.thePlayer == null || mc.playerController == null) return;
 
-            if (ignoringMiningFatigue.isToggled()) {
+            if (ignoringMiningFatigue.getValue()) {
                 mc.thePlayer.removePotionEffect(Potion.digSlowdown.getId());
             }
 
@@ -37,7 +37,7 @@ public class FastBreak extends Mod {
 
             switch (mode.getMode()) {
                 case "Normal":
-                    faster = speed.getInput() / 100.0;
+                    faster = speed.getValue() / 100.0;
                     break;
 
                 case "Instant":
@@ -52,7 +52,7 @@ public class FastBreak extends Mod {
                         if (block != null) {
                             float blockHardness = block.getPlayerRelativeBlockHardness(mc.thePlayer, mc.theWorld, blockPos);
                             if (blockHardness > 0) {
-                                faster = blockHardness * ticks.getInput();
+                                faster = blockHardness * ticks.getValue();
                             }
                         }
                     }

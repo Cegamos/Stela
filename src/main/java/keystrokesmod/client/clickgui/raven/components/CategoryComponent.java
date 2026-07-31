@@ -9,7 +9,7 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.client.GuiModule;
 import keystrokesmod.client.util.render.RenderUtil;
 import net.minecraft.client.gui.FontRenderer;

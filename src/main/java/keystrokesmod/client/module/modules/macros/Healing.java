@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -34,8 +34,8 @@ public class Healing extends Mod {
 
         HealingItems mode = getCurrentHealingItem();
 
-        if (preferSlot.isToggled()) {
-            int preferredSlot = (int) hotbarSlotPreference.getInput() - 1;
+        if (preferSlot.getValue()) {
+            int preferredSlot = (int) hotbarSlotPreference.getValue() - 1;
             if (isValidHealingItem(preferredSlot, mode)) {
                 Healing.mc.thePlayer.inventory.currentItem = preferredSlot;
                 this.disable();
@@ -55,7 +55,7 @@ public class Healing extends Mod {
     }
 
     private HealingItems getCurrentHealingItem() {
-        return HealingItems.values()[(int) itemMode.getInput() - 1];
+        return HealingItems.values()[(int) itemMode.getValue() - 1];
     }
 
     private boolean isValidHealingItem(int slot, HealingItems type) {

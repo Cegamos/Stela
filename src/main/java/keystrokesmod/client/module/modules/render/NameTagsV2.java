@@ -8,8 +8,8 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.render.RenderUtil;
@@ -46,7 +46,7 @@ public class NameTagsV2 extends Mod {
         if (!(entity instanceof EntityPlayer)) return;
         if (mc.gameSettings.thirdPersonView == 0) return;
         
-        if (rangeSetting.getInput() != 0.0D && mc.thePlayer.getDistanceToEntity(entity) > rangeSetting.getInput()) return;
+        if (rangeSetting.getValue() != 0.0D && mc.thePlayer.getDistanceToEntity(entity) > rangeSetting.getValue()) return;
 
         String displayName = entity.getDisplayName().getFormattedText();
         if (displayName == null || displayName.isEmpty()) return;
@@ -57,7 +57,7 @@ public class NameTagsV2 extends Mod {
     @SubscribeEvent
     public void render3d(RenderWorldLastEvent event) {
         List<EntityPlayer> validPlayers = new ArrayList<>();
-        double range = rangeSetting.getInput();
+        double range = rangeSetting.getValue();
         float partialTicks = ReflectUtil.getTimer().renderPartialTicks;
         if (mc.gameSettings.thirdPersonView == 0) return;
 
@@ -120,7 +120,7 @@ public class NameTagsV2 extends Mod {
 
     private void startDrawing(float x, float y, float z, EntityPlayer player) {
         float rotateX = mc.gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F;
-        double scaleRatio = (double) (getSize(player) / 10.0F * (float) scaleSetting.getInput()) * 1.5D;
+        double scaleRatio = (double) (getSize(player) / 10.0F * (float) scaleSetting.getValue()) * 1.5D;
         GL11.glPushMatrix();
         RenderUtil.startDrawing();
         GL11.glTranslatef(x, y, z);
@@ -141,7 +141,7 @@ public class NameTagsV2 extends Mod {
         startDrawing(x, y, z, player);
         drawNames(player);
         GL11.glColor4d(1.0D, 1.0D, 1.0D, 1.0D);
-        if (armorSetting.isToggled()) {
+        if (armorSetting.getValue()) {
             renderArmor(player);
         }
 
@@ -183,7 +183,7 @@ public class NameTagsV2 extends Mod {
     }
 
     private String getPlayerName(EntityPlayer player) {
-        boolean isDistanceSettingToggled = distanceSetting.isToggled();
+        boolean isDistanceSettingToggled = distanceSetting.getValue();
         return (isDistanceSettingToggled ? (new DecimalFormat("#.##")).format(mc.thePlayer.getDistanceToEntity(player)) + "m " : "") + player.getDisplayName().getFormattedText();
     }
 
@@ -233,7 +233,7 @@ public class NameTagsV2 extends Mod {
         if (is.getItem() instanceof ItemArmor) {
             int remainingDurability = is.getMaxDamage() - is.getItemDamage();
 
-            if (durabilitySetting.isToggled()) {
+            if (durabilitySetting.getValue()) {
                 mc.fontRendererObj.drawStringWithShadow(String.valueOf(remainingDurability), (float) (xPos * 2), (float) yPos, 0xFFFFFF);
             }
 

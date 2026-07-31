@@ -3,8 +3,8 @@ package keystrokesmod.client.module.modules.combat;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
@@ -23,17 +23,17 @@ public class AutoWeapon extends Mod {
         if (!Utils.Player.isPlayerInGame() || mc.currentScreen != null) {
             return;
         }
-        if (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null || (onlyWhenHoldingDown.isToggled() && !Mouse.isButtonDown(0))) {
+        if (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null || (onlyWhenHoldingDown.getValue() && !Mouse.isButtonDown(0))) {
             if (this.onWeapon) {
                 this.onWeapon = false;
-                if (goBackToPrevSlot.isToggled()) {
+                if (goBackToPrevSlot.getValue()) {
                     mc.thePlayer.inventory.currentItem = this.prevSlot;
                 }
             }
         }
         else {
             final Entity target = mc.objectMouseOver.entityHit;
-            if (onlyWhenHoldingDown.isToggled() && !Mouse.isButtonDown(0)) {
+            if (onlyWhenHoldingDown.getValue() && !Mouse.isButtonDown(0)) {
                 return;
             }
             if (!this.onWeapon) {

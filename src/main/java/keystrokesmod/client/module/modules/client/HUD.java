@@ -9,28 +9,23 @@ import java.util.stream.Collectors;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
-import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.DragEvent;
-import keystrokesmod.client.event.impl.DrawEvent;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.value.impl.ModeValue;
-import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.util.font.FontRenderer;
-import keystrokesmod.client.util.font.Fonts;
-import net.minecraft.client.gui.GuiIngameMenu;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.FontRenderer;
 
 @ModuleInfo(name = "HUD", category = Category.Client)
 public class HUD extends Mod {
 
     public final ModeValue mode = new ModeValue("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
-    private final ModeValue fontMode = new ModeValue("Font Mode", this, "Rubik", "Rubik", "Drip", "Semi bold");
     public final BooleanValue alphabeticalSort = new BooleanValue("Alphabetical sort", this, false);
 
     private final DescriptionValue desc = new DescriptionValue("Hide Category", this);
@@ -40,7 +35,6 @@ public class HUD extends Mod {
     public final BooleanValue hideOther = new BooleanValue("Hide Other", this, false);
     public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false);
     public final BooleanValue hideRender = new BooleanValue("Hide Render", this, false);
-    public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false);
 
     public static final AtomicInteger hudX = new AtomicInteger(5);
     public static final AtomicInteger hudY = new AtomicInteger(70);
@@ -52,26 +46,26 @@ public class HUD extends Mod {
 
     @Override
     public void onEnable() {
+    	super.onEnable();
         Raven.moduleManager.sort();
     }
 
     @Override
     public void guiButtonToggled(final BooleanValue setting) {
+    	super.guiButtonToggled(setting);
         if (setting == alphabeticalSort) Raven.moduleManager.sort();
     }
 
     @EventLink
-    public final Listener<DrawEvent> onDraw = event -> {
-        if (!Utils.Player.isPlayerInGame()) return;
-        if (mc.gameSettings.showDebugInfo || mc.currentScreen instanceof ClickGui
-                || mc.currentScreen instanceof GuiContainer || mc.currentScreen instanceof GuiIngameMenu)
-            return;
+    private Listener<PostRenderTickEvent> onDraw = event -> {
+        if (checkGame()) return;
+        if (gameSetting().showDebugInfo) return;
 
         final int margin = 2;
         int y = hudY.get();
         int del = 0;
 
-        if (!alphabeticalSort.isToggled()) {
+        if (!alphabeticalSort.getValue()) {
             if (positionMode.get().isTop()) Raven.moduleManager.sortShortLong();
             else Raven.moduleManager.sortLongShort();
         }
@@ -101,15 +95,15 @@ public class HUD extends Mod {
                     : hudX.get();
 
             int color = getColorForMode(mode, del);
-            font.drawString(m.getName(), drawX, (float) y, color);
+            font.drawString(m.getName(), drawX, (float) y, color, true);
 
-            y += font.getHeight() + margin;
+            y += font.FONT_HEIGHT + margin;
             del -= getDeltaForMode(mode);
         }
     };
 
     @EventLink
-    public final Listener<DragEvent> onDrag = event -> {
+    private Listener<DragEvent> onDrag = event -> {
         final FontRenderer font = getFont();
         final int mouseX = event.mouseX;
         final int mouseY = event.mouseY;
@@ -125,7 +119,7 @@ public class HUD extends Mod {
                 .max()
                 .orElse(0);
 
-        float height = activeModules.size() * (font.getHeight() + 2);
+        float height = activeModules.size() * (font.FONT_HEIGHT + 2);
         boolean mouseDown = Mouse.isButtonDown(0);
 
         if (mouseDown) {
@@ -148,14 +142,7 @@ public class HUD extends Mod {
     };
 
     public FontRenderer getFont() {
-        switch (fontMode.getMode()) {
-            case "Drip":
-                return Fonts.DRIP.get(16);
-            case "Semi bold":
-                return Fonts.SEMIBOLD.get(16);
-            default:
-                return Fonts.RUBIK.get(16);
-        }
+        return mc.fontRendererObj;
     }
 
     private int getColorForMode(ModeValue mode, int del) {

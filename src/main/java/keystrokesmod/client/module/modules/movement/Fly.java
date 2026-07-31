@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 
@@ -31,7 +31,7 @@ public class Fly extends Mod {
     	switch (mode.getMode()) {
     	case "Creative":
             mc.thePlayer.motionY = 0.0;
-            mc.thePlayer.capabilities.setFlySpeed((float)(0.05000000074505806 * b.getInput()));
+            mc.thePlayer.capabilities.setFlySpeed((float)(0.05000000074505806 * b.getValue()));
             mc.thePlayer.capabilities.isFlying = true;
     		break;
     	case "Glide":
@@ -47,7 +47,7 @@ public class Fly extends Mod {
                         this.disable();
                         return;
                     }
-                    final double s = 1.94 * b.getInput();
+                    final double s = 1.94 * b.getValue();
                     final double r = Math.toRadians(mc.thePlayer.rotationYaw + 90.0f);
                     mc.thePlayer.motionX = s * Math.cos(r);
                     mc.thePlayer.motionZ = s * Math.sin(r);

@@ -7,8 +7,8 @@ import org.lwjgl.input.Mouse;
 import io.netty.util.internal.ThreadLocalRandom;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
@@ -119,8 +119,8 @@ public class RightClicker extends Mod {
             if (!this.rightClickAllowed()) {
                 return;
             }
-            if (jitterRight.getInput() > 0.0) {
-                final double jitterMultiplier = jitterRight.getInput() * 0.45;
+            if (jitterRight.getValue() > 0.0) {
+                final double jitterMultiplier = jitterRight.getValue() * 0.45;
                 if (this.rand.nextBoolean()) {
                     final EntityPlayerSP entityPlayer = mc.thePlayer;
                     entityPlayer.rotationYaw += (float)(this.rand.nextFloat() * jitterMultiplier);
@@ -183,29 +183,29 @@ public class RightClicker extends Mod {
     public boolean rightClickAllowed() {
         final ItemStack item = mc.thePlayer.getHeldItem();
         if (item != null) {
-            if (allowEat.isToggled() && (item.getItem() instanceof ItemFood || item.getItem() instanceof ItemPotion || item.getItem() instanceof ItemBucketMilk)) {
+            if (allowEat.getValue() && (item.getItem() instanceof ItemFood || item.getItem() instanceof ItemPotion || item.getItem() instanceof ItemBucketMilk)) {
                 return false;
             }
-            if (ignoreRods.isToggled() && item.getItem() instanceof ItemFishingRod) {
+            if (ignoreRods.getValue() && item.getItem() instanceof ItemFishingRod) {
                 return false;
             }
-            if (allowBow.isToggled() && item.getItem() instanceof ItemBow) {
+            if (allowBow.getValue() && item.getItem() instanceof ItemBow) {
                 return false;
             }
-            if (onlyBlocks.isToggled() && !(item.getItem() instanceof ItemBlock)) {
+            if (onlyBlocks.getValue() && !(item.getItem() instanceof ItemBlock)) {
                 return false;
             }
-            if (noBlockSword.isToggled() && item.getItem() instanceof ItemSword) {
+            if (noBlockSword.getValue() && item.getItem() instanceof ItemSword) {
                 return false;
             }
         }
-        if (preferFastPlace.isToggled()) {
+        if (preferFastPlace.getValue()) {
             final Mod fastplace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
             if (fastplace != null && fastplace.isEnabled()) {
                 return false;
             }
         }
-        if (rightClickDelay.getInput() != 0.0) {
+        if (rightClickDelay.getValue() != 0.0) {
             if (!this.rightClickWaiting && !this.allowedClick) {
                 this.rightClickWaitStartTime = (double)System.currentTimeMillis();
                 this.rightClickWaiting = true;
@@ -213,7 +213,7 @@ public class RightClicker extends Mod {
             }
             if (this.rightClickWaiting && !this.allowedClick) {
                 final double passedTime = System.currentTimeMillis() - this.rightClickWaitStartTime;
-                if (passedTime >= rightClickDelay.getInput()) {
+                if (passedTime >= rightClickDelay.getValue()) {
                     this.allowedClick = true;
                     this.rightClickWaiting = false;
                     return true;
@@ -228,8 +228,8 @@ public class RightClicker extends Mod {
         if (!this.rightClickAllowed()) {
             return;
         }
-        if (jitterRight.getInput() > 0.0) {
-            final double jitterMultiplier = jitterRight.getInput() * 0.45;
+        if (jitterRight.getValue() > 0.0) {
+            final double jitterMultiplier = jitterRight.getValue() * 0.45;
             if (this.rand.nextBoolean()) {
                 final EntityPlayerSP entityPlayer = mc.thePlayer;
                 entityPlayer.rotationYaw += (float)(this.rand.nextFloat() * jitterMultiplier);

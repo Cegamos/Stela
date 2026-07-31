@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -19,8 +19,8 @@ public class Blocks extends Mod {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-        if (this.preferSlot.isToggled()) {
-            final int preferedSlot = (int)this.hotbarSlotPreference.getInput() - 1;
+        if (this.preferSlot.getValue()) {
+            final int preferedSlot = (int)this.hotbarSlotPreference.getValue() - 1;
             final ItemStack itemInSlot = Blocks.mc.thePlayer.inventory.getStackInSlot(preferedSlot);
             if (itemInSlot != null && itemInSlot.getItem() instanceof ItemBlock) {
                 Blocks.mc.thePlayer.inventory.currentItem = preferedSlot;

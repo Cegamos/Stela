@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 
 public abstract class Value {
 	private final String name;

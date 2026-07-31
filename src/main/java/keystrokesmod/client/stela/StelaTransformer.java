@@ -59,8 +59,7 @@ public class StelaTransformer implements IClassTransformer {
             "keystrokesmod.client.mixin.mixins.MixinGuiChat",
             "keystrokesmod.client.mixin.mixins.MixinMinecraft",
             "keystrokesmod.client.mixin.mixins.MixinNetworkManager",
-            "keystrokesmod.client.mixin.mixins.MixinEntityRenderer",
-            "keystrokesmod.client.mixin.mixins.MixinGuiIngame"
+            "keystrokesmod.client.mixin.mixins.MixinEntityRenderer"
         };
 
         for (String className : mixinClassNames) {

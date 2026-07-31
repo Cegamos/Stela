@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
-import keystrokesmod.client.event.impl.DrawEvent;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -35,7 +35,7 @@ public class KeyStrokeRenderer {
     }
     
     @EventLink
-    public final Listener<DrawEvent> onDraw = e -> {
+    public final Listener<PostRenderTickEvent> onDraw = e -> {
         if (!checkInit()) return;
         if (this.mc.currentScreen != null) {
             if (this.mc.currentScreen instanceof KeyStrokeConfigGui) {

@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 
 public class TickComponent extends Component {
@@ -36,7 +36,7 @@ public class TickComponent extends Component {
     public void draw() {
         GL11.glPushMatrix();
         GL11.glScaled(0.5D, 0.5D, 0.5D);
-        mc.fontRendererObj.drawStringWithShadow(this.cl1ckbUtt0n.isToggled() ? "[+]  " + this.cl1ckbUtt0n.getName() : "[-]  " + this.cl1ckbUtt0n.getName(), (float)((this.module.category.getX() + 4) * 2), (float)((this.module.category.getY() + this.o + 5) * 2), this.cl1ckbUtt0n.isToggled() ? Theme.getMainColor().getRGB() : -1);
+        mc.fontRendererObj.drawStringWithShadow(this.cl1ckbUtt0n.getValue() ? "[+]  " + this.cl1ckbUtt0n.getName() : "[-]  " + this.cl1ckbUtt0n.getName(), (float)((this.module.category.getX() + 4) * 2), (float)((this.module.category.getY() + this.o + 5) * 2), this.cl1ckbUtt0n.getValue() ? Theme.getMainColor().getRGB() : -1);
         GL11.glPopMatrix();
      }
     

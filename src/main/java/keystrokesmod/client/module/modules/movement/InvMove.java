@@ -4,8 +4,8 @@ import org.lwjgl.input.Keyboard;
 
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.settings.KeyBinding;
@@ -20,7 +20,7 @@ public class InvMove extends Mod {
 		if (mc.currentScreen != null) {
 			if (mc.currentScreen instanceof GuiChat) return;
 
-			if (!onlyClick.isToggled() || mc.currentScreen instanceof ClickGui) {
+			if (!onlyClick.getValue() || mc.currentScreen instanceof ClickGui) {
 				setMoveKey(mc.gameSettings.keyBindForward);
 				setMoveKey(mc.gameSettings.keyBindBack);
 				setMoveKey(mc.gameSettings.keyBindRight);

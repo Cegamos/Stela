@@ -4,8 +4,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.init.Blocks;
@@ -40,7 +40,7 @@ public class BedAura extends Mod {
             @Override
             public void run() {
                 int y;
-                for (int ra = y = (int)r.getInput(); y >= -ra; --y) {
+                for (int ra = y = (int)r.getValue(); y >= -ra; --y) {
                     for (int x = -ra; x <= ra; ++x) {
                         for (int z = -ra; z <= ra; ++z) {
                             if (Utils.Player.isPlayerInGame()) {

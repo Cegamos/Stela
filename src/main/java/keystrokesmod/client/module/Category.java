@@ -4,7 +4,6 @@ public enum Category {
     Combat,
     Movement,
     Player,
-    World,
     Render,
     Other,
     Client,

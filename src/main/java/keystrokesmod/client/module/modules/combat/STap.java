@@ -5,15 +5,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.value.impl.ModeValue;
-import keystrokesmod.client.module.value.impl.RangeValue;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.Utils.Modes.SprintResetTimings;
 import keystrokesmod.client.util.timing.Clock;
@@ -46,8 +44,6 @@ public class STap extends Mod {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-    	AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
-
         if (waitingForPostDelay) {
             if (this.postDelayTimer.hasFinished()) {
                 waitingForPostDelay = false;
@@ -63,14 +59,12 @@ public class STap extends Mod {
                 if (target.isDead) {
                     return;
                 }
-                if (mc.thePlayer.getDistanceToEntity(target) <= range.getInput()) {
+                if (mc.thePlayer.getDistanceToEntity(target) <= range.getValue()) {
                     if ((target.hurtResistantTime >= 10 && mode.is(SprintResetTimings.POST)) || (target.hurtResistantTime <= 10 && mode.is(SprintResetTimings.PRE))) {
-                        if (onlyPlayers.isToggled() && !(target instanceof EntityPlayer)) {
+                        if (onlyPlayers.getValue() && !(target instanceof EntityPlayer)) {
                             return;
                         }
-                        if (bot.bot(target)) {
-                            return;
-                        }
+
                         if (hitCoolDown && !alreadyHit) {
                             ++hitsWaited;
                             if (hitsWaited < hitTimeout) {
@@ -80,7 +74,7 @@ public class STap extends Mod {
                             hitCoolDown = false;
                             hitsWaited = 0;
                         }
-                        if (chance.getInput() != 100.0 && Math.random() > chance.getInput() / 100.0) {
+                        if (chance.getValue() != 100.0 && Math.random() > chance.getValue() / 100.0) {
                             return;
                         }
                         if (!alreadyHit) {

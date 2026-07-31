@@ -1,4 +1,4 @@
-package keystrokesmod.client.module;
+package keystrokesmod.client.module.modules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,13 +11,14 @@ import org.lwjgl.input.Keyboard;
 import com.google.gson.JsonObject;
 
 import keystrokesmod.client.event.EventBus;
+import keystrokesmod.client.module.Category;
+import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.client.HUD;
 import keystrokesmod.client.module.value.Value;
 import keystrokesmod.client.module.value.impl.BooleanValue;
-import keystrokesmod.client.util.IMinecraft;
-import net.minecraft.entity.Entity;
+import keystrokesmod.client.util.Wrapper;
 
-public class Mod implements IMinecraft {
+public class Mod extends Wrapper {
     protected final ArrayList<Value> settings = new ArrayList<>();
     private final ModuleInfo moduleInfo;
     private final String moduleName;
@@ -173,13 +174,12 @@ public class Mod implements IMinecraft {
 
     public boolean shouldDisplay(HUD hud) {
         Map<Category, Boolean> visibility = new HashMap<>();
-        visibility.put(Category.Client, hud.hideClient.isToggled());
-        visibility.put(Category.Combat, hud.hideCombat.isToggled());
-        visibility.put(Category.Movement, hud.hideMovement.isToggled());
-        visibility.put(Category.Other, hud.hideOther.isToggled());
-        visibility.put(Category.Player, hud.hidePlayer.isToggled());
-        visibility.put(Category.Render, hud.hideRender.isToggled());
-        visibility.put(Category.World, hud.hideWorld.isToggled());
+        visibility.put(Category.Client, hud.hideClient.getValue());
+        visibility.put(Category.Combat, hud.hideCombat.getValue());
+        visibility.put(Category.Movement, hud.hideMovement.getValue());
+        visibility.put(Category.Other, hud.hideOther.getValue());
+        visibility.put(Category.Player, hud.hidePlayer.getValue());
+        visibility.put(Category.Render, hud.hideRender.getValue());
 
         return !visibility.getOrDefault(this.moduleCategory, false);
     }
@@ -193,8 +193,4 @@ public class Mod implements IMinecraft {
     public void guiUpdate() {}
 
     public void guiButtonToggled(BooleanValue setting) {}
-
-    public void onGuiClose() {}
-
-    public void onAttackTargetEntityWithCurrentItem(Entity entity) {}
 }

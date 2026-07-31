@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.other;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.DimensionUtil;
 import net.minecraft.block.Block;

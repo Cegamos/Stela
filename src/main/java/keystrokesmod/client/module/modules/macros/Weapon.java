@@ -1,6 +1,7 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.*;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.util.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.ItemStack;

@@ -2,19 +2,16 @@ package keystrokesmod.client.module.modules.render;
 
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -29,22 +26,17 @@ public class NameTags extends Mod {
 
     @SubscribeEvent
     public void r(final RenderLivingEvent.Specials.Pre e) {
-    	AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
-
-        if (rm.isToggled()) {
+        if (rm.getValue()) {
             e.setCanceled(true);
         }
         else if (e.entity instanceof EntityPlayer && e.entity.deathTime == 0) {
             final EntityPlayer en = (EntityPlayer)e.entity;
-            if (!d.isToggled() && en.isInvisible()) {
-                return;
-            }
-            if (bot.bot((Entity)en) || en.getDisplayNameString().isEmpty()) {
+            if (!d.getValue() && en.isInvisible()) {
                 return;
             }
             e.setCanceled(true);
             String str = en.getDisplayName().getFormattedText();
-            if (c.isToggled()) {
+            if (c.getValue()) {
                 final double r = en.getHealth() / en.getMaxHealth();
                 final String h = ((r < 0.3) ? "§c" : ((r < 0.5) ? "§6" : ((r < 0.7) ? "§e" : "§a"))) + Utils.Java.round(en.getHealth(), 1);
                 str = str + " " + h;
@@ -66,10 +58,10 @@ public class NameTags extends Mod {
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             final Tessellator tessellator = Tessellator.getInstance();
             final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            final int i = (int)(-a.getInput());
+            final int i = (int)(-a.getValue());
             final int j = mc.fontRendererObj.getStringWidth(str) / 2;
             GlStateManager.disableTexture2D();
-            if (b.isToggled()) {
+            if (b.getValue()) {
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
                 worldrenderer.pos((double)(-j - 1), (double)(-1 + i), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
                 worldrenderer.pos((double)(-j - 1), (double)(8 + i), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();

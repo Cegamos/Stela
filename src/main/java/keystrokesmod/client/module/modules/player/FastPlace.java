@@ -4,8 +4,8 @@ import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PostPlayerTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
@@ -21,14 +21,14 @@ public class FastPlace extends Mod {
     @EventLink
     private Listener<PostPlayerTickEvent> playerTick = event -> {
         if (Utils.Player.isPlayerInGame() && mc.inGameHasFocus) {
-            if (blockOnly.isToggled()) {
+            if (blockOnly.getValue()) {
                 final ItemStack item = mc.thePlayer.getHeldItem();
                 if (item == null || !(item.getItem() instanceof ItemBlock)) {
                     return;
                 }
             }
 
-            ReflectUtil.setRightClickDelayTimer((int) delaySlider.getInput());
+            ReflectUtil.setRightClickDelayTimer((int) delaySlider.getValue());
         }
     };
 }

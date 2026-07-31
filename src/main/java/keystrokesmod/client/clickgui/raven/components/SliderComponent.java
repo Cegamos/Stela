@@ -42,7 +42,7 @@ public class SliderComponent extends Component {
         Gui.drawRect(l, this.p.category.getY() + this.o + 11, r, this.p.category.getY() + this.o + 15, Theme.getMainColor().getRGB());
         GL11.glPushMatrix();
         GL11.glScaled(0.5, 0.5, 0.5);
-        mc.fontRendererObj.drawStringWithShadow(this.v.getName() + ": " + this.v.getInput(), (float)(int)((this.p.category.getX() + 4) * 2.0f), (float)(int)((this.p.category.getY() + this.o + 3) * 2.0f), -1);
+        mc.fontRendererObj.drawStringWithShadow(this.v.getName() + ": " + this.v.getValue(), (float)(int)((this.p.category.getX() + 4) * 2.0f), (float)(int)((this.p.category.getY() + this.o + 3) * 2.0f), -1);
         GL11.glPopMatrix();
     }
     
@@ -61,7 +61,7 @@ public class SliderComponent extends Component {
         this.y = this.p.category.getY() + this.o;
         this.x = this.p.category.getX();
         final double d = Math.min(this.p.category.getWidth() - 8, Math.max(0, mousePosX - this.x));
-        this.w = (this.p.category.getWidth() - 8) * (this.v.getInput() - this.v.getMin()) / (this.v.getMax() - this.v.getMin());
+        this.w = (this.p.category.getWidth() - 8) * (this.v.getValue() - this.v.getMin()) / (this.v.getMax() - this.v.getMin());
         if (this.d) {
             if (d == 0.0) {
                 this.v.setValue(this.v.getMin());

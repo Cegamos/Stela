@@ -5,8 +5,8 @@ import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PacketReceiveEvent;
 import keystrokesmod.client.event.impl.PacketSendEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 

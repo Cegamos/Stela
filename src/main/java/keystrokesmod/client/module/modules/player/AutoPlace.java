@@ -4,8 +4,8 @@ import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -36,15 +36,15 @@ public class AutoPlace extends Mod {
     
     @Override
     public void guiUpdate() {
-        if (this.lfd != c.getInput()) {
+        if (this.lfd != c.getValue()) {
             this.rv();
         }
-        this.lfd = c.getInput();
+        this.lfd = c.getValue();
     }
     
     @Override
     public void onDisable() {
-        if (a.isToggled()) {
+        if (a.getValue()) {
             this.rd(4);
         }
         this.rv();
@@ -53,7 +53,7 @@ public class AutoPlace extends Mod {
     @Override
     public void update() {
         final FastPlace fastPlace = (FastPlace) Raven.moduleManager.getModuleByClazz(FastPlace.class);
-        if (a.isToggled() && Mouse.isButtonDown(1) && !mc.thePlayer.capabilities.isFlying && fastPlace != null && !fastPlace.isEnabled()) {
+        if (a.getValue() && Mouse.isButtonDown(1) && !mc.thePlayer.capabilities.isFlying && fastPlace != null && !fastPlace.isEnabled()) {
             final ItemStack i = mc.thePlayer.getHeldItem();
             if (i == null || !(i.getItem() instanceof ItemBlock)) {
                 return;
@@ -69,7 +69,7 @@ public class AutoPlace extends Mod {
             if (i != null && i.getItem() instanceof ItemBlock) {
                 final MovingObjectPosition m = mc.objectMouseOver;
                 if (m != null && m.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && m.sideHit != EnumFacing.UP && m.sideHit != EnumFacing.DOWN) {
-                    if (this.lm != null && this.f < c.getInput()) {
+                    if (this.lm != null && this.f < c.getValue()) {
                         ++this.f;
                     }
                     else {
@@ -77,7 +77,7 @@ public class AutoPlace extends Mod {
                         final BlockPos pos = m.getBlockPos();
                         if (this.lp == null || pos.getX() != this.lp.getX() || pos.getY() != this.lp.getY() || pos.getZ() != this.lp.getZ()) {
                             final Block b = mc.theWorld.getBlockState(pos).getBlock();
-                            if (b != null && b != Blocks.air && !(b instanceof BlockLiquid) && (!a.isToggled() || Mouse.isButtonDown(1))) {
+                            if (b != null && b != Blocks.air && !(b instanceof BlockLiquid) && (!a.getValue() || Mouse.isButtonDown(1))) {
                                 final long n = System.currentTimeMillis();
                                 if (n - this.l >= 25L) {
                                     this.l = n;

@@ -1,7 +1,7 @@
 package keystrokesmod.client.config;
 
 import keystrokesmod.client.Raven;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 import keystrokesmod.client.module.value.impl.*;
 
@@ -54,10 +54,10 @@ public class ConfigManager {
 
                             if (setting instanceof BooleanValue) {
                                 dos.writeByte(1);
-                                dos.writeBoolean(((BooleanValue) setting).isToggled());
+                                dos.writeBoolean(((BooleanValue) setting).getValue());
                             } else if (setting instanceof NumberValue) {
                                 dos.writeByte(2);
-                                dos.writeDouble(((NumberValue) setting).getInput());
+                                dos.writeDouble(((NumberValue) setting).getValue());
                             } else if (setting instanceof RangeValue) {
                                 dos.writeByte(3);
                                 dos.writeDouble(((RangeValue) setting).getInputMin());

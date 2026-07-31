@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -61,7 +61,7 @@ public class BedPlates extends Mod {
             clock.start();
         }
 
-        final int rangeValue = (int) range.getInput();
+        final int rangeValue = (int) range.getValue();
         final double px = mc.thePlayer.posX;
         final double py = mc.thePlayer.posY;
         final double pz = mc.thePlayer.posZ;
@@ -81,7 +81,7 @@ public class BedPlates extends Mod {
                     if (state.getBlock() != bedBlock) continue;
                     if (state.getValue(BlockBed.PART) != footPart) continue;
 
-                    if (firstBed.isToggled()) {
+                    if (firstBed.getValue()) {
                         if (bed != null && pos.equals(bed[0])) return;
 
                         bed = new BlockPos[]{
@@ -119,7 +119,7 @@ public class BedPlates extends Mod {
 	@SubscribeEvent
 	public void onRender3D(RenderWorldLastEvent event) {
         if (Utils.Player.isPlayerInGame()) {
-            if (firstBed.isToggled() && this.bed != null) {
+            if (firstBed.getValue() && this.bed != null) {
                 if (!(mc.theWorld.getBlockState(bed[0]).getBlock() instanceof BlockBed)) {
                     this.bed = null;
                     return;
@@ -146,7 +146,7 @@ public class BedPlates extends Mod {
 	private void drawPlate(BlockPos blockPos, int index) {
 	    float rotateX = mc.gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F;
 	    double distance = mc.thePlayer.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-	    double scale = plateScale.getInput();
+	    double scale = plateScale.getValue();
 	    double base = 0.01666666753590107D * Math.sqrt(distance);
 
 	    glPushMatrix();
@@ -225,7 +225,7 @@ public class BedPlates extends Mod {
                 {0, 0, -1}  // Atrás
         };
 
-        int layersCount = (int) layers.getInput();
+        int layersCount = (int) layers.getValue();
 
         for (int[] dir : directions) {
             for (int layer = 1; layer <= layersCount; layer++) {

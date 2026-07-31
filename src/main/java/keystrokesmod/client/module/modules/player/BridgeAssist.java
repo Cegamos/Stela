@@ -2,8 +2,8 @@ package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -37,7 +37,7 @@ public class BridgeAssist extends Mod {
     
     @Override
     public void guiUpdate() {
-        this.assistModeDesc.setDesc("Mode: " + Utils.Modes.BridgeMode.values()[(int)(this.assistMode.getInput() - 1.0)].name());
+        this.assistModeDesc.setDesc("Mode: " + Utils.Modes.BridgeMode.values()[(int)(this.assistMode.getValue() - 1.0)].name());
     }
     
     @Override
@@ -56,7 +56,7 @@ public class BridgeAssist extends Mod {
         if (!Utils.Player.playerOverAir() || !mc.thePlayer.onGround) {
             return;
         }
-        if (this.onSneak.isToggled() && !mc.thePlayer.isSneaking()) {
+        if (this.onSneak.getValue() && !mc.thePlayer.isSneaking()) {
             return;
         }
         if (this.gliding) {
@@ -109,15 +109,15 @@ public class BridgeAssist extends Mod {
             this.startWaitTime = System.currentTimeMillis();
             return;
         }
-        if (System.currentTimeMillis() - this.startWaitTime < this.waitFor.getInput()) {
+        if (System.currentTimeMillis() - this.startWaitTime < this.waitFor.getValue()) {
             return;
         }
         final float fuckedYaw = mc.thePlayer.rotationYaw;
         final float fuckedPitch = mc.thePlayer.rotationPitch;
         final float yaw = fuckedYaw - (int)fuckedYaw / 360 * 360;
         final float pitch = fuckedPitch - (int)fuckedPitch / 360 * 360;
-        final float range = (float)this.assistRange.getInput();
-        switch (Utils.Modes.BridgeMode.values()[(int)(this.assistMode.getInput() - 1.0)]) {
+        final float range = (float)this.assistRange.getValue();
+        switch (Utils.Modes.BridgeMode.values()[(int)(this.assistMode.getValue() - 1.0)]) {
             case GODBRIDGE: {
                 if (this.godbridgePos[0] >= pitch - range && this.godbridgePos[0] <= pitch + range) {
                     for (int k = 1; k < this.godbridgePos.length; ++k) {
@@ -169,7 +169,7 @@ public class BridgeAssist extends Mod {
     }
     
     public void aimAt(final float pitch, final float yaw, final float fuckedYaw, final float fuckedPitch) {
-        if (this.setLook.isToggled()) {
+        if (this.setLook.getValue()) {
             mc.thePlayer.rotationPitch = pitch + (int)fuckedPitch / 360 * 360;
             mc.thePlayer.rotationYaw = yaw;
         }

@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.render;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

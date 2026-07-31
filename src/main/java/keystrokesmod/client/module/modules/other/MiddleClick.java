@@ -7,8 +7,8 @@ import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.combat.AimAssist;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -67,12 +67,12 @@ public class MiddleClick extends Mod {
 				}
 			} else if (mode.is("Add friend")) {
 				this.addFriend();
-				if (showHelp.isToggled()) {
+				if (showHelp.getValue()) {
 					this.showHelpMessage();
 				}
 			} else if (mode.is("Remove Friend")) {
 				removeFriend();
-				if (showHelp.isToggled()) {
+				if (showHelp.getValue()) {
 					this.showHelpMessage();
 				}
 			}
@@ -84,7 +84,7 @@ public class MiddleClick extends Mod {
 	}
 
 	private void showHelpMessage() {
-		if (showHelp.isToggled()) {
+		if (showHelp.getValue()) {
 			Utils.Player.sendMessageToSelf(
 					"Run 'help friends' in CommandLine to find out how to add, remove and view friends.");
 		}

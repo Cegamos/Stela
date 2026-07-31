@@ -3,8 +3,8 @@ package keystrokesmod.client.module.modules.render;
 import java.awt.Color;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -24,7 +24,7 @@ public class ChestESP extends Mod {
     @SubscribeEvent
     public void onRenderWorldLast(final RenderWorldLastEvent ev) {
         if (Utils.Player.isPlayerInGame()) {
-            final int rgb = d.isToggled() ? Utils.Client.rainbowDraw(2L, 0L) : new Color((int)a.getInput(), (int)b.getInput(), (int)c.getInput()).getRGB();
+            final int rgb = d.getValue() ? Utils.Client.rainbowDraw(2L, 0L) : new Color((int)a.getValue(), (int)b.getValue(), (int)c.getValue()).getRGB();
             for (final TileEntity te : mc.theWorld.loadedTileEntityList) {
                 if (te instanceof TileEntityChest || te instanceof TileEntityEnderChest) {
                     Utils.HUD.re(te.getPos(), rgb, true);

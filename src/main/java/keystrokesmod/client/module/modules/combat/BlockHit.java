@@ -5,15 +5,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.value.impl.ModeValue;
-import keystrokesmod.client.module.value.impl.RangeValue;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.Utils.Modes.SprintResetTimings;
 import keystrokesmod.client.util.timing.Clock;
@@ -48,9 +46,8 @@ public class BlockHit extends Mod {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-    	AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
 
-        if (onRightMBHold.isToggled() && !Utils.Player.tryingToCombo()) {
+        if (onRightMBHold.getValue() && !Utils.Player.tryingToCombo()) {
             if (!safeGuard || (Utils.Player.isPlayerHoldingWeapon() && Mouse.isButtonDown(0))) {
                 safeGuard = true;
                 finishCombo();
@@ -70,7 +67,7 @@ public class BlockHit extends Mod {
             return;
         }
         if (!executingAction) {
-            if (onRightMBHold.isToggled() && Utils.Player.tryingToCombo()) {
+            if (onRightMBHold.getValue() && Utils.Player.tryingToCombo()) {
                 if (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null) {
                     if (!safeGuard || (Utils.Player.isPlayerHoldingWeapon() && Mouse.isButtonDown(0))) {
                         safeGuard = true;
@@ -91,20 +88,18 @@ public class BlockHit extends Mod {
             if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit instanceof Entity && Mouse.isButtonDown(0)) {
                 final Entity target = mc.objectMouseOver.entityHit;
                 if (target.isDead) {
-                    if (onRightMBHold.isToggled() && Mouse.isButtonDown(1) && Mouse.isButtonDown(0) && (!safeGuard || (Utils.Player.isPlayerHoldingWeapon() && Mouse.isButtonDown(0)))) {
+                    if (onRightMBHold.getValue() && Mouse.isButtonDown(1) && Mouse.isButtonDown(0) && (!safeGuard || (Utils.Player.isPlayerHoldingWeapon() && Mouse.isButtonDown(0)))) {
                         safeGuard = true;
                         finishCombo();
                     }
                     return;
                 }
-                if (mc.thePlayer.getDistanceToEntity(target) <= range.getInput()) {
+                if (mc.thePlayer.getDistanceToEntity(target) <= range.getValue()) {
                     if ((target.hurtResistantTime >= 10 && Utils.Modes.SprintResetTimings.values()[(int)mode.getIndex() - 1] == Utils.Modes.SprintResetTimings.POST) || (target.hurtResistantTime <= 10 && Utils.Modes.SprintResetTimings.values()[(int)mode.getIndex() - 1] == Utils.Modes.SprintResetTimings.PRE)) {
-                        if (onlyPlayers.isToggled() && !(target instanceof EntityPlayer)) {
+                        if (onlyPlayers.getValue() && !(target instanceof EntityPlayer)) {
                             return;
                         }
-                        if (bot.bot(target)) {
-                            return;
-                        }
+
                         if (hitCoolDown && !alreadyHit) {
                             ++hitsWaited;
                             if (hitsWaited < hitTimeout) {
@@ -114,7 +109,7 @@ public class BlockHit extends Mod {
                             hitCoolDown = false;
                             hitsWaited = 0;
                         }
-                        if (chance.getInput() != 100.0 && Math.random() > chance.getInput() / 100.0) {
+                        if (chance.getValue() != 100.0 && Math.random() > chance.getValue() / 100.0) {
                             return;
                         }
                         if (!alreadyHit) {

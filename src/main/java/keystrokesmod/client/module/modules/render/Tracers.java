@@ -4,11 +4,10 @@ import java.awt.Color;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -54,9 +53,9 @@ public class Tracers extends Mod {
     @Override
     public void guiUpdate() {
         rgbColor = new Color(
-            (int) red.getInput(),
-            (int) green.getInput(),
-            (int) blue.getInput()
+            (int) red.getValue(),
+            (int) green.getValue(),
+            (int) blue.getValue()
         ).getRGB();
     }
 
@@ -64,24 +63,14 @@ public class Tracers extends Mod {
     public void onRenderWorld(RenderWorldLastEvent event) {
         if (!Utils.Player.isPlayerInGame()) return;
 
-        AntiBot botModule = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
-        int color = rainbow.isToggled() ? Utils.Client.rainbowDraw(2L, 0L) : rgbColor;
-        float width = (float) lineWidth.getInput();
+        int color = rainbow.getValue() ? Utils.Client.rainbowDraw(2L, 0L) : rgbColor;
+        float width = (float) lineWidth.getValue();
 
-        if (!Raven.debugger) {
-            for (EntityPlayer player : mc.theWorld.playerEntities) {
-                if (player == mc.thePlayer || player.deathTime != 0) continue;
-                if (!showInvis.isToggled() && player.isInvisible()) continue;
-                if (botModule.bot(player)) continue;
+        for (EntityPlayer player : mc.theWorld.playerEntities) {
+            if (player == mc.thePlayer || player.deathTime != 0) continue;
+            if (!showInvis.getValue() && player.isInvisible()) continue;
 
-                Utils.HUD.dtl(player, color, width);
-            }
-        } else {
-            for (Entity entity : mc.theWorld.loadedEntityList) {
-                if (entity instanceof EntityLivingBase && entity != mc.thePlayer) {
-                    Utils.HUD.dtl(entity, color, width);
-                }
-            }
+            Utils.HUD.dtl(player, color, width);
         }
     }
 }

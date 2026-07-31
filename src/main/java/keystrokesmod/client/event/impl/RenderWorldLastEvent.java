@@ -2,10 +2,10 @@ package keystrokesmod.client.event.impl;
 
 import keystrokesmod.client.event.Event;
 
-public class DrawEvent extends Event {
+public class RenderWorldLastEvent extends Event {
     private final float partialTicks;
 
-    public DrawEvent(float partialTicks) {
+    public RenderWorldLastEvent(float partialTicks) {
         this.partialTicks = partialTicks;
     }
 

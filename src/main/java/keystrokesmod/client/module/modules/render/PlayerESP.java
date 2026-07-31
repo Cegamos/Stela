@@ -4,12 +4,11 @@ import java.awt.Color;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.world.AntiBot;
+import keystrokesmod.client.module.modules.Mod;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
-import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -49,9 +48,9 @@ public class PlayerESP extends Mod {
     @Override
     public void guiUpdate() {
         this.rgb_c = new Color(
-            (int) red.getInput(),
-            (int) green.getInput(),
-            (int) blue.getInput()
+            (int) red.getValue(),
+            (int) green.getValue(),
+            (int) blue.getValue()
         ).getRGB();
     }
 
@@ -59,43 +58,32 @@ public class PlayerESP extends Mod {
     public void r1(final RenderWorldLastEvent e) {
         if (!Utils.Player.isPlayerInGame()) return;
 
-        final int rgb = rainbow.isToggled() ? 0 : this.rgb_c;
-    	AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
-
-        if (!Raven.debugger) {
-            for (final EntityPlayer en : mc.theWorld.playerEntities) {
-                if (en != mc.thePlayer && en.deathTime == 0 && (showInvis.isToggled() || !en.isInvisible())) {
-                    if (bot.bot(en)) continue;
-                    this.renderESP(en, rgb);
-                }
-            }
-        } else {
-            for (final Entity en2 : mc.theWorld.loadedEntityList) {
-                if (en2 instanceof EntityLivingBase && en2 != mc.thePlayer) {
-                    this.renderESP(en2, rgb);
-                }
+        final int rgb = rainbow.getValue() ? 0 : this.rgb_c;
+        for (final EntityPlayer en : mc.theWorld.playerEntities) {
+            if (en != mc.thePlayer && en.deathTime == 0 && (showInvis.getValue() || !en.isInvisible())) {
+                this.renderESP(en, rgb);
             }
         }
     }
 
     private void renderESP(final Entity en, final int rgb) {
-        if (box.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 1, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (box.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 1, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
-        if (shaded.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 2, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (shaded.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 2, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
-        if (esp2D.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 3, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (esp2D.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 3, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
-        if (health.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 4, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (health.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 4, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
-        if (arrow.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 5, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (arrow.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 5, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
-        if (ring.isToggled()) {
-            Utils.HUD.drawBoxAroundEntity(en, 6, expand.getInput(), xShift.getInput(), rgb, redOnDamage.isToggled());
+        if (ring.getValue()) {
+            Utils.HUD.drawBoxAroundEntity(en, 6, expand.getValue(), xShift.getValue(), rgb, redOnDamage.getValue());
         }
     }
 }

@@ -1,8 +1,8 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 
 @ModuleInfo(name = "VClip", category = Category.Movement)
@@ -11,8 +11,8 @@ public class VClip extends Mod {
 
     @Override
     public void onEnable() {
-        if (a.getInput() != 0.0) {
-            mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + a.getInput(), mc.thePlayer.posZ);
+        if (a.getValue() != 0.0) {
+            mc.thePlayer.setPosition(mc.thePlayer.posX, mc.thePlayer.posY + a.getValue(), mc.thePlayer.posZ);
         }
         this.disable();
     }

@@ -15,7 +15,6 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.raven.components.CategoryComponent;
 import keystrokesmod.client.module.modules.client.HUD;
 import keystrokesmod.client.module.modules.client.Terminal;
-import keystrokesmod.client.module.modules.render.PotionHUD;
 import keystrokesmod.client.util.IMinecraft;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.keystroke.KeyStroke;
@@ -107,8 +106,6 @@ public class ClientConfig implements IMinecraft {
         config.add("loaded-cfg~ " + ConfigManager.getCurrentProfileName());
         config.add("HUDX~ " + HUD.hudX);
         config.add("HUDY~ " + HUD.hudY);
-        config.add("POTIONX~ " + PotionHUD.potionHudX);
-        config.add("POTIONY~ " + PotionHUD.potionHudY);
         config.add("terminal-pos~ " + Raven.clickGui.terminal.getX() + "," + Raven.clickGui.terminal.getY());
         config.add("terminal-size~ " + Raven.clickGui.terminal.getWidth() + "," + Raven.clickGui.terminal.height());
         config.add("terminal-opened~ " + Raven.clickGui.terminal.opened);
@@ -150,22 +147,6 @@ public class ClientConfig implements IMinecraft {
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            else if (line.startsWith("POTIONX~ ")) {
-            	try {
-            		PotionHUD.potionHudX = Integer.parseInt(line.replace("POTIONX~ ", ""));
-            	}
-            	catch (Exception e) {
-            		e.printStackTrace();
-            	}
-            }
-            else if (line.startsWith("POTIONY~ ")) {
-            	try {
-            		PotionHUD.potionHudY = Integer.parseInt(line.replace("POTIONY~ ", ""));
-            	}
-            	catch (Exception e) {
-            		e.printStackTrace();
-            	}
             }
             else if (line.startsWith("terminal-pos~ ")) {
                 try {

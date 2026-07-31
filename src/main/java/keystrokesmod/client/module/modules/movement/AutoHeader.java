@@ -4,8 +4,8 @@ import org.lwjgl.input.Keyboard;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
@@ -32,13 +32,13 @@ public class AutoHeader extends Mod {
         if (!Utils.Player.isPlayerInGame() || mc.currentScreen != null) {
             return;
         }
-        if (cancelDuringShift.isToggled() && mc.thePlayer.isSneaking()) {
+        if (cancelDuringShift.getValue() && mc.thePlayer.isSneaking()) {
             return;
         }
-        if (onlyWhenHoldingSpacebar.isToggled() && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
+        if (onlyWhenHoldingSpacebar.getValue() && !Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode())) {
             return;
         }
-        if (Utils.Player.playerUnderBlock() && mc.thePlayer.onGround && this.startWait + 1000.0 / ThreadLocalRandom.current().nextDouble(pbs.getInput() - 0.543543, pbs.getInput() + 1.32748923) < System.currentTimeMillis()) {
+        if (Utils.Player.playerUnderBlock() && mc.thePlayer.onGround && this.startWait + 1000.0 / ThreadLocalRandom.current().nextDouble(pbs.getValue() - 0.543543, pbs.getValue() + 1.32748923) < System.currentTimeMillis()) {
             mc.thePlayer.jump();
             this.startWait = (double)System.currentTimeMillis();
         }

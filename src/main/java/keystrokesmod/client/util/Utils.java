@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import keystrokesmod.client.Raven;
-import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
@@ -373,16 +373,16 @@ public class Utils implements IMinecraft {
 		}
 		
 		public static void correctSliders(final NumberValue c, final NumberValue d) {
-			if (c.getInput() > d.getInput()) {
-				final double p = c.getInput();
-				c.setValue(d.getInput());
+			if (c.getValue() > d.getValue()) {
+				final double p = c.getValue();
+				c.setValue(d.getValue());
 				d.setValue(p);
 			}
 		}
 
 		public static double ranModuleVal(final NumberValue a, final NumberValue b, final Random r) {
-			return (a.getInput() == b.getInput()) ? a.getInput()
-					: (a.getInput() + r.nextDouble() * (b.getInput() - a.getInput()));
+			return (a.getValue() == b.getValue()) ? a.getValue()
+					: (a.getValue() + r.nextDouble() * (b.getValue() - a.getValue()));
 		}
 
 		public static double ranModuleVal(final RangeValue a, final Random r) {

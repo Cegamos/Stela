@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.client.*;
 import keystrokesmod.client.module.modules.combat.*;
 import keystrokesmod.client.module.modules.macros.*;
@@ -12,7 +13,6 @@ import keystrokesmod.client.module.modules.movement.*;
 import keystrokesmod.client.module.modules.other.*;
 import keystrokesmod.client.module.modules.player.*;
 import keystrokesmod.client.module.modules.render.*;
-import keystrokesmod.client.module.modules.world.*;
 
 public class ModuleManager {
 
@@ -58,7 +58,6 @@ public class ModuleManager {
             new InvMove(),
             new KeepSprint(),
             new NoSlow(),
-            new SlyPort(),
             new Speed(),
             new Sprint(),
             new StopMotion(),
@@ -70,7 +69,6 @@ public class ModuleManager {
             new MiddleClick(),
             new WaterBucket(),
             new StringEncrypt(),
-            new FakeChat(),
             
             new AutoJump(),
             new AutoPlace(),
@@ -92,13 +90,9 @@ public class ModuleManager {
             new NameTags(),
             new NameTagsV2(),
             new Fullbright(),
-            new PotionHUD(),
             new PlayerESP(),
             new Tracers(),
-            new Xray(),
-            
-            new ChatLogger(),
-            new AntiBot()
+            new Xray()
         );
 
         initialized = true;
@@ -144,7 +138,7 @@ public class ModuleManager {
 
     public void sort() {
         HUD hud = getHUD();
-        if (hud.alphabeticalSort.isToggled()) {
+        if (hud.alphabeticalSort.getValue()) {
             modules.sort(Comparator.comparing(Mod::getName));
         }
 
@@ -182,7 +176,7 @@ public class ModuleManager {
         int height = 0;
         for (Mod mod : modules) {
             if (mod.isEnabled()) {
-                height += hud.getFont().getHeight() + margin;
+                height += hud.getFont().FONT_HEIGHT + margin;
             }
         }
         return height;

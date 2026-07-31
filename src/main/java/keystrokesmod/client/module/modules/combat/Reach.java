@@ -6,10 +6,10 @@ import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -63,16 +63,16 @@ public class Reach extends Mod {
         if (!Utils.Player.isPlayerInGame()) {
             return false;
         }
-        if (weapon_only.isToggled() && !Utils.Player.isPlayerHoldingWeapon()) {
+        if (weapon_only.getValue() && !Utils.Player.isPlayerHoldingWeapon()) {
             return false;
         }
-        if (moving_only.isToggled() && mc.thePlayer.moveForward == 0.0 && mc.thePlayer.moveStrafing == 0.0) {
+        if (moving_only.getValue() && mc.thePlayer.moveForward == 0.0 && mc.thePlayer.moveStrafing == 0.0) {
             return false;
         }
-        if (sprint_only.isToggled() && !mc.thePlayer.isSprinting()) {
+        if (sprint_only.getValue() && !mc.thePlayer.isSprinting()) {
             return false;
         }
-        if (!hit_through_blocks.isToggled() && mc.objectMouseOver != null) {
+        if (!hit_through_blocks.getValue() && mc.objectMouseOver != null) {
             final BlockPos p = mc.objectMouseOver.getBlockPos();
             if (p != null && mc.theWorld.getBlockState(p).getBlock() != Blocks.air) {
                 return false;

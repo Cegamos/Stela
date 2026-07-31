@@ -3,9 +3,10 @@ package keystrokesmod.client.module.modules.render;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PacketReceiveEvent;
+import keystrokesmod.client.event.impl.PreTickEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
@@ -23,13 +24,13 @@ public class TimeChanger extends Mod {
 		super.onDisable();
 		clear();
 	}
-	
-    @SubscribeEvent
-    public void onTick(TickEvent event) {
-		if (!Utils.Player.isPlayerInGame()) return;
+
+    @EventLink
+    private Listener<PreTickEvent> preTick = event -> {
+		if (checkGame()) return;
 		clear();
-		mc.theWorld.setWorldTime((long) (time.getInput() * 22999));
-    }
+		getWorld().setWorldTime((long) (time.getValue() * 22999));
+    };
 	
     @EventLink
     private Listener<PacketReceiveEvent> packetReceive = event -> {
@@ -44,12 +45,12 @@ public class TimeChanger extends Mod {
     };
 
 	public void clear() {
-		if (!Utils.Player.isPlayerInGame()) return;
-		mc.theWorld.setRainStrength(0);
-		mc.theWorld.getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
-		mc.theWorld.getWorldInfo().setRainTime(0);
-		mc.theWorld.getWorldInfo().setThunderTime(0);
-		mc.theWorld.getWorldInfo().setRaining(false);
-		mc.theWorld.getWorldInfo().setThundering(false);
+		if (checkGame()) return;
+		getWorld().setRainStrength(0);
+		getWorld().getWorldInfo().setCleanWeatherTime(Integer.MAX_VALUE);
+		getWorld().getWorldInfo().setRainTime(0);
+		getWorld().getWorldInfo().setThunderTime(0);
+		getWorld().getWorldInfo().setRaining(false);
+		getWorld().getWorldInfo().setThundering(false);
 	}
 }

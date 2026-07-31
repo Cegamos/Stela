@@ -5,8 +5,8 @@ import java.awt.Color;
 import org.lwjgl.input.Keyboard;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
@@ -68,7 +68,7 @@ public class Freecam extends Mod {
     public void update() {
         if (!Utils.Player.isPlayerInGame() || fakePlayer == null || mc.thePlayer == null) return;
 
-        if (disableOnDamage.isToggled() && mc.thePlayer.hurtTime != 0) {
+        if (disableOnDamage.getValue() && mc.thePlayer.hurtTime != 0) {
             this.disable();
             return;
         }
@@ -82,7 +82,7 @@ public class Freecam extends Mod {
         fakePlayer.rotationYawHead = mc.thePlayer.rotationYaw;
         fakePlayer.rotationPitch = mc.thePlayer.rotationPitch;
 
-        double moveSpeed = 0.215 * speed.getInput();
+        double moveSpeed = 0.215 * speed.getValue();
         moveEntityWithKeys(fakePlayer, moveSpeed);
 
         if (lastChunkCoords[0] != fakePlayer.chunkCoordX || lastChunkCoords[1] != fakePlayer.chunkCoordZ) {

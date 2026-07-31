@@ -6,11 +6,11 @@ import java.awt.Robot;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
-import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.input.MouseManager;
 import net.minecraft.item.ItemBlock;
@@ -54,22 +54,22 @@ public class ClickAssist extends Mod {
     
     @SubscribeEvent
     public void onMouseUpdate(final MouseEvent ev) {
-        if (ev.button >= 0 && ev.buttonstate && chance.getInput() != 0.0 && Utils.Player.isPlayerInGame()) {
+        if (ev.button >= 0 && ev.buttonstate && chance.getValue() != 0.0 && Utils.Player.isPlayerInGame()) {
             if (mc.currentScreen == null && !mc.thePlayer.isEating() && !mc.thePlayer.isBlocking()) {
-                if (ev.button == 0 && L.isToggled()) {
+                if (ev.button == 0 && L.getValue()) {
                     if (this.engagedLeft) {
                         this.engagedLeft = false;
                     }
                     else {
-                        if (weaponOnly.isToggled() && !Utils.Player.isPlayerHoldingWeapon()) {
+                        if (weaponOnly.getValue() && !Utils.Player.isPlayerHoldingWeapon()) {
                             return;
                         }
-                        if (onlyWhileTargeting.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
+                        if (onlyWhileTargeting.getValue() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
                             return;
                         }
-                        if (chance.getInput() != 100.0) {
+                        if (chance.getValue() != 100.0) {
                             final double ch = Math.random();
-                            if (ch >= chance.getInput() / 100.0) {
+                            if (ch >= chance.getValue() / 100.0) {
                                 this.fix(0);
                                 return;
                             }
@@ -79,25 +79,25 @@ public class ClickAssist extends Mod {
                         this.engagedLeft = true;
                     }
                 }
-                else if (ev.button == 1 && R.isToggled()) {
+                else if (ev.button == 1 && R.getValue()) {
                     if (this.engagedRight) {
                         this.engagedRight = false;
                     }
                     else {
-                        if (blocksOnly.isToggled()) {
+                        if (blocksOnly.getValue()) {
                             final ItemStack item = mc.thePlayer.getHeldItem();
                             if (item == null || !(item.getItem() instanceof ItemBlock)) {
                                 this.fix(1);
                                 return;
                             }
                         }
-                        if (above5.isToggled() && MouseManager.getRightClickCounter() <= 5) {
+                        if (above5.getValue() && MouseManager.getRightClickCounter() <= 5) {
                             this.fix(1);
                             return;
                         }
-                        if (chance.getInput() != 100.0) {
+                        if (chance.getValue() != 100.0) {
                             final double ch = Math.random();
-                            if (ch >= chance.getInput() / 100.0) {
+                            if (ch >= chance.getValue() / 100.0) {
                                 this.fix(1);
                                 return;
                             }

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
+import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
@@ -28,7 +28,7 @@ public class AutoPlay extends Mod {
 	@SubscribeEvent
 	public void onInbound(ClientChatReceivedEvent event) {
 	    if (!Utils.Player.isPlayerInGame()) return;
-	    if (clock.finished((long) delay.getInput())) {
+	    if (clock.finished((long) delay.getValue())) {
 	        String receiveMessage = event.message.getUnformattedText();
 	        String game = getDetectedGame(mc.theWorld.getScoreboard());
 	
