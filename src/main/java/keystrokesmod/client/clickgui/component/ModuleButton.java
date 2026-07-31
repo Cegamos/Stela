@@ -1,32 +1,31 @@
-package keystrokesmod.client.clickgui.raven.components;
+package keystrokesmod.client.clickgui.component;
 
 import java.awt.Color;
 import java.util.ArrayList;
 
-import org.lwjgl.opengl.GL11;
-
-import keystrokesmod.client.clickgui.raven.Component;
+import keystrokesmod.client.clickgui.component.impl.*;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
-import keystrokesmod.client.module.value.impl.ModeValue;
-import keystrokesmod.client.module.value.impl.DescriptionValue;
-import keystrokesmod.client.module.value.impl.RangeValue;
-import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.util.render.RoundedUtil;
 
-public class ModuleComponent extends Component {
+public class ModuleButton extends Component {
     public Mod mod;
-    public CategoryComponent category;
-    public int o;
+    public CategoryPanel category;
+    public int offset;
     public boolean open;
 
     private final ArrayList<Component> settings = new ArrayList<>();
 
-    public ModuleComponent(final Mod mod, final CategoryComponent parent, final int offset) {
+    public ModuleButton(final Mod mod, final CategoryPanel parent, final int offset) {
         this.mod = mod;
         this.category = parent;
-        this.o = offset;
+        this.offset = offset;
         this.open = false;
 
         int y = offset + 12;
@@ -35,24 +34,24 @@ public class ModuleComponent extends Component {
             Component component = createComponentForSetting(setting, y);
             if (component != null) {
                 settings.add(component);
-                y += (component instanceof SliderComponent || component instanceof RangeSliderComponent) ? 16 : 12;
+                y += (component instanceof SliderSetting || component instanceof RangeSliderSetting) ? 16 : 12;
             }
         }
 
-        settings.add(new BindComponent(this, y));
+        settings.add(new BindSetting(this, y));
     }
 
     private Component createComponentForSetting(Value setting, int y) {
         if (setting instanceof NumberValue)
-            return new SliderComponent((NumberValue) setting, this, y);
+            return new SliderSetting((NumberValue) setting, this, y);
         if (setting instanceof BooleanValue)
-            return new TickComponent(mod, (BooleanValue) setting, this, y);
+            return new CheckboxSetting(mod, (BooleanValue) setting, this, y);
         if (setting instanceof DescriptionValue)
-            return new DescriptionComponent((DescriptionValue) setting, this, y);
+            return new TextSetting((DescriptionValue) setting, this, y);
         if (setting instanceof RangeValue)
-            return new RangeSliderComponent((RangeValue) setting, this, y);
+            return new RangeSliderSetting((RangeValue) setting, this, y);
         if (setting instanceof ModeValue)
-            return new ModeComponent((ModeValue) setting, this, y);
+            return new ModeSetting((ModeValue) setting, this, y);
         return null;
     }
 
@@ -60,23 +59,29 @@ public class ModuleComponent extends Component {
     public void draw() {
         int x = category.getX();
         int width = category.getWidth();
-        int baseY = category.getY() + o;
+        int baseY = category.getY() + offset;
 
-        GL11.glPushMatrix();
-        int color;
+        Color textColor;
         if (this.mod.isEnabled()) {
-        	color = Theme.getMainColor().getRGB();
+            Color mainColor = Theme.getMainColor();
+            Color pillBg = new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 45);
+            RoundedUtil.drawRound(x + 4, baseY + 1, width - 8, 14, 3f, pillBg);
+            textColor = mainColor;
         } else if (this.mod.canBeEnabled()) {
-        	color = Color.lightGray.getRGB();
+            textColor = new Color(200, 200, 205);
         } else {
-        	color = new Color(102, 102, 102).getRGB();
+            textColor = new Color(100, 100, 105);
         }
-        
-        mc.fontRendererObj.drawStringWithShadow(mod.getName(), x + width / 2 - mc.fontRendererObj.getStringWidth(mod.getName()) / 2, baseY + 4, color);
-        GL11.glPopMatrix();
+
+        mc.fontRendererObj.drawStringWithShadow(
+            mod.getName(),
+            x + width / 2 - mc.fontRendererObj.getStringWidth(mod.getName()) / 2,
+            baseY + 4,
+            textColor.getRGB()
+        );
 
         if (open) {
-        	category.r3nd3r();
+            category.r3nd3r();
             reflowSettings();
             for (Component c : settings) {
                 if (c.isVisible()) {
@@ -95,7 +100,7 @@ public class ModuleComponent extends Component {
 
     @Override
     public void mouseDown(int x, int y, int b) {
-        if (ii(x, y)) {
+        if (isHovered(x, y)) {
             if (b == 0 && mod.canBeEnabled()) mod.toggle();
             else if (b == 1) {
                 open = !open;
@@ -122,33 +127,37 @@ public class ModuleComponent extends Component {
         }
     }
 
-    public boolean ii(int x, int y) {
-        int startY = category.getY() + o;
-        return x > category.getX() && x < category.getX() + category.getWidth() && y > startY && y < startY + 16;
+    public boolean isHovered(int mouseX, int mouseY) {
+        int startY = category.getY() + offset;
+        return mouseX > category.getX() && mouseX < category.getX() + category.getWidth() && mouseY > startY && mouseY < startY + 16;
     }
-    
+
     @Override
     public int height() {
         if (!open) return 16;
 
         return 16 + settings.stream()
             .filter(Component::isVisible)
-            .mapToInt(c -> (c instanceof SliderComponent || c instanceof RangeSliderComponent) ? 16 : 12)
+            .mapToInt(c -> (c instanceof SliderSetting || c instanceof RangeSliderSetting) ? 16 : 12)
             .sum();
     }
 
     @Override
     public void setComponentStartAt(int n) {
-        this.o = n;
+        this.offset = n;
         reflowSettings();
     }
-    
+
     public void reflowSettings() {
-        int y = o + 16;
+        int y = offset + 16;
         for (Component c : settings) {
             if (!c.isVisible()) continue;
             c.setComponentStartAt(y);
-            y += (c instanceof SliderComponent || c instanceof RangeSliderComponent) ? 16 : 12;
+            y += (c instanceof SliderSetting || c instanceof RangeSliderSetting) ? 16 : 12;
         }
+    }
+
+    public CategoryPanel getCategory() {
+        return category;
     }
 }

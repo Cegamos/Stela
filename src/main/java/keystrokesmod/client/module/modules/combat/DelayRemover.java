@@ -14,7 +14,7 @@ import keystrokesmod.client.util.system.ReflectUtil;
 
 @ModuleInfo(name = "DelayRemover", category = Category.Combat)
 public class DelayRemover extends Mod {
-	private final DescriptionValue desc = new DescriptionValue("Remove click and jump delay", this);
+	protected final DescriptionValue desc = new DescriptionValue("Remove click and jump delay", this);
 
     public BooleanValue jump = new BooleanValue("Jump", this, false);
     public BooleanValue click = new BooleanValue("1.7 HitReg", this, true);

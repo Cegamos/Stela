@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import keystrokesmod.client.Raven;
-import keystrokesmod.client.clickgui.raven.components.CategoryComponent;
+import keystrokesmod.client.clickgui.component.CategoryPanel;
 import keystrokesmod.client.module.modules.client.HUD;
 import keystrokesmod.client.module.modules.client.Terminal;
 import keystrokesmod.client.util.IMinecraft;
@@ -202,7 +202,7 @@ public class ClientConfig implements IMinecraft {
     
     private void loadClickGuiCoords(final String decryptedString) {
         for (final String what : decryptedString.split("/")) {
-            for (final CategoryComponent cat : Raven.clickGui.getCategoryList()) {
+            for (final CategoryPanel cat : Raven.clickGui.getCategoryList()) {
                 if (what.startsWith(cat.categoryName.name())) {
                     final List<String> cfg = Utils.Java.StringListToList(what.split("~"));
                     cat.setX(Integer.parseInt(cfg.get(1)));
@@ -215,7 +215,7 @@ public class ClientConfig implements IMinecraft {
     
     public String getClickGuiPos() {
         final StringBuilder posConfig = new StringBuilder();
-        for (final CategoryComponent cat : Raven.clickGui.getCategoryList()) {
+        for (final CategoryPanel cat : Raven.clickGui.getCategoryList()) {
             posConfig.append(cat.categoryName.name());
             posConfig.append("~");
             posConfig.append(cat.getX());

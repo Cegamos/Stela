@@ -1,11 +1,12 @@
 package keystrokesmod.client.module;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.client.*;
@@ -20,14 +21,19 @@ import net.minecraft.client.gui.FontRenderer;
 public class ModuleManager {
 
     private final List<Mod> modules = new ArrayList<>();
-    
-    private final Map<Class<? extends Mod>, Mod> moduleClassMap = new ConcurrentHashMap<>();
-    private final Map<String, Mod> moduleNameMap = new ConcurrentHashMap<>();
-    
+    private final Map<Class<? extends Mod>, Mod> moduleClassMap = new HashMap<>(64);
+    private final Map<String, Mod> moduleNameMap = new HashMap<>(64);
+    private final Map<Category, List<Mod>> categoryMap = new EnumMap<>(Category.class);
+
+    private HUD cachedHUD;
     private boolean initialized = false;
 
     public ModuleManager() {
         if (initialized) return;
+
+        for (Category category : Category.values()) {
+            categoryMap.put(category, new ArrayList<>());
+        }
 
         registerModules(
             new FPSSpoofer(), new GuiModule(), new SelfDestruct(), new Terminal(), new HUD(),
@@ -47,6 +53,7 @@ public class ModuleManager {
             new NameTagsV2(), new Fullbright(), new PlayerESP(), new Tracers(), new Xray()
         );
 
+        this.cachedHUD = (HUD) getModuleByClazz(HUD.class);
         this.initialized = true;
     }
 
@@ -55,6 +62,11 @@ public class ModuleManager {
             this.modules.add(mod);
             this.moduleClassMap.put(mod.getClass(), mod);
             this.moduleNameMap.put(mod.getName().toLowerCase(), mod);
+
+            List<Mod> categoryList = this.categoryMap.get(mod.moduleCategory());
+            if (categoryList != null) {
+                categoryList.add(mod);
+            }
         }
     }
 
@@ -63,9 +75,10 @@ public class ModuleManager {
         return moduleNameMap.get(name.toLowerCase());
     }
 
-    public Mod getModuleByClazz(Class<? extends Mod> clazz) {
+    @SuppressWarnings("unchecked")
+    public <T extends Mod> T getModuleByClazz(Class<T> clazz) {
         if (!initialized || clazz == null) return null;
-        return moduleClassMap.get(clazz);
+        return (T) moduleClassMap.get(clazz);
     }
 
     public List<Mod> getModules() {
@@ -73,13 +86,15 @@ public class ModuleManager {
     }
 
     public List<Mod> getModulesInCategory(Category category) {
-        return modules.stream()
-                .filter(mod -> mod.moduleCategory() == category)
-                .collect(Collectors.toList());
+        List<Mod> list = categoryMap.get(category);
+        return list != null ? list : Collections.emptyList();
     }
 
     private HUD getHUD() {
-        return (HUD) getModuleByClazz(HUD.class);
+        if (cachedHUD == null) {
+            cachedHUD = getModuleByClazz(HUD.class);
+        }
+        return cachedHUD;
     }
 
     public void sort() {
@@ -104,7 +119,7 @@ public class ModuleManager {
         FontRenderer font = (hud != null) ? hud.getFont() : null;
         if (font == null) return;
 
-        modules.sort(Comparator.comparingInt(mod -> font.getStringWidth(mod.getName())));
+        modules.sort((a, b) -> font.getStringWidth(b.getName()) - font.getStringWidth(a.getName()));
     }
 
     public void sortShortLong() {
@@ -112,7 +127,7 @@ public class ModuleManager {
         FontRenderer font = (hud != null) ? hud.getFont() : null;
         if (font == null) return;
 
-        modules.sort((a, b) -> font.getStringWidth(b.getName()) - font.getStringWidth(a.getName()));
+        modules.sort(Comparator.comparingInt(mod -> font.getStringWidth(mod.getName())));
     }
 
     public int numberOfModules() {
@@ -124,11 +139,15 @@ public class ModuleManager {
         FontRenderer font = (hud != null) ? hud.getFont() : null;
         if (font == null) return 0;
 
-        return modules.stream()
-                .filter(Mod::isEnabled)
-                .mapToInt(mod -> font.getStringWidth(mod.getName()))
-                .max()
-                .orElse(0);
+        int max = 0;
+        for (int i = 0; i < modules.size(); i++) {
+            Mod mod = modules.get(i);
+            if (mod.isEnabled()) {
+                int width = font.getStringWidth(mod.getName());
+                if (width > max) max = width;
+            }
+        }
+        return max;
     }
 
     public int getBoxHeight(int margin) {
@@ -136,8 +155,12 @@ public class ModuleManager {
         FontRenderer font = (hud != null) ? hud.getFont() : null;
         if (font == null) return 0;
 
-        return (int) modules.stream()
-                .filter(Mod::isEnabled)
-                .count() * (font.FONT_HEIGHT + margin);
+        int count = 0;
+        for (int i = 0; i < modules.size(); i++) {
+            if (modules.get(i).isEnabled()) {
+                count++;
+            }
+        }
+        return count * (font.FONT_HEIGHT + margin);
     }
 }

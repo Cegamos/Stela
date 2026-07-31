@@ -5,6 +5,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -18,8 +22,6 @@ import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "BlockHit", category = Category.Combat)
 public class BlockHit extends Mod {
@@ -40,10 +42,15 @@ public class BlockHit extends Mod {
     private Clock actionTimer = new Clock(0);
     private Clock postDelayTimer = new Clock(0);
     private boolean waitingForPostDelay;
-
-    @SubscribeEvent
-    public void onTick(final TickEvent.RenderTickEvent e) {
-        if (!Utils.Player.isPlayerInGame()) {
+    
+    @EventLink
+    private Listener<PreRenderTickEvent> preRenderTick = event -> both();
+    
+    @EventLink
+    private Listener<PostRenderTickEvent> postRenderTick = event -> both();
+    
+    private void both() {
+    	if (!Utils.Player.isPlayerInGame()) {
             return;
         }
 
@@ -157,7 +164,7 @@ public class BlockHit extends Mod {
             finishCombo();
         }
     }
-    
+
     private void finishCombo() {
         final int key = mc.gameSettings.keyBindUseItem.getKeyCode();
         KeyBinding.setKeyBindState(key, false);

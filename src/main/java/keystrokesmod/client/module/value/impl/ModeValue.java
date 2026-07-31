@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import com.google.gson.JsonObject;
 
-import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
@@ -99,10 +97,5 @@ public class ModeValue extends Value {
 
 	public void resetToDefaults() {
 		setMode(list.get(0));
-	}
-
-	@Override
-	public Component createComponent(ModuleComponent parent) {
-		return null;
 	}
 }

@@ -7,6 +7,12 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.Raven;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.MouseEvent;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PreRenderTickEvent;
+import keystrokesmod.client.event.impl.RenderWorldLastEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -22,10 +28,6 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "HitBox", category = Category.Combat)
 public class HitBox extends Mod {
@@ -35,41 +37,42 @@ public class HitBox extends Mod {
     
     @Override
     public void update() {
+    	super.update();
         gmo(1.0f);
     }
     
-    @SubscribeEvent
-    public void m(final MouseEvent e) {
-        if (!Utils.Player.isPlayerInGame()) {
-            return;
-        }
-        if (e.button == 0 && e.buttonstate && mv != null) {
-            mc.objectMouseOver = mv;
-        }
-    }
+    @EventLink
+    private Listener<MouseEvent> mouse = event -> {
+    	if (checkGame()) return;
+    	if (event.getButton() == 0 && event.isButtonstate() && mv != null)
+    		mc.objectMouseOver = mv;
+    };
     
-    @SubscribeEvent
-    public void ef(final TickEvent.RenderTickEvent ev) {
-        if (!Utils.Player.isPlayerInGame()) {
-            return;
-        }
-        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
-        if (autoClicker != null && !autoClicker.isEnabled()) {
-            return;
-        }
-        if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0) && mv != null) {
-            mc.objectMouseOver = mv;
-        }
-    }
+    @EventLink
+    private Listener<PreRenderTickEvent> preRenderTick = event -> both();
     
-    @SubscribeEvent
-    public void r1(final RenderWorldLastEvent e) {
+    @EventLink
+    private Listener<PostRenderTickEvent> postRenderTick = event -> both();
+
+    @EventLink
+    private Listener<RenderWorldLastEvent> renderWorldLast = event -> {
         if (b.getValue() && Utils.Player.isPlayerInGame()) {
             for (final Entity en : mc.theWorld.loadedEntityList) {
                 if (en != mc.thePlayer && en instanceof EntityLivingBase && ((EntityLivingBase)en).deathTime == 0 && !(en instanceof EntityArmorStand) && !en.isInvisible()) {
                     this.rh(en, Color.WHITE);
                 }
             }
+        }
+    };
+ 
+    private void both() {
+    	if (checkGame()) return;
+        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        if (autoClicker != null && !autoClicker.isEnabled()) {
+            return;
+        }
+        if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0) && mv != null) {
+            mc.objectMouseOver = mv;
         }
     }
     
@@ -93,7 +96,7 @@ public class HitBox extends Mod {
             final Vec3 vec5 = vec3.addVector(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0);
             Vec3 vec6 = null;
             final float f1 = 1.0f;
-            final List list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand((double)f1, (double)f1, (double)f1));
+            final List<?> list = mc.theWorld.getEntitiesWithinAABBExcludingEntity(mc.getRenderViewEntity(), mc.getRenderViewEntity().getEntityBoundingBox().addCoord(vec4.xCoord * d0, vec4.yCoord * d0, vec4.zCoord * d0).expand((double)f1, (double)f1, (double)f1));
             double d3 = d2;
             for (final Object o : list) {
                 final Entity entity = (Entity)o;

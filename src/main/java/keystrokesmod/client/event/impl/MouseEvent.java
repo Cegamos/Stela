@@ -4,12 +4,18 @@ import keystrokesmod.client.event.Event;
 
 public class MouseEvent extends Event {
     private final int button;
+    private final boolean buttonstate;
+    
+	public MouseEvent(int button, boolean buttonstate) {
+		this.button = button;
+		this.buttonstate = buttonstate;
+	}
 
-    public MouseEvent(int button) {
-        this.button = button;
-    }
+	public int getButton() {
+		return button;
+	}
 
-    public int getButton() {
-        return button;
-    }
+	public boolean isButtonstate() {
+		return buttonstate;
+	}
 }

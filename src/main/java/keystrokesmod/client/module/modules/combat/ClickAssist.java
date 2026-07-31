@@ -5,6 +5,9 @@ import java.awt.Robot;
 
 import org.lwjgl.input.Mouse;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.MouseEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -15,12 +18,10 @@ import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.input.MouseManager;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "ClickAssist", category = Category.Combat)
 public class ClickAssist extends Mod {
-    private final DescriptionValue desc = new DescriptionValue("Boost your CPS.", this);
+	protected final DescriptionValue desc = new DescriptionValue("Boost your CPS.", this);
     private final NumberValue chance = new NumberValue("Chance", this, 80.0, 0.0, 100.0, 1.0);
     private final BooleanValue L = new BooleanValue("Left click", this, true);
     private final BooleanValue weaponOnly = new BooleanValue("Weapon only", this, true);
@@ -37,7 +38,9 @@ public class ClickAssist extends Mod {
         this.engagedRight = false;
     }
     
+    @Override
     public void onEnable() {
+    	super.onEnable();
         try {
             this.bot = new Robot();
         }
@@ -46,17 +49,19 @@ public class ClickAssist extends Mod {
         }
     }
     
+    @Override
     public void onDisable() {
+    	super.onDisable();
         this.engagedLeft = false;
         this.engagedRight = false;
         this.bot = null;
     }
     
-    @SubscribeEvent
-    public void onMouseUpdate(final MouseEvent ev) {
-        if (ev.button >= 0 && ev.buttonstate && chance.getValue() != 0.0 && Utils.Player.isPlayerInGame()) {
+    @EventLink
+    private Listener<MouseEvent> mouse = event -> {
+    	if (event.getButton() >= 0 && event.isButtonstate() && chance.getValue() != 0.0 && Utils.Player.isPlayerInGame()) {
             if (mc.currentScreen == null && !mc.thePlayer.isEating() && !mc.thePlayer.isBlocking()) {
-                if (ev.button == 0 && L.getValue()) {
+                if (event.getButton() == 0 && L.getValue()) {
                     if (this.engagedLeft) {
                         this.engagedLeft = false;
                     }
@@ -79,7 +84,7 @@ public class ClickAssist extends Mod {
                         this.engagedLeft = true;
                     }
                 }
-                else if (ev.button == 1 && R.getValue()) {
+                else if (event.getButton() == 1 && R.getValue()) {
                     if (this.engagedRight) {
                         this.engagedRight = false;
                     }
@@ -115,8 +120,8 @@ public class ClickAssist extends Mod {
                 this.fix(1);
             }
         }
-    }
-    
+    };
+
     private void fix(final int t) {
         if (t == 0) {
             if (this.engagedLeft && !Mouse.isButtonDown(0)) {

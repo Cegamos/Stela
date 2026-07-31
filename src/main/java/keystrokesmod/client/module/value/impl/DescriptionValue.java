@@ -4,8 +4,6 @@ import java.util.function.Supplier;
 
 import com.google.gson.JsonObject;
 
-import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
@@ -55,10 +53,5 @@ public class DescriptionValue extends Value {
 			return;
 		}
 		this.setDesc(data.get("value").getAsString());
-	}
-
-	@Override
-	public Component createComponent(final ModuleComponent moduleComponent) {
-		return null;
 	}
 }

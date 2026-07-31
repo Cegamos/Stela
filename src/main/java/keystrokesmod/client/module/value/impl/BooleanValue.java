@@ -4,8 +4,6 @@ import java.util.function.Supplier;
 
 import com.google.gson.JsonObject;
 
-import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
@@ -60,11 +58,6 @@ public class BooleanValue extends Value {
 			return;
 		}
 		this.setEnabled(data.get("value").getAsBoolean());
-	}
-
-	@Override
-	public Component createComponent(final ModuleComponent moduleComponent) {
-		return null;
 	}
 
 	public boolean getValue() {

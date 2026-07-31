@@ -6,8 +6,6 @@ import java.util.function.Supplier;
 
 import com.google.gson.JsonObject;
 
-import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
@@ -55,11 +53,6 @@ public class NumberValue extends Value {
             return;
         }
         this.setValue(data.get("value").getAsDouble());
-    }
-    
-    @Override
-    public Component createComponent(final ModuleComponent moduleComponent) {
-        return null;
     }
     
     public double getValue() {

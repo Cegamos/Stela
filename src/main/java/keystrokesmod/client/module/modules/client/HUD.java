@@ -1,12 +1,13 @@
 package keystrokesmod.client.module.modules.client;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
-import keystrokesmod.client.clickgui.raven.ClickGui;
+import keystrokesmod.client.clickgui.ClickGui;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.DragEvent;
@@ -27,7 +28,7 @@ public class HUD extends Mod {
     public final ModeValue mode = new ModeValue("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
     public final BooleanValue alphabeticalSort = new BooleanValue("Alphabetical sort", this, false);
 
-    private final DescriptionValue desc = new DescriptionValue("Hide Category", this);
+    protected final DescriptionValue desc = new DescriptionValue("Hide Category", this);
     public final BooleanValue hideClient = new BooleanValue("Hide Client", this, false);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false);
     public final BooleanValue hideMovement = new BooleanValue("Hide Movement", this, false);
@@ -42,6 +43,18 @@ public class HUD extends Mod {
     private static boolean draggingModuleList = false;
     private static float dragOffsetX = 0f;
     private static float dragOffsetY = 0f;
+
+    private final List<Mod> renderList = new ArrayList<>(64);
+    
+    private int cachedMaxWidth = 0;
+    private int cachedTotalHeight = 0;
+
+    private ScaledResolution cachedSR;
+    private int lastDisplayWidth = -1, lastDisplayHeight = -1, lastGuiScale = -1;
+
+    private final Comparator<Mod> sortLongShort = (m1, m2) -> getFont().getStringWidth(m2.getName()) - getFont().getStringWidth(m1.getName());
+    private final Comparator<Mod> sortShortLong = (m1, m2) -> getFont().getStringWidth(m1.getName()) - getFont().getStringWidth(m2.getName());
+    private final Comparator<Mod> sortAlphabetical = Comparator.comparing(Mod::getName);
 
     @Override
     public void onEnable() {
@@ -63,37 +76,54 @@ public class HUD extends Mod {
     private Listener<PostRenderTickEvent> onDraw = event -> {
         if (checkGame() || gameSetting().showDebugInfo || currentScreen() instanceof ClickGui) return;
 
-        final int margin = 2;
-        int y = hudY;
-        int del = 0;
+        final FontRenderer font = getFont();
+        if (font == null) return;
 
-        if (!alphabeticalSort.getValue()) {
-            if (positionMode.isTop()) Raven.moduleManager.sortShortLong();
-            else Raven.moduleManager.sortLongShort();
+        renderList.clear();
+        for (Mod m : Raven.moduleManager.getModules()) {
+            if (m.isEnabled() && m != this && !isCategoryHidden(m.moduleCategory())) {
+                renderList.add(m);
+            }
         }
 
-        List<Mod> activeModules = getActiveAndVisibleModules();
-        if (activeModules.isEmpty()) return;
+        if (renderList.isEmpty()) return;
 
-        final FontRenderer font = getFont();
+        if (alphabeticalSort.getValue()) {
+            renderList.sort(sortAlphabetical);
+        } else {
+            renderList.sort(positionMode.isTop() ? sortLongShort : sortShortLong);
+        }
+
+        final int margin = 2;
+        int maxWidth = 0;
+
+        for (int i = 0; i < renderList.size(); i++) {
+            int width = font.getStringWidth(renderList.get(i).getName());
+            if (width > maxWidth) maxWidth = width;
+        }
+
+        int totalHeight = renderList.size() * (font.FONT_HEIGHT + margin);
         
-        int textBoxWidth = activeModules.stream().mapToInt(m -> font.getStringWidth(m.getName())).max().orElse(0);
-        int textBoxHeight = activeModules.size() * (font.FONT_HEIGHT + margin);
+        cachedMaxWidth = maxWidth;
+        cachedTotalHeight = totalHeight;
 
-        ScaledResolution sr = new ScaledResolution(mc);
+        ScaledResolution sr = getScaledResolution();
         int correctedX = Math.max(hudX, margin);
         int correctedY = Math.max(hudY, margin);
-        correctedX = Math.min(correctedX, sr.getScaledWidth() - textBoxWidth - margin);
-        correctedY = Math.min(correctedY, sr.getScaledHeight() - textBoxHeight - margin);
+        correctedX = Math.min(correctedX, sr.getScaledWidth() - maxWidth - margin);
+        correctedY = Math.min(correctedY, sr.getScaledHeight() - totalHeight - margin);
 
         hudX = correctedX;
         hudY = correctedY;
 
         final boolean rightAligned = positionMode.isRight();
+        int y = hudY;
+        int del = 0;
 
-        for (Mod m : activeModules) {
+        for (int i = 0; i < renderList.size(); i++) {
+            Mod m = renderList.get(i);
             float drawX = rightAligned
-                    ? hudX + (float) (textBoxWidth - font.getStringWidth(m.getName()))
+                    ? hudX + (float) (maxWidth - font.getStringWidth(m.getName()))
                     : hudX;
 
             int color = getColorForMode(mode, del);
@@ -106,24 +136,15 @@ public class HUD extends Mod {
 
     @EventLink
     private Listener<DragEvent> onDrag = event -> {
-        final FontRenderer font = getFont();
+        if (cachedMaxWidth == 0 || cachedTotalHeight == 0) return;
+
         final int mouseX = event.mouseX;
         final int mouseY = event.mouseY;
-
-        List<Mod> activeModules = getActiveAndVisibleModules();
-        if (activeModules.isEmpty()) return;
-
-        float maxWidth = (float) activeModules.stream()
-                .mapToDouble(m -> font.getStringWidth(m.getName()))
-                .max()
-                .orElse(0);
-
-        float height = activeModules.size() * (font.FONT_HEIGHT + 2);
         boolean mouseDown = Mouse.isButtonDown(0);
 
         if (mouseDown) {
-            boolean hovering = mouseX >= hudX && mouseX <= hudX + maxWidth
-                    && mouseY >= hudY && mouseY <= hudY + height;
+            boolean hovering = mouseX >= hudX && mouseX <= hudX + cachedMaxWidth
+                    && mouseY >= hudY && mouseY <= hudY + cachedTotalHeight;
 
             if (hovering && !draggingModuleList) {
                 draggingModuleList = true;
@@ -140,13 +161,15 @@ public class HUD extends Mod {
         }
     };
 
-    private List<Mod> getActiveAndVisibleModules() {
-        return Raven.moduleManager.getModules().stream()
-                .filter(Mod::isEnabled)
-                .filter(m -> m != this)
-                .filter(m -> m.shouldDisplay(this))
-                .filter(m -> !isCategoryHidden(m.moduleCategory()))
-                .collect(Collectors.toList());
+    private ScaledResolution getScaledResolution() {
+        int scale = mc.gameSettings.guiScale;
+        if (cachedSR == null || lastDisplayWidth != mc.displayWidth || lastDisplayHeight != mc.displayHeight || lastGuiScale != scale) {
+            cachedSR = new ScaledResolution(mc);
+            lastDisplayWidth = mc.displayWidth;
+            lastDisplayHeight = mc.displayHeight;
+            lastGuiScale = scale;
+        }
+        return cachedSR;
     }
 
     private boolean isCategoryHidden(Category category) {

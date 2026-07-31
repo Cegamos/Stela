@@ -5,6 +5,11 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.MouseEvent;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -19,9 +24,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "Reach", category = Category.Combat)
 public class Reach extends Mod {
@@ -31,25 +33,26 @@ public class Reach extends Mod {
     private final BooleanValue sprint_only = new BooleanValue("Sprint only", this, false);
     private final BooleanValue hit_through_blocks = new BooleanValue("Hit through blocks", this, false);
 
-    @SubscribeEvent
-    public void onMouse(final MouseEvent ev) {
-        if (!Utils.Player.isPlayerInGame()) {
-            return;
-        }
+    @EventLink
+    private Listener<MouseEvent> mouse = event -> {
         final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
             return;
         }
-        if (ev.button >= 0 && ev.buttonstate) {
+        if (event.getButton() >= 0 && event.isButtonstate()) {
             call();
         }
-    }
+    };
     
-    @SubscribeEvent
-    public void onRenderTick(final TickEvent.RenderTickEvent ev) {
-        if (!Utils.Player.isPlayerInGame()) {
-            return;
-        }
+    @EventLink
+    private Listener<PreRenderTickEvent> preRenderTick = event -> both();
+    
+    @EventLink
+    private Listener<PostRenderTickEvent> postRenderTick = event -> both();
+    
+    private void both() {
+        if (checkGame()) return;
+        
         final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker == null || !autoClicker.isEnabled()) {
             return;

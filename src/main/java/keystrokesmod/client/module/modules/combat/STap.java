@@ -5,6 +5,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -18,8 +22,6 @@ import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "STap", category = Category.Combat)
 public class STap extends Mod {
@@ -38,10 +40,15 @@ public class STap extends Mod {
     public static int hitsWaited;
     private Clock actionTimer = new Clock(0L);
     private Clock postDelayTimer = new Clock(0L);
-
-    @SubscribeEvent
-    public void onTick(final TickEvent.RenderTickEvent e) {
-        if (!Utils.Player.isPlayerInGame()) {
+    
+    @EventLink
+    private Listener<PreRenderTickEvent> preRenderTick = event -> both();
+    
+    @EventLink
+    private Listener<PostRenderTickEvent> postRenderTick = event -> both();
+    
+    private void both() {
+    	if (!Utils.Player.isPlayerInGame()) {
             return;
         }
         if (waitingForPostDelay) {
@@ -114,7 +121,7 @@ public class STap extends Mod {
             finishCombo();
         }
     }
-    
+
     private static void finishCombo() {
         if (!Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);

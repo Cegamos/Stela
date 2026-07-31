@@ -440,52 +440,18 @@ public class RenderUtil implements IMinecraft {
 	}
 
     public static void drawRoundedRect(float x, float y, float width, float height, float radius, int color) {
-        float x1 = x;
-        float y1 = y;
-        float x2 = x + width;
-        float y2 = y + height;
-
-        float f1 = (float) (color >> 24 & 255) / 255.0F;
-        float f2 = (float) (color >> 16 & 255) / 255.0F;
-        float f3 = (float) (color >> 8 & 255) / 255.0F;
-        float f4 = (float) (color & 255) / 255.0F;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-        GlStateManager.color(f2, f3, f4, f1);
-
-        int numberOfSlices = 18;
-        double angleStep = 90.0 / numberOfSlices;
-
-        GL11.glBegin(GL11.GL_POLYGON);
-        for (int i = 0; i <= numberOfSlices; i++) {
-            double angle = Math.toRadians(i * angleStep);
-            GL11.glVertex2d(x2 - radius + Math.sin(angle) * radius, y1 + radius - Math.cos(angle) * radius);
+        try {
+            RoundedUtil.drawRound(x, y, width, height, radius, new Color(color, true));
+        } catch (Exception ex) {
+            drawRoundedRect1(x, y, x + width, y + height, radius, color);
         }
-        for (int i = 0; i <= numberOfSlices; i++) {
-            double angle = Math.toRadians(90 + i * angleStep);
-            GL11.glVertex2d(x2 - radius + Math.sin(angle) * radius, y2 - radius - Math.cos(angle) * radius);
-        }
-        for (int i = 0; i <= numberOfSlices; i++) {
-            double angle = Math.toRadians(180 + i * angleStep);
-            GL11.glVertex2d(x1 + radius + Math.sin(angle) * radius, y2 - radius - Math.cos(angle) * radius);
-        }
-        for (int i = 0; i <= numberOfSlices; i++) {
-            double angle = Math.toRadians(270 + i * angleStep);
-            GL11.glVertex2d(x1 + radius + Math.sin(angle) * radius, y1 + radius - Math.cos(angle) * radius);
-        }
-        GL11.glEnd();
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
     }
 
     public static void drawCircle(float x, float y, float radius, int color) {
-        drawRoundedRect1(x - radius, y - radius, radius * 2, radius * 2, radius, color);
+        try {
+            RoundedUtil.drawRound(x - radius, y - radius, radius * 2, radius * 2, radius, new Color(color, true));
+        } catch (Exception ex) {
+            drawRoundedRect1(x - radius, y - radius, x + radius, y + radius, radius, color);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.other;
 
-import keystrokesmod.client.clickgui.raven.ClickGui;
+import keystrokesmod.client.clickgui.ClickGui;
 import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;

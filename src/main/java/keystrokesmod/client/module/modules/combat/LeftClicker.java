@@ -33,7 +33,7 @@ import net.minecraft.util.BlockPos;
 
 @ModuleInfo(name = "LeftClicker", category = Category.Combat)
 public class LeftClicker extends Mod {
-	private final DescriptionValue desc = new DescriptionValue("Best with delay remover", this);
+	protected final DescriptionValue desc = new DescriptionValue("Best with delay remover", this);
 	public RangeValue leftCPS = new RangeValue("Left CPS", this, 9.0, 13.0, 1.0, 60.0, 0.5);
 	public NumberValue jitterLeft = new NumberValue("Jitter left", this, 0.0, 0.0, 3.0, 0.1);
 	public BooleanValue inventoryFill = new BooleanValue("Inventory fill", this, false);
