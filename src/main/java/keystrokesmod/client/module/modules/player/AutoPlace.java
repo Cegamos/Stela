@@ -2,15 +2,15 @@ package keystrokesmod.client.module.modules.player;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.ReflectUtil;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
@@ -23,7 +23,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "AutoPlace", category = Category.Player)
-public class AutoPlace extends ClientModule {
+public class AutoPlace extends Mod {
     private final DescriptionSetting ds = new DescriptionSetting("FD: FPS/80", this);
     private final SliderSetting c = new SliderSetting("Frame delay", this, 8.0, 0.0, 30.0, 1.0);
     private final TickSetting a = new TickSetting("Hold right", this, true);

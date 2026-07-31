@@ -1,13 +1,13 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 
 @ModuleInfo(name = "StopMotion", category = Category.Movement)
-public class StopMotion extends ClientModule {
+public class StopMotion extends Mod {
     private final TickSetting a = new TickSetting("Stop X", this, true);
     private final TickSetting b = new TickSetting("Stop Y", this, true);
     private final TickSetting c = new TickSetting("Stop Z", this, true);

@@ -2,22 +2,24 @@ package keystrokesmod.client.module.modules.combat;
 
 import org.lwjgl.input.Keyboard;
 
-import keystrokesmod.client.events.ClientAttackEvent;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.AttackEvent;
+import keystrokesmod.client.event.impl.PacketReceiveEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.ReflectUtil;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Velocity", category = Category.Combat)
-public class Velocity extends ClientModule {
+public class Velocity extends Mod {
 	
 	private final ComboSetting mode = new ComboSetting("Mode", this, Mode.MOTION, Mode.values());
 	private final ComboSetting intaveMode = new ComboSetting("Intave Mode", this, () -> mode.is(Mode.INTAVE), IntaveMode.SAFE, IntaveMode.values());
@@ -28,21 +30,23 @@ public class Velocity extends ClientModule {
     private final TickSetting d = new TickSetting("Only while targeting", this, false);
     private final TickSetting e = new TickSetting("Disable while holding S", this, false);
     
-	@Override
-    public boolean onReceive(Packet packet) {
+    @EventLink
+    private Listener<PacketReceiveEvent> packetReceive = event -> {
+    	final Packet<?> packet = event.getPacket();
+    	
         if (mode.is(Mode.MOTION)) {
             if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
-                return false;
+                return;
             }
             
             if (e.isToggled() && Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode())) {
-            	return false;
+            	return;
             }
             
             if (chance.getInput() != 100) {
                 final double ch = Math.random();
                 if (ch >= chance.getInput() / 100) {
-                	return false;
+                	return;
                 }
             }
         	
@@ -55,12 +59,11 @@ public class Velocity extends ClientModule {
                 }
             }
         }
-        return false;
-    }
+    };
 	
-    @SubscribeEvent
-    public void onClientAttack(ClientAttackEvent event) {
-    	if (mode.is(Mode.INTAVE)) {
+	@EventLink
+	private Listener<AttackEvent> attackEvent = event -> {
+		if (mode.is(Mode.INTAVE)) {
     		
             if (d.isToggled() && (mc.objectMouseOver == null || mc.objectMouseOver.entityHit == null)) {
                 return;
@@ -78,7 +81,7 @@ public class Velocity extends ClientModule {
             }
     		
     		if (intaveMode.is(IntaveMode.SAFE)) {
-                if (event.target instanceof EntityLivingBase && mc.thePlayer.hurtTime > 0) {
+                if (event.getTarget() instanceof EntityLivingBase && mc.thePlayer.hurtTime > 0) {
                     if (mc.thePlayer.onGround) {
                         mc.thePlayer.motionX *= 0.52;
                         mc.thePlayer.motionZ *= 0.52;
@@ -88,14 +91,14 @@ public class Velocity extends ClientModule {
                     }
                 }
             } else {
-                if (event.target instanceof EntityLivingBase && mc.thePlayer.hurtTime > 0) {
+                if (event.getTarget() instanceof EntityLivingBase && mc.thePlayer.hurtTime > 0) {
                     mc.thePlayer.motionX *= 0.6;
                     mc.thePlayer.motionZ *= 0.6;
                 }
             }
         }
-    }
-
+	};
+	
 	@Override
 	public void update() {
 		if (mode.is(Mode.JUMP)) {

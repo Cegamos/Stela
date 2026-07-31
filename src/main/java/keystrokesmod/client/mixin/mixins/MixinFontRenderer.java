@@ -1,37 +1,32 @@
 package keystrokesmod.client.mixin.mixins;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
-import keystrokesmod.client.events.RenderTextEvent;
+import keystrokesmod.client.event.EventBus;
+import keystrokesmod.client.event.impl.RenderTextEvent;
+import keystrokesmod.client.stela.annotations.Mixin;
+import keystrokesmod.client.stela.annotations.ModifyArg;
+import keystrokesmod.client.stela.annotations.Target;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraftforge.common.MinecraftForge;
 
 @Mixin(FontRenderer.class)
 public class MixinFontRenderer {
-	
-    @ModifyVariable(method = "renderString", at = @At("HEAD"), ordinal = 0)
-    private String renderString(String text) {
+
+    @ModifyArg(method = "renderString", desc = "(Ljava/lang/String;FFIZ)I", target = @Target("HEAD"), index = 0)
+    public static String renderString(String text) {
         if (text == null) {
-            return text;
+            return null;
         }
-        
         RenderTextEvent event = new RenderTextEvent(text);
-        MinecraftForge.EVENT_BUS.post(event);
-        text = event.text;
-        return text;
+        EventBus.INSTANCE.post(event);
+        return event.getText();
     }
 
-    @ModifyVariable(method = "getStringWidth", at = @At("HEAD"), ordinal = 0)
-    private String getStringWidth(String text) {
+    @ModifyArg(method = "getStringWidth", desc = "(Ljava/lang/String;)I", target = @Target("HEAD"), index = 0)
+    public static String getStringWidth(String text) {
         if (text == null) {
-            return text;
+            return null;
         }
-        
         RenderTextEvent event = new RenderTextEvent(text);
-        MinecraftForge.EVENT_BUS.post(event);
-        text = event.text;
-        return text;
+        EventBus.INSTANCE.post(event);
+        return event.getText();
     }
 }

@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "AutoPlay", category = Category.Other)
-public class AutoPlay extends ClientModule {
+public class AutoPlay extends Mod {
 	
 	private final DescriptionSetting desc = new DescriptionSetting("Only for Universocraft", this);
 	private final SliderSetting delay = new SliderSetting("Delay", this, 0, 0, 600, 50);

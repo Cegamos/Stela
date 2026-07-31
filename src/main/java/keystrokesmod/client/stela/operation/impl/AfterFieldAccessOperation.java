@@ -1,0 +1,62 @@
+package keystrokesmod.client.stela.operation.impl;
+
+import keystrokesmod.client.stela.Mixin;
+import keystrokesmod.client.stela.annotations.AfterFieldAccess;
+import keystrokesmod.client.stela.operation.Operation;
+import keystrokesmod.client.stela.util.ASMUtil;
+
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class AfterFieldAccessOperation implements Operation {
+
+    @Override
+    public void dispose(Mixin mixin) {
+        ClassNode source = mixin.getSource();
+        ClassNode target = mixin.getTarget();
+
+        List<MethodNode> handlers = source.methods.stream()
+                .filter(m -> getAnnotation(m) != null)
+                .collect(Collectors.toList());
+
+        for (MethodNode handler : handlers) {
+            AfterFieldAccess info = getAnnotation(handler);
+            if (info == null) continue;
+            MethodNode targetMethod = InjectOperation.findTargetMethod(target.methods, mixin.getTargetName(), info.method(), info.desc());
+            if (targetMethod == null) continue;
+
+            for (AbstractInsnNode insn : targetMethod.instructions.toArray()) {
+                if (insn instanceof FieldInsnNode) {
+                    FieldInsnNode finsn = (FieldInsnNode) insn;
+                    if (info.field().isEmpty() || finsn.name.equals(info.field())) {
+                        InsnList patch = new InsnList();
+                        patch.add(new MethodInsnNode(Opcodes.INVOKESTATIC, source.name, handler.name, handler.desc, false));
+                        targetMethod.instructions.insert(insn, patch);
+                    }
+                }
+            }
+        }
+    }
+
+    public static AfterFieldAccess getAnnotation(MethodNode method) {
+        if (method == null) return null;
+        for (AnnotationNode annotation : keystrokesmod.client.stela.util.ASMUtil.getAnnotations(method)) {
+            if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/AfterFieldAccess;")) {
+                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                String desc = ASMUtil.getAnnotationValue(annotation, "desc");
+                String field = ASMUtil.getAnnotationValue(annotation, "field");
+                return new AfterFieldAccess() {
+                    @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return AfterFieldAccess.class; }
+                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String desc() { return desc != null ? desc : ""; }
+                    @Override public String field() { return field != null ? field : ""; }
+                    @Override public boolean remap() { return true; }
+                };
+            }
+        }
+        return null;
+    }
+}

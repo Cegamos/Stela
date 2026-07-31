@@ -2,15 +2,15 @@ package keystrokesmod.client.module.modules.render;
 
 import java.awt.Color;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "PlayerESP", category = Category.Render)
-public class PlayerESP extends ClientModule {
+public class PlayerESP extends Mod {
     private final SliderSetting red = new SliderSetting("Red", this, 0.0, 0.0, 255.0, 1.0);
     private final SliderSetting green = new SliderSetting("Green", this, 255.0, 0.0, 255.0, 1.0);
     private final SliderSetting blue = new SliderSetting("Blue", this, 0.0, 0.0, 255.0, 1.0);

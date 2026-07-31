@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.utils.Clock;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -81,13 +80,15 @@ public class Terminal extends Component
         if (this.hidden) {
             return;
         }
+        FontRenderer fontRenderer = this.mc != null && this.mc.fontRendererObj != null ? this.mc.fontRendererObj : this.fr;
+        if (fontRenderer == null) return;
         final double desiredTextSize = this.barHeight * 0.65;
-        final double scaleFactor = desiredTextSize / this.fr.FONT_HEIGHT;
+        final double scaleFactor = desiredTextSize / fontRenderer.FONT_HEIGHT;
         final double coordFactor = 1.0 / scaleFactor;
         final double margin = (int)((this.barHeight - desiredTextSize) * 0.8);
         final float textY = (float)((this.y + margin) * coordFactor);
         final float textX = (float)((this.x + margin) * coordFactor);
-        final float buttonX = (float)((this.x + this.width - margin - this.fr.getStringWidth(this.opened ? "-" : "+")) * coordFactor);
+        final float buttonX = (float)((this.x + this.width - margin - fontRenderer.getStringWidth(this.opened ? "-" : "+")) * coordFactor);
         int cursorX = 0;
         int cursorY = 0;
         float outStartX = (float)(this.x + margin + this.border);
@@ -112,8 +113,8 @@ public class Terminal extends Component
         }
         GL11.glPushMatrix();
         GL11.glScaled(scaleFactor, scaleFactor, scaleFactor);
-        this.fr.drawString("Terminal", textX, textY, 16777215, false);
-        this.fr.drawString(this.opened ? "-" : "+", buttonX, textY, 16777215, false);
+        fontRenderer.drawString("Terminal", textX, textY, 16777215, false);
+        fontRenderer.drawString(this.opened ? "-" : "+", buttonX, textY, 16777215, false);
         if (this.opened) {
             final ArrayList<String> currentOut = new ArrayList<String>(Terminal.out);
             currentOut.add("$ " + this.inputText);
@@ -127,11 +128,11 @@ public class Terminal extends Component
             }
             final String[] inputTextLineSplit = this.splitUpLine("$ " + this.inputText.substring(0, this.inputText.length() - this.backCharsCursor), maxTextWidth, scaleFactor);
             final String finalInputLine = inputTextLineSplit[inputTextLineSplit.length - 1];
-            cursorX += (int)(this.fr.getStringWidth(finalInputLine) * scaleFactor);
+            cursorX += (int)(fontRenderer.getStringWidth(finalInputLine) * scaleFactor);
             for (int k = finalOut.size() - 1; k >= 0; --k) {
                 final String currentLine = finalOut.get(k);
                 final int topMargin = (int)((finalOut.size() - 1 - k) * (desiredTextSize + margin) * coordFactor + outStartY);
-                this.fr.drawString(currentLine, (int)outStartX, topMargin, new Color(32, 194, 14).getRGB());
+                fontRenderer.drawString(currentLine, (int)outStartX, topMargin, new Color(32, 194, 14).getRGB());
                 if (currentLine.startsWith(finalInputLine)) {
                     cursorY = (int)(topMargin / coordFactor);
                 }
@@ -144,12 +145,13 @@ public class Terminal extends Component
     }
     
     private String[] splitUpLine(final String currentLine, final float maxTextWidth, final double scaleSize) {
-        if (this.fr.getStringWidth(currentLine) * scaleSize <= maxTextWidth) {
+        FontRenderer fontRenderer = this.mc != null && this.mc.fontRendererObj != null ? this.mc.fontRendererObj : this.fr;
+        if (fontRenderer == null || fontRenderer.getStringWidth(currentLine) * scaleSize <= maxTextWidth) {
             return new String[] { currentLine };
         }
         for (int i = currentLine.length(); i >= 0; --i) {
             final String newLine = currentLine.substring(0, i);
-            if (this.fr.getStringWidth(newLine) * scaleSize <= maxTextWidth) {
+            if (fontRenderer.getStringWidth(newLine) * scaleSize <= maxTextWidth) {
                 return mergeArray(new String[] { newLine }, this.splitUpLine(currentLine.substring(i, currentLine.length()), maxTextWidth, scaleSize));
             }
         }
@@ -299,7 +301,7 @@ public class Terminal extends Component
                 final String command = this.inputText.split(" ")[0];
                 final boolean hasArgs = this.inputText.contains(" ");
                 final String[] args = hasArgs ? this.inputText.substring(command.length() + 1, this.inputText.length()).split(" ") : new String[0];
-                Raven.commandManager.executeCommand(command, args);
+                keystrokesmod.client.command.CommandManager.execute("." + this.inputText);
             }
             catch (IndexOutOfBoundsException ex) {}
         }

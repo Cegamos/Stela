@@ -1,6 +1,6 @@
 package keystrokesmod.client.clickgui.raven;
 
-import keystrokesmod.client.utils.IMinecraft;
+import keystrokesmod.client.util.IMinecraft;
 
 public class Component implements IMinecraft {
 	public float x, y, width, height;

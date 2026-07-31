@@ -8,12 +8,12 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.ReflectUtil;
-import keystrokesmod.client.utils.RenderUtils;
+import keystrokesmod.client.utils.render.RenderUtil;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.enchantment.Enchantment;
@@ -30,7 +30,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "NameTagsV2", category = Category.Render)
-public class NameTagsV2 extends ClientModule {
+public class NameTagsV2 extends Mod {
     private final SliderSetting scaleSetting = new SliderSetting("Scale", this, 5.0D, 0.1D, 10.0D, 0.1D);
     private final SliderSetting rangeSetting = new SliderSetting("Range", this, 0.0D, 0.0D, 512.0D, 1.0D);
     private final TickSetting armorSetting = new TickSetting("Armor", this, true);
@@ -102,7 +102,7 @@ public class NameTagsV2 extends ClientModule {
         int borderColor = new Color(20, 20, 20, 180).getRGB();
         int backgroundColor = new Color(10, 10, 10, 200).getRGB();
 
-        RenderUtils.drawBorderedRect(xStart, boxTop, xEnd, boxBottom, 1.0F, borderColor, backgroundColor);
+        RenderUtil.drawBorderedRect(xStart, boxTop, xEnd, boxBottom, 1.0F, borderColor, backgroundColor);
 
         GlStateManager.disableDepth();
         drawString(playerName, -nameWidth / 2.0F, 0.0F, 0xFFFFFF);
@@ -122,7 +122,7 @@ public class NameTagsV2 extends ClientModule {
         float rotateX = mc.gameSettings.thirdPersonView == 2 ? -1.0F : 1.0F;
         double scaleRatio = (double) (getSize(player) / 10.0F * (float) scaleSetting.getInput()) * 1.5D;
         GL11.glPushMatrix();
-        RenderUtils.startDrawing();
+        RenderUtil.startDrawing();
         GL11.glTranslatef(x, y, z);
         GL11.glNormal3f(0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-mc.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
@@ -131,7 +131,7 @@ public class NameTagsV2 extends ClientModule {
     }
 
     private void stopDrawing() {
-        RenderUtils.stopDrawing();
+        RenderUtil.stopDrawing();
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
     }

@@ -1,21 +1,21 @@
 package keystrokesmod.client.module.modules.movement;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 
 @ModuleInfo(name = "SlyPort", category = Category.Movement)
-public class SlyPort extends ClientModule {
+public class SlyPort extends Mod {
     private final DescriptionSetting f = new DescriptionSetting("Teleport behind enemies.", this);
     private final SliderSetting r = new SliderSetting("Range", this, 6.0, 2.0, 15.0, 1.0);
     private final TickSetting b = new TickSetting("Play sound", this, true);

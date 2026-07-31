@@ -1,17 +1,17 @@
 package keystrokesmod.client.module.modules.combat;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.utils.ReflectUtil;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "DelayRemover", category = Category.Combat)
-public class DelayRemover extends ClientModule {
+public class DelayRemover extends Mod {
 	private final DescriptionSetting desc = new DescriptionSetting("Remove click and jump delay", this);
 
     public TickSetting jump = new TickSetting("Jump", this, false);

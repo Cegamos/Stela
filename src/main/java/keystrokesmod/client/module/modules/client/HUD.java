@@ -8,25 +8,26 @@ import java.util.stream.Collectors;
 
 import org.lwjgl.input.Mouse;
 
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.raven.ClickGui;
-import keystrokesmod.client.events.DragEvent;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.DragEvent;
+import keystrokesmod.client.event.impl.DrawEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.utils.font.FontRenderer;
 import keystrokesmod.client.utils.font.Fonts;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "HUD", category = Category.Client)
-public class HUD extends ClientModule {
+public class HUD extends Mod {
 
     public final ComboSetting mode = new ComboSetting("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
     private final ComboSetting fontMode = new ComboSetting("Font Mode", this, "Rubik", "Rubik", "Drip", "Semi bold");
@@ -59,9 +60,9 @@ public class HUD extends ClientModule {
         if (setting == alphabeticalSort) Raven.moduleManager.sort();
     }
 
-    @SubscribeEvent
-    public void onRenderTick(final TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !Utils.Player.isPlayerInGame()) return;
+    @EventLink
+    public final Listener<DrawEvent> onDraw = event -> {
+        if (!Utils.Player.isPlayerInGame()) return;
         if (mc.gameSettings.showDebugInfo || mc.currentScreen instanceof ClickGui
                 || mc.currentScreen instanceof GuiContainer || mc.currentScreen instanceof GuiIngameMenu)
             return;
@@ -75,7 +76,7 @@ public class HUD extends ClientModule {
             else Raven.moduleManager.sortLongShort();
         }
 
-        List<ClientModule> modules = Raven.moduleManager.getModules();
+        List<Mod> modules = Raven.moduleManager.getModules();
         if (modules.isEmpty()) return;
 
         final int textBoxWidth = Raven.moduleManager.getLongestActiveModule();
@@ -92,7 +93,7 @@ public class HUD extends ClientModule {
 
         final boolean rightAligned = positionMode.get().isRight();
 
-        for (ClientModule m : modules) {
+        for (Mod m : modules) {
             if (!m.isEnabled() || m == this || !m.shouldDisplay(this)) continue;
 
             float drawX = rightAligned
@@ -105,15 +106,15 @@ public class HUD extends ClientModule {
             y += font.getHeight() + margin;
             del -= getDeltaForMode(mode);
         }
-    }
+    };
 
-    @SubscribeEvent
-    public void onDrag(DragEvent event) {
+    @EventLink
+    public final Listener<DragEvent> onDrag = event -> {
         final FontRenderer font = getFont();
         final int mouseX = event.mouseX;
         final int mouseY = event.mouseY;
 
-        List<ClientModule> activeModules = Raven.moduleManager.getModules().stream()
+        List<Mod> activeModules = Raven.moduleManager.getModules().stream()
                 .filter(m -> m.isEnabled() && m != Raven.moduleManager.getModuleByClazz(HUD.class))
                 .collect(Collectors.toList());
 
@@ -144,7 +145,7 @@ public class HUD extends ClientModule {
         } else {
             draggingModuleList.set(false);
         }
-    }
+    };
 
     public FontRenderer getFont() {
         switch (fontMode.getMode()) {

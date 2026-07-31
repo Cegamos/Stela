@@ -16,16 +16,14 @@ import keystrokesmod.client.module.modules.world.*;
 
 public class ModuleManager {
 
-    private final List<ClientModule> modules = new ArrayList<>();
+    private final List<Mod> modules = new ArrayList<>();
     public static boolean initialized = false;
 
     public ModuleManager() {
         if (initialized) return;
 
         addModules(
-
             new FPSSpoofer(),
-            new ClientNameSpoof(),
             new GuiModule(),
             new SelfDestruct(),
             new Terminal(),
@@ -86,7 +84,6 @@ public class ModuleManager {
             new Freecam(),
             new NoFall(),
             new RightClicker(),
-            new SafeWalk(),
             
             new BedPlates(),
             new Chams(),
@@ -107,11 +104,11 @@ public class ModuleManager {
         initialized = true;
     }
 
-    private void addModules(ClientModule... modules) {
+    private void addModules(Mod... modules) {
         Collections.addAll(this.modules, modules);
     }
 
-    public ClientModule getModuleByName(String name) {
+    public Mod getModuleByName(String name) {
         if (!initialized) return null;
         return modules.stream()
                 .filter(mod -> mod.getName().equalsIgnoreCase(name))
@@ -119,7 +116,7 @@ public class ModuleManager {
                 .orElse(null);
     }
 
-    public ClientModule getModuleByClazz(Class<? extends ClientModule> clazz) {
+    public Mod getModuleByClazz(Class<? extends Mod> clazz) {
         if (!initialized) return null;
         return modules.stream()
                 .filter(mod -> mod.getClass().equals(clazz))
@@ -127,13 +124,13 @@ public class ModuleManager {
                 .orElse(null);
     }
 
-    public List<ClientModule> getModules() {
+    public List<Mod> getModules() {
         return modules;
     }
 
-    public List<ClientModule> getModulesInCategory(Category category) {
-        List<ClientModule> filtered = new ArrayList<>();
-        for (ClientModule mod : modules) {
+    public List<Mod> getModulesInCategory(Category category) {
+        List<Mod> filtered = new ArrayList<>();
+        for (Mod mod : modules) {
             if (mod.moduleCategory() == category) {
                 filtered.add(mod);
             }
@@ -148,7 +145,7 @@ public class ModuleManager {
     public void sort() {
         HUD hud = getHUD();
         if (hud.alphabeticalSort.isToggled()) {
-            modules.sort(Comparator.comparing(ClientModule::getName));
+            modules.sort(Comparator.comparing(Mod::getName));
         }
 
         modules.sort(Comparator.comparingInt(mod -> -hud.getFont().getStringWidth(mod.getName())));
@@ -171,7 +168,7 @@ public class ModuleManager {
     public int getLongestActiveModule() {
     	HUD hud = getHUD();
         int maxLength = 0;
-        for (ClientModule mod : modules) {
+        for (Mod mod : modules) {
             if (mod.isEnabled()) {
                 int width = hud.getFont().getStringWidth(mod.getName());
                 if (width > maxLength) maxLength = width;
@@ -183,7 +180,7 @@ public class ModuleManager {
     public int getBoxHeight(int margin) {
     	HUD hud = getHUD();
         int height = 0;
-        for (ClientModule mod : modules) {
+        for (Mod mod : modules) {
             if (mod.isEnabled()) {
                 height += hud.getFont().getHeight() + margin;
             }

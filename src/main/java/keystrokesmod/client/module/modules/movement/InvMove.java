@@ -4,14 +4,14 @@ import org.lwjgl.input.Keyboard;
 
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.settings.KeyBinding;
 
 @ModuleInfo(name = "InvMove", category = Category.Movement)
-public class InvMove extends ClientModule {
+public class InvMove extends Mod {
 	
 	private final TickSetting onlyClick = new TickSetting("Only ClickGui", this, true);
 

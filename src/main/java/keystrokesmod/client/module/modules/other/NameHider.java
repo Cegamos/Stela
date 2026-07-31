@@ -1,22 +1,22 @@
 package keystrokesmod.client.module.modules.other;
 
-import keystrokesmod.client.events.RenderTextEvent;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.Utils;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import keystrokesmod.client.util.Utils;
 
 @ModuleInfo(name = "NameHider", category = Category.Other)
-public class NameHider extends ClientModule {
+public class NameHider extends Mod {
 	public static String name = "";
 	
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onRenderText(RenderTextEvent event) {
-		if (!Utils.Player.isPlayerInGame()) return;
+	@EventLink
+	public final Listener<RenderTextEvent> onRenderText = event -> {
+		if (!Utils.Player.isPlayerInGame() || event.getText() == null) return;
 
-		String text = event.text;
+		String text = event.getText();
 		String ownName = mc.getSession().getUsername();
 		String displayName = checkName();
 
@@ -26,9 +26,9 @@ public class NameHider extends ClientModule {
 
 		if (text.contains(ownName)) {
 			text = text.replace(ownName, displayName);
-			event.text = text;
+			event.setText(text);
 		}
-	}
+	};
 	
 	public String checkName() {
 		return name.isEmpty() ? "You" : name;

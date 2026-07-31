@@ -1,10 +1,10 @@
 package keystrokesmod.client.module.modules.other;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.DimensionHelper;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.system.DimensionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,18 +20,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "WaterBucket", category = Category.Other)
-public class WaterBucket extends ClientModule {
+public class WaterBucket extends Mod {
     private boolean handling;
 
     @Override
     public boolean canBeEnabled() {
-        return !DimensionHelper.isPlayerInNether();
+        return !DimensionUtil.isPlayerInNether();
     }
     
     @SubscribeEvent
     public void onTick(final TickEvent.ClientTickEvent ev) {
         if (ev.phase != TickEvent.Phase.END && Utils.Player.isPlayerInGame() && !mc.isGamePaused()) {
-            if (DimensionHelper.isPlayerInNether()) {
+            if (DimensionUtil.isPlayerInNether()) {
                 this.disable();
             }
             if (this.inPosition() && this.holdWaterBucket()) {

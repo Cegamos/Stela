@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Set;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -40,7 +40,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "BedPlates", category = Category.Render)
-public class BedPlates extends ClientModule {
+public class BedPlates extends Mod {
     private final List<BlockPos> beds = new ArrayList<>();
     private final List<List<Block>> bedBlocks = new ArrayList<>();
     private BlockPos[] bed = null;

@@ -6,17 +6,17 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import io.netty.util.internal.ThreadLocalRandom;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.ReflectUtil;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "LeftClicker", category = Category.Combat)
-public class LeftClicker extends ClientModule {
+public class LeftClicker extends Mod {
 	private final DescriptionSetting desc = new DescriptionSetting("Best with delay remover", this);
 	public DoubleSliderSetting leftCPS = new DoubleSliderSetting("Left CPS", this, 9.0, 13.0, 1.0, 60.0, 0.5);
 	public SliderSetting jitterLeft = new SliderSetting("Jitter left", this, 0.0, 0.0, 3.0, 0.1);

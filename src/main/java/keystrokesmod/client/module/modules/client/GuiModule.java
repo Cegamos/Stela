@@ -2,16 +2,17 @@ package keystrokesmod.client.module.modules.client;
 
 import org.lwjgl.input.Keyboard;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.KeyEvent;
 
 @ModuleInfo(name = "Gui", category = Category.Client, key = 54)
-public class GuiModule extends ClientModule {
+public class GuiModule extends Mod {
 
 	public final ComboSetting mode = new ComboSetting("Mode", this, Colors.PastelPink, Colors.values());
 	
@@ -25,8 +26,8 @@ public class GuiModule extends ClientModule {
         super.onEnable();
     }
 
-    @SubscribeEvent
-    public void onInputKeyboard(InputEvent.KeyInputEvent event) {
+    @EventLink
+    public final Listener<KeyEvent> onInputKeyboard = event -> {
         if (Keyboard.getEventKey() == this.keycode || Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
             if (mc.currentScreen == null) {
             	mc.displayGuiScreen(Raven.clickGui);
@@ -38,7 +39,7 @@ public class GuiModule extends ClientModule {
                 this.onDisable();
             }
         }
-    }
+    };
 
     @Override
     public void onDisable() {

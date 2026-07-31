@@ -8,10 +8,10 @@ import java.util.concurrent.ScheduledFuture;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.raven.components.CategoryComponent;
-import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.client.gui.GuiScreen;
 
 public class ClickGui extends GuiScreen {
@@ -58,7 +58,7 @@ public class ClickGui extends GuiScreen {
             }
         }
 
-        this.mc.fontRendererObj.drawString("Raven B+ v" + Raven.VERSION + " | Config: " + Raven.configManager.getConfig().getName(), 4, this.height - 3 - this.mc.fontRendererObj.FONT_HEIGHT, Utils.Client.astolfoColorsDraw(10, 14, 3000f));
+        this.mc.fontRendererObj.drawString("Raven B+ v" + Raven.VERSION + " | Config: " + keystrokesmod.client.config.ConfigManager.getCurrentProfileName(), 4, this.height - 3 - this.mc.fontRendererObj.FONT_HEIGHT, Utils.Client.astolfoColorsDraw(10, 14, 3000f));
 
         for (final CategoryComponent category : this.categoryList) {
             category.rf(this.fontRendererObj);
@@ -150,7 +150,7 @@ public class ClickGui extends GuiScreen {
             this.sf.cancel(true);
             this.sf = null;
         }
-        Raven.configManager.save();
+        keystrokesmod.client.config.ConfigManager.saveConfigByName(keystrokesmod.client.config.ConfigManager.getCurrentProfileName());
         Raven.clientConfig.saveConfig();
     }
     

@@ -3,41 +3,32 @@ package keystrokesmod.client.module.modules.other;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import keystrokesmod.client.events.TickEvent;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PreTickEvent;
+import keystrokesmod.client.event.impl.RenderEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.RenderUtils;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.render.RenderUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.item.ItemBow;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "MurderMystery", category = Category.Other)
-public class MurderMystery extends ClientModule {
-	private final TickSetting checkBow = new TickSetting("Check bow", this, false);
-	
-	private final TickSetting drawGold = new TickSetting("Draw gold esp", this, true);
-	private final TickSetting drawBow = new TickSetting("Draw bow esp", this, false);
+public class MurderMystery extends Mod {
+	private final TickSetting alertMurder = new TickSetting("Alert murder", this, true);
+	private final TickSetting alertDetective = new TickSetting("Alert detective", this, true);
+
 	private final TickSetting drawMurder = new TickSetting("Draw murder esp", this, false);
 	private final TickSetting drawDetective = new TickSetting("Draw detective esp", this, false);
 
 	private final ArrayList<EntityPlayer> murderers = new ArrayList<>();
 	private final ArrayList<EntityPlayer> detectives = new ArrayList<>();
-	
-	@SubscribeEvent
-	public void onChangeWorld(WorldEvent.Load event) {
-		murderers.clear();
-		detectives.clear();
-	}
 	
 	@Override
 	public void onDisable() {
@@ -45,9 +36,13 @@ public class MurderMystery extends ClientModule {
 		detectives.clear();
 	}
 	
-	@SubscribeEvent
-	public void onTick(TickEvent event) {
-		if (!Utils.Player.isPlayerInGame()) return;
+	@EventLink
+	public final Listener<PreTickEvent> onTick = event -> {
+		if (!Utils.Player.isPlayerInGame()) {
+			murderers.clear();
+			detectives.clear();
+			return;
+		}
 
 		for (EntityPlayer player : mc.theWorld.playerEntities) {
 			if (player.getHeldItem() == null || detectives.contains(player) || player == mc.thePlayer) continue;
@@ -59,52 +54,46 @@ public class MurderMystery extends ClientModule {
 				sendNotification(player.getName() + " es el asesino.", EnumChatFormatting.RED, "!");
 			}
 
-			if (checkBow.isToggled() && isBow(itemName) && !murderers.contains(player)) {
+			if (isDetective(player) && !detectives.contains(player)) {
 				detectives.add(player);
-				sendNotification(player.getName() + " tiene un arco.", EnumChatFormatting.BLUE, "*");
+				mc.thePlayer.playSound("note.pling", 1.0F, 1.0F);
+				sendNotification(player.getName() + " es el detective.", EnumChatFormatting.BLUE, "!");
 			}
 		}
-	}
-	
-	@SubscribeEvent
-	public void onRenderWorldLast(RenderWorldLastEvent event) {
-		for (Entity entity : mc.theWorld.loadedEntityList) {
-			if (entity == mc.thePlayer) continue;
+	};
 
-			if (entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() == Items.gold_ingot && drawGold.isToggled()) {
-				RenderUtils.drawSimpleItemBox(entity, Color.YELLOW);
-			} else if (entity instanceof EntityArmorStand && drawBow.isToggled() && isArmorStandHoldingBow((EntityArmorStand) entity)) {
-				RenderUtils.drawSimpleItemBox(entity, Color.CYAN);
-			} else if (entity instanceof EntityPlayer) {
+	@EventLink
+	public final Listener<RenderEvent> onRender = event -> {
+		if (!Utils.Player.isPlayerInGame()) return;
+
+		for (Entity entity : mc.theWorld.loadedEntityList) {
+			if (entity instanceof EntityItem) {
+				String name = ((EntityItem) entity).getEntityItem().getDisplayName();
+
+				if (name.equalsIgnoreCase("gold ingot")) {
+					RenderUtil.drawSimpleItemBox(entity, Color.YELLOW);
+				} else if (name.equalsIgnoreCase("bow")) {
+					RenderUtil.drawSimpleItemBox(entity, Color.CYAN);
+				}
+			} else if (entity instanceof EntityPlayer && entity != mc.thePlayer) {
 				if (murderers.contains(entity) && drawMurder.isToggled()) {
-					RenderUtils.drawSimpleBox((EntityPlayer) entity, Color.RED.getRGB(), event.partialTicks);
+					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.RED.getRGB(), event.getPartialTicks());
 				} else if (detectives.contains(entity) && drawDetective.isToggled()) {
-					RenderUtils.drawSimpleBox((EntityPlayer) entity, Color.BLUE.getRGB(), event.partialTicks);
+					RenderUtil.drawSimpleBox((EntityPlayer) entity, Color.BLUE.getRGB(), event.getPartialTicks());
 				}
 			}
 		}
-	}
-	
-	private boolean isArmorStandHoldingBow(EntityArmorStand armorStand) {
-		return armorStand.getEquipmentInSlot(0) != null && armorStand.getEquipmentInSlot(0).getItem() == Items.bow;
-	}
+	};
 
 	private void sendNotification(String message, EnumChatFormatting color, String symbol) {
-		display(EnumChatFormatting.YELLOW + "[" + color + symbol + EnumChatFormatting.YELLOW + "] " + color + message + EnumChatFormatting.RESET);
+		Utils.Player.sendMessageToSelf(color + symbol + " " + EnumChatFormatting.RESET + message);
 	}
 
 	private boolean isMurder(String itemName) {
-		return itemName.contains("Knife") || itemName.contains("Cuchillo");
+		return itemName.contains("Knife") || itemName.contains("Sword") || itemName.contains("Scythe");
 	}
 
-	private boolean isBow(String itemName) {
-		return itemName.contains("Bow") || itemName.contains("Arco");
+	private boolean isDetective(EntityPlayer player) {
+		return player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBow;
 	}
-	
-    private void display(final Object message, final Object... objects) {
-        if (mc.thePlayer != null) {
-            final String format = String.format(message.toString(), objects);
-            mc.thePlayer.addChatMessage(new ChatComponentText(format));
-        }
-    }
 }

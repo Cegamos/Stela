@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.setting.Setting;
 
 public class DoubleSliderSetting extends Setting {
@@ -20,7 +20,7 @@ public class DoubleSliderSetting extends Setting {
     private final double defaultValMin;
     private final double defaultValMax;
     
-    public DoubleSliderSetting(String name, ClientModule module, final double defaultValueMin, final double defaultValueMax, final double min, final double max, final double intervals, Supplier<Boolean> visible) {
+    public DoubleSliderSetting(String name, Mod module, final double defaultValueMin, final double defaultValueMax, final double min, final double max, final double intervals, Supplier<Boolean> visible) {
     	super(name, module, visible);
         this.valMin = defaultValueMin;
         this.valMax = defaultValueMax;
@@ -31,7 +31,7 @@ public class DoubleSliderSetting extends Setting {
         this.defaultValMax = this.valMax;
     }
 
-    public DoubleSliderSetting(String name, ClientModule module, final double defaultValueMin, final double defaultValueMax, final double min, final double max, final double intervals) {
+    public DoubleSliderSetting(String name, Mod module, final double defaultValueMin, final double defaultValueMax, final double min, final double max, final double intervals) {
         this(name, module, defaultValueMin, defaultValueMax, min, max, intervals, () -> true);
     }
 

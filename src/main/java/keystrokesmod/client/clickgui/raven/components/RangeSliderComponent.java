@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.client.gui.Gui;
 
 public class RangeSliderComponent extends Component {

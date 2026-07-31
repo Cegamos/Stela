@@ -1,0 +1,61 @@
+package keystrokesmod.client.stela.operation.impl;
+
+import keystrokesmod.client.stela.Mixin;
+import keystrokesmod.client.stela.annotations.InjectIf;
+import keystrokesmod.client.stela.operation.Operation;
+import keystrokesmod.client.stela.util.ASMUtil;
+
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class InjectIfOperation implements Operation {
+
+    @Override
+    public void dispose(Mixin mixin) {
+        ClassNode source = mixin.getSource();
+        ClassNode target = mixin.getTarget();
+
+        List<MethodNode> injections = source.methods.stream()
+                .filter(m -> getInjectIfAnnotation(m) != null)
+                .collect(Collectors.toList());
+
+        for (MethodNode injection : injections) {
+            InjectIf info = getInjectIfAnnotation(injection);
+            if (info == null) continue;
+            MethodNode targetMethod = InjectOperation.findTargetMethod(target.methods, mixin.getTargetName(), info.method(), info.desc());
+            if (targetMethod == null) continue;
+
+            LabelNode skipLabel = new LabelNode();
+            InsnList wrapper = new InsnList();
+            wrapper.add(new MethodInsnNode(Opcodes.INVOKESTATIC, source.name, info.condition(), "()Z", false));
+            wrapper.add(new JumpInsnNode(Opcodes.IFEQ, skipLabel));
+            wrapper.add(new MethodInsnNode(Opcodes.INVOKESTATIC, source.name, injection.name, injection.desc, false));
+            wrapper.add(skipLabel);
+
+            targetMethod.instructions.insert(wrapper);
+        }
+    }
+
+    public static InjectIf getInjectIfAnnotation(MethodNode method) {
+        if (method == null) return null;
+        for (AnnotationNode annotation : keystrokesmod.client.stela.util.ASMUtil.getAnnotations(method)) {
+            if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/InjectIf;")) {
+                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                String desc = ASMUtil.getAnnotationValue(annotation, "desc");
+                String condition = ASMUtil.getAnnotationValue(annotation, "condition");
+                return new InjectIf() {
+                    @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return InjectIf.class; }
+                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String desc() { return desc != null ? desc : ""; }
+                    @Override public String condition() { return condition != null ? condition : ""; }
+                    @Override public keystrokesmod.client.stela.annotations.Target target() { return null; }
+                    @Override public boolean remap() { return true; }
+                };
+            }
+        }
+        return null;
+    }
+}

@@ -10,15 +10,15 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.events.DragEvent;
+import keystrokesmod.client.event.impl.DragEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.RenderUtils;
-import keystrokesmod.client.utils.RoundedUtils;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.utils.animations.ContinualAnimation;
 import keystrokesmod.client.utils.font.Fonts;
+import keystrokesmod.client.utils.render.RenderUtil;
+import keystrokesmod.client.utils.render.RoundedUtil;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "PotionHUD", category = Category.Render)
-public class PotionHUD extends ClientModule {
+public class PotionHUD extends Mod {
 
     private final static ContinualAnimation widthAnimation = new ContinualAnimation();
     private final static ContinualAnimation heightAnimation = new ContinualAnimation();
@@ -92,7 +92,7 @@ public class PotionHUD extends ClientModule {
 
         float totalHeight = 14f + heightAnimation.getOutput();
 
-        RoundedUtils.drawRound(potionHudX, potionHudY, widthAnimation.getOutput() + 12, totalHeight - 8, 4, Theme.getBackColor());
+        RoundedUtil.drawRound(potionHudX, potionHudY, widthAnimation.getOutput() + 12, totalHeight - 8, 4, Theme.getBackColor());
 
         for (PotionEffect potion : potions) {
             String potionString = I18n.format(Potion.potionTypes[potion.getPotionID()].getName()) +
@@ -102,7 +102,7 @@ public class PotionHUD extends ClientModule {
 
             if (Potion.potionTypes[potion.getPotionID()].hasStatusIcon()) {
                 GL11.glPushMatrix();
-                RenderUtils.resetColor();
+                RenderUtil.resetColor();
                 RenderHelper.enableGUIStandardItemLighting();
                 int i1 = Potion.potionTypes[potion.getPotionID()].getStatusIconIndex();
                 GL11.glScaled(0.5, 0.5, 0.5);

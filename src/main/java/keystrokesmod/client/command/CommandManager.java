@@ -1,84 +1,80 @@
 package keystrokesmod.client.command;
 
-import java.util.*;
+import keystrokesmod.client.command.impl.*;
+import keystrokesmod.client.util.Utils;
 
-import keystrokesmod.client.clickgui.raven.Terminal;
-import keystrokesmod.client.command.commands.*;
-import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.module.modules.client.HUD;
-import keystrokesmod.client.utils.Utils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CommandManager {
-    private final List<Command> commandList = new ArrayList<>();
-    private final List<Command> sortedCommandList = new ArrayList<>();
+    private static final List<Command> commands = new ArrayList<>();
+    private static String prefix = ".";
 
-    public CommandManager() {
-        registerCommands(
-            new Help(),
-            new ConfigCommand(),
-            new Clear(),
-            new Cname(),
-            new Debug(),
-            new Fakechat(),
-            new Ping(),
-            new Shoutout(),
-            new Uwu(),
-            new Friends(),
-            new F3Name()
-        );
+    public static void init() {
+        commands.clear();
+        register(new ConfigCommand());
+        register(new ToggleCommand());
+        register(new BindCommand());
+        register(new HelpCommand());
     }
 
-    private void registerCommands(Command... commands) {
-        for (Command cmd : commands) {
-            addCommand(cmd);
+    public static void register(Command command) {
+        commands.add(command);
+    }
+
+    public static boolean execute(String rawInput) {
+        if (rawInput == null || !rawInput.startsWith(prefix)) {
+            return false;
         }
-    }
 
-    public void addCommand(Command command) {
-        commandList.add(command);
-        sortedCommandList.add(command);
-    }
+        String withoutPrefix = rawInput.substring(prefix.length()).trim();
+        if (withoutPrefix.isEmpty()) {
+            return true;
+        }
 
-    public List<Command> getCommandList() {
-        return Collections.unmodifiableList(commandList);
-    }
+        String[] parts = withoutPrefix.split(" ");
+        String commandName = parts[0].toLowerCase();
+        String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
 
-    public Command getCommandByName(String name) {
-        for (Command command : commandList) {
-            if (command.getName().equalsIgnoreCase(name)) {
-                return command;
+        Command command = getCommandByNameOrAlias(commandName);
+        if (command != null) {
+            try {
+                command.execute(args);
+            } catch (Exception e) {
+                Utils.Player.sendMessageToSelf("&cError executing command: " + e.getMessage());
+                e.printStackTrace();
             }
-            for (String alias : command.getAliases()) {
+        } else {
+            Utils.Player.sendMessageToSelf("&cUnknown command &e" + commandName + "&c. Type &e" + prefix + "help &cfor commands.");
+        }
+
+        return true;
+    }
+
+    public static Command getCommandByNameOrAlias(String name) {
+        for (Command cmd : commands) {
+            if (cmd.getName().equalsIgnoreCase(name)) {
+                return cmd;
+            }
+            for (String alias : cmd.getAliases()) {
                 if (alias.equalsIgnoreCase(name)) {
-                    return command;
+                    return cmd;
                 }
             }
         }
         return null;
     }
 
-    public void noSuchCommand(String name) {
-        Terminal.print("Command '" + name + "' not found! Report this on the Discord if this is an error!");
+    public static List<Command> getCommands() {
+        return commands;
     }
 
-    public void executeCommand(String commandName, String[] args) {
-        Command command = getCommandByName(commandName);
-        if (command == null) {
-            noSuchCommand(commandName);
-            return;
-        }
-        command.onCall(args);
+    public static String getPrefix() {
+        return prefix;
     }
 
-    public void sort() {
-    	HUD hud = (HUD) Raven.moduleManager.getModuleByClazz(HUD.class);
-
-        if (hud.alphabeticalSort.isToggled()) {
-            sortedCommandList.sort(Comparator.comparing(Command::getName, String.CASE_INSENSITIVE_ORDER));
-        } else {
-            sortedCommandList.sort(Comparator.comparingInt(
-                cmd -> -Utils.mc.fontRendererObj.getStringWidth(cmd.getName())
-            ));
-        }
+    public static void setPrefix(String newPrefix) {
+        prefix = newPrefix;
     }
 }

@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "Reach", category = Category.Combat)
-public class Reach extends ClientModule {
+public class Reach extends Mod {
     private final DoubleSliderSetting reach = new DoubleSliderSetting("Reach (Blocks)", this, 3.1, 3.3, 3.0, 6.0, 0.05);
     private final TickSetting weapon_only = new TickSetting("Weapon only", this, false);
     private final TickSetting moving_only = new TickSetting("Moving only", this, false);
@@ -36,7 +36,7 @@ public class Reach extends ClientModule {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-        final ClientModule autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
             return;
         }
@@ -50,7 +50,7 @@ public class Reach extends ClientModule {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-        final ClientModule autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker == null || !autoClicker.isEnabled()) {
             return;
         }

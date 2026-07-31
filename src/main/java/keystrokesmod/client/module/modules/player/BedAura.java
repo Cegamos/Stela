@@ -4,17 +4,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C07PacketPlayerDigging;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 @ModuleInfo(name = "BedAura", category = Category.Player)
-public class BedAura extends ClientModule {
+public class BedAura extends Mod {
     private final SliderSetting r = new SliderSetting("Range", this, 5.0, 2.0, 10.0, 1.0);
     private Timer t;
     private BlockPos m = null;

@@ -5,14 +5,14 @@ import java.awt.Robot;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.combat.AimAssist;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "MiddleClick", category = Category.Other)
-public class MiddleClick extends ClientModule {
+public class MiddleClick extends Mod {
 	public ComboSetting mode = new ComboSetting("On click", this, "Add friend", "Addfriend", "Remove Friend", "Throw pearl");
 	public TickSetting showHelp = new TickSetting("Show friend help in chat", this, true);
 	int prevSlot;

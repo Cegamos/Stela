@@ -5,15 +5,15 @@ import java.util.Random;
 import org.lwjgl.input.Mouse;
 
 import io.netty.util.internal.ThreadLocalRandom;
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "RightClicker", category = Category.Player)
-public class RightClicker extends ClientModule {
+public class RightClicker extends Mod {
     private final DoubleSliderSetting rightCPS = new DoubleSliderSetting("RightCPS", this, 12.0, 16.0, 1.0, 60.0, 0.5);
     private final SliderSetting jitterRight = new SliderSetting("Jitter right", this, 0.0, 0.0, 3.0, 0.1);
     private final SliderSetting rightClickDelay = new SliderSetting("Rightclick delay (ms)", this, 85.0, 0.0, 500.0, 1.0);
@@ -200,7 +200,7 @@ public class RightClicker extends ClientModule {
             }
         }
         if (preferFastPlace.isToggled()) {
-            final ClientModule fastplace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
+            final Mod fastplace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
             if (fastplace != null && fastplace.isEnabled()) {
                 return false;
             }

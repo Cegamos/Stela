@@ -1,146 +1,175 @@
 package keystrokesmod.client.config;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
+import keystrokesmod.client.Raven;
+import keystrokesmod.client.module.Mod;
+import keystrokesmod.client.module.setting.Setting;
+import keystrokesmod.client.module.setting.impl.*;
+
+import java.io.*;
 import java.util.List;
-import java.util.Objects;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+public class ConfigManager {
+    private static final byte[] MAGIC = new byte[]{0x53, 0x54, 0x45, 0x4C, 0x41}; // "STELA"
+    private static final byte VERSION = 0x01;
+    public static final File PROFILES_DIR = new File("profiles");
+    private static String currentProfileName = "default";
 
-import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.module.ClientModule;
-import net.minecraft.client.Minecraft;
-
-public class ConfigManager
-{
-    private final File configDirectory;
-    private Config config;
-    private final ArrayList<Config> configs;
-    
-    public ConfigManager() {
-        this.configDirectory = new File(Minecraft.getMinecraft().mcDataDir + File.separator + "keystrokes" + File.separator + "configs");
-        this.configs = new ArrayList<Config>();
-        if (!this.configDirectory.isDirectory()) {
-            this.configDirectory.mkdirs();
-        }
-        this.discoverConfigs();
-        final File defaultFile = new File(this.configDirectory, "default.bplus");
-        this.config = new Config(defaultFile);
-        if (!defaultFile.exists()) {
-            this.save();
-        }
+    public static String getCurrentProfileName() {
+        return currentProfileName;
     }
-    
-    public static boolean isOutdated(final File file) {
-        try (FileReader reader = new FileReader(file)) {
-            JsonElement element = new JsonParser().parse(reader);
 
-            if (element != null && element.isJsonObject()) {
-                JsonObject data = element.getAsJsonObject();
-                return false;
-            } else {
-                System.err.println("JSON is not an object.");
-                return true;
+    public static void saveConfigByName(String name) {
+        currentProfileName = name;
+        saveConfig(new File(PROFILES_DIR, name + ".stela"), Raven.moduleManager.getModules());
+    }
+
+    public static void loadConfigByName(String name) {
+        currentProfileName = name;
+        loadConfig(new File(PROFILES_DIR, name + ".stela"), Raven.moduleManager.getModules());
+    }
+
+    public static void saveConfig(File destination, List<Mod> modules) {
+        try {
+            if (destination.getParentFile() != null && !destination.getParentFile().exists()) {
+                destination.getParentFile().mkdirs();
             }
-        } catch (JsonSyntaxException | ClassCastException | IOException e) {
+
+            try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(destination)))) {
+                dos.write(MAGIC);
+                dos.writeByte(VERSION);
+
+                dos.writeShort(modules.size());
+
+                for (Mod module : modules) {
+                    dos.writeUTF(module.getName());
+                    dos.writeBoolean(module.isEnabled());
+                    dos.writeInt(module.getKeycode());
+
+                    List<Setting> settings = module.getSettings();
+                    dos.writeShort(settings != null ? settings.size() : 0);
+
+                    if (settings != null) {
+                        for (Setting setting : settings) {
+                            dos.writeUTF(setting.getName());
+
+                            if (setting instanceof TickSetting) {
+                                dos.writeByte(1);
+                                dos.writeBoolean(((TickSetting) setting).isToggled());
+                            } else if (setting instanceof SliderSetting) {
+                                dos.writeByte(2);
+                                dos.writeDouble(((SliderSetting) setting).getInput());
+                            } else if (setting instanceof DoubleSliderSetting) {
+                                dos.writeByte(3);
+                                dos.writeDouble(((DoubleSliderSetting) setting).getInputMin());
+                                dos.writeDouble(((DoubleSliderSetting) setting).getInputMax());
+                            } else if (setting instanceof ComboSetting) {
+                                dos.writeByte(4);
+                                ComboSetting cs = (ComboSetting) setting;
+                                dos.writeUTF(cs.getMode() != null ? cs.getMode() : "");
+                            } else {
+                                dos.writeByte(0);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[Config] Failed to save binary config: " + destination.getName());
             e.printStackTrace();
-            return true;
         }
     }
-    
-    public void discoverConfigs() {
-        this.configs.clear();
-        if (this.configDirectory.listFiles() == null || Objects.requireNonNull(this.configDirectory.listFiles()).length <= 0) {
-            return;
-        }
-        for (final File file : Objects.requireNonNull(this.configDirectory.listFiles())) {
-            if (file.getName().endsWith(".bplus") && !isOutdated(file)) {
-                this.configs.add(new Config(new File(file.getPath())));
+
+    public static void loadConfig(File source, List<Mod> modules) {
+        if (!source.exists()) return;
+
+        try (DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(source)))) {
+            byte[] magic = new byte[5];
+            dis.readFully(magic);
+            for (int i = 0; i < 5; i++) {
+                if (magic[i] != MAGIC[i]) {
+                    System.err.println("[Config] Invalid magic bytes in " + source.getName());
+                    return;
+                }
             }
-        }
-    }
-    
-    public Config getConfig() {
-        return this.config;
-    }
-    
-    public void save() {
-        final JsonObject data = new JsonObject();
-        data.addProperty("version", Raven.VERSION);
-        data.addProperty("author", "Unknown");
-        data.addProperty("notes", "");
-        data.addProperty("intendedServer", "");
-        data.addProperty("usedFor", (Number)0);
-        data.addProperty("lastEditTime", (Number)System.currentTimeMillis());
-        final JsonObject modules = new JsonObject();
-        for (final ClientModule module : Raven.moduleManager.getModules()) {
-            modules.add(module.getName(), (JsonElement)module.getConfigAsJson());
-        }
-        data.add("modules", (JsonElement)modules);
-        this.config.save(data);
-    }
-    
-    public void setConfig(final Config config) {
-        this.config = config;
-        final JsonObject data = config.getData().get("modules").getAsJsonObject();
-        final List<ClientModule> knownModules = new ArrayList<ClientModule>(Raven.moduleManager.getModules());
-        for (final ClientModule module : knownModules) {
-            if (data.has(module.getName())) {
-                module.applyConfigFromJson(data.get(module.getName()).getAsJsonObject());
+
+            byte version = dis.readByte();
+            if (version != VERSION) {
+                System.err.println("[Config] Unsupported config version: " + version);
+                return;
             }
-            else {
-                module.resetToDefaults();
+
+            short moduleCount = dis.readShort();
+
+            for (int i = 0; i < moduleCount; i++) {
+                String moduleName = dis.readUTF();
+                boolean enabled = dis.readBoolean();
+                int keycode = dis.readInt();
+
+                Mod module = findModule(modules, moduleName);
+                if (module != null) {
+                    if (enabled != module.isEnabled()) {
+                        module.toggle();
+                    }
+                    module.setKeycode(keycode);
+                }
+
+                short settingCount = dis.readShort();
+                for (int j = 0; j < settingCount; j++) {
+                    String settingName = dis.readUTF();
+                    byte type = dis.readByte();
+
+                    Setting setting = module != null ? findSetting(module, settingName) : null;
+
+                    switch (type) {
+                        case 1: // TickSetting
+                            boolean bVal = dis.readBoolean();
+                            if (setting instanceof TickSetting) {
+                                ((TickSetting) setting).setEnabled(bVal);
+                            }
+                            break;
+                        case 2: // SliderSetting
+                            double sVal = dis.readDouble();
+                            if (setting instanceof SliderSetting) {
+                                ((SliderSetting) setting).setValue(sVal);
+                            }
+                            break;
+                        case 3: // DoubleSliderSetting
+                            double minVal = dis.readDouble();
+                            double maxVal = dis.readDouble();
+                            if (setting instanceof DoubleSliderSetting) {
+                                ((DoubleSliderSetting) setting).setValueMin(minVal);
+                                ((DoubleSliderSetting) setting).setValueMax(maxVal);
+                            }
+                            break;
+                        case 4: // ComboSetting
+                            String mVal = dis.readUTF();
+                            if (setting instanceof ComboSetting) {
+                                ((ComboSetting) setting).setMode(mVal);
+                            }
+                            break;
+                        case 0:
+                            break;
+                    }
+                }
             }
+        } catch (Exception e) {
+            System.err.println("[Config] Failed to load binary config: " + source.getName());
+            e.printStackTrace();
         }
     }
-    
-    public void loadConfigByName(final String replace) {
-        this.discoverConfigs();
-        for (final Config config : this.configs) {
-            if (config.getName().equals(replace)) {
-                this.setConfig(config);
-            }
+
+    private static Mod findModule(List<Mod> modules, String name) {
+        for (Mod m : modules) {
+            if (m.getName().equalsIgnoreCase(name)) return m;
         }
+        return null;
     }
-    
-    public ArrayList<Config> getConfigs() {
-        this.discoverConfigs();
-        return this.configs;
-    }
-    
-    public void copyConfig(final Config config, final String s) {
-        final File file = new File(this.configDirectory, s);
-        final Config newConfig = new Config(file);
-        newConfig.save(config.getData());
-    }
-    
-    public void resetConfig() {
-        for (final ClientModule module : Raven.moduleManager.getModules()) {
-            module.resetToDefaults();
+
+    private static Setting findSetting(Mod module, String name) {
+        if (module == null || module.getSettings() == null) return null;
+        for (Setting s : module.getSettings()) {
+            if (s.getName().equalsIgnoreCase(name)) return s;
         }
-        this.save();
-    }
-    
-    public void deleteConfig(final Config config) {
-        config.file.delete();
-        if (config.getName().equals(this.config.getName())) {
-            this.discoverConfigs();
-            if (this.configs.size() < 2) {
-                this.resetConfig();
-                final File defaultFile = new File(this.configDirectory, "default.bplus");
-                this.config = new Config(defaultFile);
-                this.save();
-            }
-            else {
-                this.config = this.configs.get(0);
-            }
-            this.save();
-        }
+        return null;
     }
 }

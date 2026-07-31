@@ -2,8 +2,8 @@ package keystrokesmod.keystroke;
 
 import java.io.IOException;
 
-import keystrokesmod.client.main.ClientConfig;
-import keystrokesmod.client.utils.MouseManager;
+import keystrokesmod.client.config.ClientConfig;
+import keystrokesmod.client.utils.input.MouseManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 

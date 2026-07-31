@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.setting.Setting;
 
 public class TickSetting extends Setting {
@@ -15,13 +15,13 @@ public class TickSetting extends Setting {
     public boolean isMethodButton;
     private Runnable method;
 	
-    public TickSetting(String name, ClientModule module, boolean value, Supplier<Boolean> visible) {
+    public TickSetting(String name, Mod module, boolean value, Supplier<Boolean> visible) {
         super(name, module, visible);
 		this.isEnabled = value;
 		this.defaultValue = value;
     }
 
-    public TickSetting(String name, ClientModule module, boolean value) {
+    public TickSetting(String name, Mod module, boolean value) {
         this(name, module, value, () -> true);
     }
     
@@ -29,7 +29,7 @@ public class TickSetting extends Setting {
         this(name, null, method, () -> true);
     }
 
-    public TickSetting(String name, ClientModule module, Runnable method, Supplier<Boolean> visibleCheck) {
+    public TickSetting(String name, Mod module, Runnable method, Supplier<Boolean> visibleCheck) {
 		super(name, null, visibleCheck);
         this.isEnabled = false;
         this.isMethodButton = true;

@@ -7,7 +7,7 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.utils.MouseManager;
+import keystrokesmod.client.utils.input.MouseManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -31,7 +31,7 @@ public class KeyStrokeMouse {
         this.e = m;
     }
     
-    public void n(final int o, final int p, final int color) {
+    public void renderMouse(final int o, final int p, final int color) {
         final boolean r = Mouse.isButtonDown(this.c);
         final String s = KeyStrokeMouse.a[this.c];
         if (r != this.g) {

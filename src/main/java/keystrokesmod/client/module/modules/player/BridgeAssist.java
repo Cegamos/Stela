@@ -1,19 +1,19 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "BridgeAssist", category = Category.Player)
-public class BridgeAssist extends ClientModule {
+public class BridgeAssist extends Mod {
 	private final DescriptionSetting desc = new DescriptionSetting("Best with fastplace, not autoplace", this);
 	private final SliderSetting waitFor = new SliderSetting("Wait time (ms)", this, 500.0, 0.0, 5000.0, 25.0);
 	private final TickSetting setLook = new TickSetting("Set look pos", this, true);
@@ -52,10 +52,7 @@ public class BridgeAssist extends ClientModule {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-        final SafeWalk safeWalk = (SafeWalk) Raven.moduleManager.getModuleByClazz(SafeWalk.class);
-        if (safeWalk != null && safeWalk.isEnabled() && !this.workWithSafeWalk.isToggled()) {
-            return;
-        }
+        
         if (!Utils.Player.playerOverAir() || !mc.thePlayer.onGround) {
             return;
         }

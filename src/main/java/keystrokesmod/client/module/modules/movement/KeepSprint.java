@@ -5,7 +5,7 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
@@ -13,7 +13,7 @@ import keystrokesmod.client.module.setting.impl.TickSetting;
 import net.minecraft.entity.Entity;
 
 @ModuleInfo(name = "KeepSprint", category = Category.Movement)
-public class KeepSprint extends ClientModule {
+public class KeepSprint extends Mod {
     private final DescriptionSetting a = new DescriptionSetting("Default is 40% motion reduction.", this);
     private final SliderSetting b = new SliderSetting("Slow %", this, 40.0, 0.0, 100.0, 1.0);
     private final TickSetting c = new TickSetting("Only reduce reach hits", this, false);

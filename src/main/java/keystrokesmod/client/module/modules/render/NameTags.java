@@ -2,14 +2,14 @@ package keystrokesmod.client.module.modules.render;
 
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -20,7 +20,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Nametags", category = Category.Render)
-public class NameTags extends ClientModule {
+public class NameTags extends Mod {
     private final SliderSetting a = new SliderSetting("Offset", this, 0.0, -40.0, 40.0, 1.0);
     private final TickSetting b = new TickSetting("Rect", this, true);
     private final TickSetting c = new TickSetting("Show health", this, true);

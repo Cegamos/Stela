@@ -1,13 +1,15 @@
 package keystrokesmod.client.module.modules.player;
 
-import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PacketSendEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.Clock;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -16,7 +18,7 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
 
 @ModuleInfo(name = "Blink", category = Category.Player)
-public class Blink extends ClientModule {
+public class Blink extends Mod {
 	private Clock clock = new Clock(0);
 	private Queue<Packet<?>> packets = new ConcurrentLinkedQueue<>();
 	
@@ -37,15 +39,14 @@ public class Blink extends ClientModule {
 	    packets.clear();
 	}
 	
-	@Override
-	public boolean onSend(Packet packet) {
-        if (packet instanceof C03PacketPlayer) {
-            packets.add(packet);
-            return true;
-         } else if (packet instanceof C08PacketPlayerBlockPlacement || packet instanceof C07PacketPlayerDigging || packet instanceof C09PacketHeldItemChange || packet instanceof C02PacketUseEntity) {
-            this.packets.add(packet);
-            return true;
+    @EventLink
+    private Listener<PacketSendEvent> packetSend = event -> {
+        if (event.getPacket() instanceof C03PacketPlayer) {
+            packets.add(event.getPacket());
+            event.cancel();
+         } else if (event.getPacket() instanceof C08PacketPlayerBlockPlacement || event.getPacket() instanceof C07PacketPlayerDigging || event.getPacket() instanceof C09PacketHeldItemChange || event.getPacket() instanceof C02PacketUseEntity) {
+            this.packets.add(event.getPacket());
+            event.cancel();
          }
-		return false;
-	}
+    };
 }

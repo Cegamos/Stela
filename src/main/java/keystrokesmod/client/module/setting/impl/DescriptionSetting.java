@@ -6,20 +6,20 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.setting.Setting;
 
 public class DescriptionSetting extends Setting {
 	private String desc;
 	private String defaultDesc;
 
-	public DescriptionSetting(final String desc, ClientModule module, Supplier<Boolean> visible) {
+	public DescriptionSetting(final String desc, Mod module, Supplier<Boolean> visible) {
 		super(desc, module, visible);
 		this.desc = desc;
 		this.defaultDesc = desc;
 	}
 	
-    public DescriptionSetting(String name, ClientModule module) {
+    public DescriptionSetting(String name, Mod module) {
         this(name, module, () -> true);
     }
 

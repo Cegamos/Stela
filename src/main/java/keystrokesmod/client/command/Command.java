@@ -1,61 +1,70 @@
 package keystrokesmod.client.command;
 
-import keystrokesmod.client.clickgui.raven.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public abstract class Command
-{
+public abstract class Command {
     private final String name;
-    private final String help;
-    private final int minArgs;
-    private final int maxArgs;
-    private final String[] alias;
-    private String[] args;
-    
-    public Command(final String name, final String help, final int minArgs, final int maxArgs, final String[] args, final String[] alias) {
+    private final String description;
+    private final String usage;
+    private final List<String> aliases;
+    private final List<SubCommand> subCommands = new ArrayList<>();
+
+    public Command() {
+        CommandInfo info = getClass().getAnnotation(CommandInfo.class);
+        if (info != null) {
+            this.name = info.name();
+            this.description = info.description();
+            this.usage = info.usage();
+            this.aliases = new ArrayList<>(Arrays.asList(info.aliases()));
+        } else {
+            this.name = getClass().getSimpleName().toLowerCase();
+            this.description = "";
+            this.usage = "." + this.name;
+            this.aliases = new ArrayList<>();
+        }
+    }
+
+    public Command(String name, String description, String usage, String... aliases) {
         this.name = name;
-        this.help = help;
-        this.minArgs = minArgs;
-        this.maxArgs = maxArgs;
-        this.args = args;
-        this.alias = alias;
+        this.description = description;
+        this.usage = usage;
+        this.aliases = new ArrayList<>(Arrays.asList(aliases));
     }
-    
-    public Command(final String name, final String help, final int minArgs, final int maxArgs, final String[] args) {
-        this(name, help, minArgs, maxArgs, args, new String[0]);
+
+    public abstract void execute(String[] args);
+
+    public void addSubCommand(SubCommand subCommand) {
+        this.subCommands.add(subCommand);
     }
-    
+
+    public List<SubCommand> getSubCommands() {
+        return subCommands;
+    }
+
+    public SubCommand getSubCommand(String name) {
+        for (SubCommand sub : subCommands) {
+            if (sub.getName().equalsIgnoreCase(name)) {
+                return sub;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
-        return this.name;
+        return name;
     }
-    
-    public String getHelp() {
-        return this.help;
+
+    public String getDescription() {
+        return description;
     }
-    
-    public int getMinArgs() {
-        return this.minArgs;
+
+    public String getUsage() {
+        return usage;
     }
-    
-    public int getMaxArgs() {
-        return this.maxArgs;
-    }
-    
-    public String[] getArgs() {
-        return this.args;
-    }
-    
-    public void setArgs(final String[] args) {
-        this.args = args;
-    }
-    
-    public void onCall(final String[] args) {
-    }
-    
-    public void incorrectArgs() {
-        Terminal.print("Incorrect arguments! Run help " + this.getName() + " for usage info");
-    }
-    
-    public String[] getAliases() {
-        return this.alias;
+
+    public List<String> getAliases() {
+        return aliases;
     }
 }

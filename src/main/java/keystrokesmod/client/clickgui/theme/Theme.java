@@ -2,7 +2,7 @@ package keystrokesmod.client.clickgui.theme;
 
 import java.awt.Color;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.modules.client.GuiModule;
 
 public class Theme {

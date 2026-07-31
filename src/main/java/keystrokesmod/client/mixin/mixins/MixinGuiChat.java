@@ -1,19 +1,17 @@
 package keystrokesmod.client.mixin.mixins;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import keystrokesmod.client.events.DragEvent;
+import keystrokesmod.client.event.EventBus;
+import keystrokesmod.client.event.impl.DragEvent;
+import keystrokesmod.client.stela.annotations.Inject;
+import keystrokesmod.client.stela.annotations.Mixin;
+import keystrokesmod.client.stela.annotations.Target;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraftforge.common.MinecraftForge;
 
 @Mixin(GuiChat.class)
 public class MixinGuiChat {
 
-    @Inject(method = "drawScreen", at = @At("TAIL"))
-    private void onDrawScreen(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-        MinecraftForge.EVENT_BUS.post(new DragEvent(mouseX, mouseY, partialTicks));
+    @Inject(method = "drawScreen", desc = "(IIF)V", target = @Target("TAIL"))
+    private void onDrawScreen(int mouseX, int mouseY, float partialTicks) {
+        EventBus.INSTANCE.post(new DragEvent(mouseX, mouseY, partialTicks));
     }
 }

@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.setting.Setting;
 
 public class SliderSetting extends Setting {
@@ -18,7 +18,7 @@ public class SliderSetting extends Setting {
     private final double interval;
     private final double defaultVal;
 
-    public SliderSetting(String name, ClientModule module, final double defaultValue, final double min, final double max, final double intervals, Supplier<Boolean> visible) {
+    public SliderSetting(String name, Mod module, final double defaultValue, final double min, final double max, final double intervals, Supplier<Boolean> visible) {
     	super(name, module, visible);
         this.value = defaultValue;
         this.min = min;
@@ -27,7 +27,7 @@ public class SliderSetting extends Setting {
         this.defaultVal = defaultValue;
     }
 
-    public SliderSetting(String name, ClientModule module, final double defaultValue, final double min, final double max, final double intervals) {
+    public SliderSetting(String name, Mod module, final double defaultValue, final double min, final double max, final double intervals) {
         this(name, module, defaultValue, min, max, intervals, () -> true);
     }
     

@@ -1,14 +1,17 @@
 package keystrokesmod.client.module.modules.movement;
 
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PacketReceiveEvent;
+import keystrokesmod.client.event.impl.PacketSendEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
 @ModuleInfo(name = "Freeze", category = Category.Movement)
-public class Freeze extends ClientModule {
+public class Freeze extends Mod {
     public double motionX = 0.0, motionY = 0.0, motionZ = 0.0;
     public double x = 0.0, y = 0.0, z = 0.0;
     
@@ -40,18 +43,15 @@ public class Freeze extends ClientModule {
         mc.thePlayer.setPositionAndRotation(x, y, z, mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch);
     }
     
-    @Override
-    public boolean onSend(Packet packet) {
-        if (packet instanceof C03PacketPlayer) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onReceive(Packet packet) {
-        if (packet instanceof S08PacketPlayerPosLook) {
-            S08PacketPlayerPosLook p = (S08PacketPlayerPosLook) packet;
+    @EventLink
+    private Listener<PacketSendEvent> packetSend = event -> {
+    	if (event.getPacket() instanceof C03PacketPlayer) event.cancel();
+    };
+    
+    @EventLink
+    private Listener<PacketReceiveEvent> packetReceive = event -> {
+        if (event.getPacket() instanceof S08PacketPlayerPosLook) {
+            S08PacketPlayerPosLook p = (S08PacketPlayerPosLook) event.getPacket();
             x = p.getX();
             y = p.getY();
             z = p.getZ();
@@ -59,6 +59,5 @@ public class Freeze extends ClientModule {
             motionY = 0.0;
             motionZ = 0.0;
         }
-        return false;
-    }
+    };
 }

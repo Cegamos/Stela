@@ -1,12 +1,12 @@
 package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.ReflectUtil;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "FastBreak", category = Category.Player)
-public class FastBreak extends ClientModule {
+public class FastBreak extends Mod {
 	
 	private final ComboSetting mode = new ComboSetting("Mode", this, "Normal", "Normal", "Ticks", "Instant");
     private final SliderSetting speed = new SliderSetting("Speed", this, 50, 0, 100, 1, () -> mode.is("Normal"));

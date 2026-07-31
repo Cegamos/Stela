@@ -2,19 +2,16 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url = 'https://maven.minecraftforge.net/' }
-
-        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -36,19 +33,9 @@ minecraft {
     clientJvmArgs += ["-Dfml.coreMods.load=keystrokesmod.client.mixin.MixinLoader"]
 }
 
-mixin {
-    disableRefMapWarning = true
-    defaultObfuscationEnv searge
-    sourceSets {
-        main {
-            ext.refMap = 'mixins.lau.refmap.json'
-        }
-    }
-}
-
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://plugins.gradle.org/m2/' }
 }
 
 configurations {
@@ -58,18 +45,6 @@ configurations {
 
 dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
-    embed('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
-        exclude module: 'gson'
-        exclude module: 'guava'
-        exclude module: 'jarjar'
-        exclude module: 'commons-codec'
-        exclude module: 'commons-io'
-        exclude module: 'launchwrapper'
-        exclude module: 'asm-commons'
-        exclude module: 'slf4j-api'
-    }
-
-    annotationProcessor 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
     implementation configurations.embed
 }
 
@@ -100,7 +75,6 @@ shadowJar {
     exclude "META-INF/versions/**"
     exclude "org/apache/**"
     exclude "org/junit/**"
-
 }
 
 reobf {
@@ -115,9 +89,6 @@ tasks.reobfJar.dependsOn(shadowJar)
 jar {
     manifest {
         attributes(
-                'MixinConfigs': 'mixins.lau.json',
-                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
-                'TweakOrder': 0,
                 "FMLCorePlugin": "keystrokesmod.client.mixin.MixinLoader",
                 'ForceLoadAsMod': 'true',
                 'FMLCorePluginContainsFMLMod': 'true',

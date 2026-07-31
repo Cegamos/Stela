@@ -2,14 +2,14 @@ package keystrokesmod.client.module.modules.render;
 
 import java.awt.Color;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Tracers", category = Category.Render)
-public class Tracers extends ClientModule {
+public class Tracers extends Mod {
 
     private final TickSetting showInvis = new TickSetting("Show invis", this, true);
     private final SliderSetting lineWidth = new SliderSetting("Line Width", this, 1.0, 1.0, 5.0, 1.0);

@@ -13,3 +13,4 @@ build/libs
 *.iws
 .idea
 build
+Stela Launch.launch

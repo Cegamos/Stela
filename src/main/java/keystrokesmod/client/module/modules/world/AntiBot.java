@@ -2,20 +2,20 @@ package keystrokesmod.client.module.modules.world;
 
 import java.util.HashMap;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.player.Freecam;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "AntiBot", category = Category.World, enabled = true)
-public class AntiBot extends ClientModule {
+public class AntiBot extends Mod {
 	private static final HashMap<EntityPlayer, Long> newEnt;
 	private final long ms = 4000L;
 	public TickSetting a = new TickSetting("Wait 80 ticks", this, false);
@@ -50,7 +50,7 @@ public class AntiBot extends ClientModule {
 		if (Freecam.fakePlayer != null && Freecam.fakePlayer == en) {
 			return true;
 		}
-		final ClientModule antiBot = Raven.moduleManager.getModuleByClazz(AntiBot.class);
+		final Mod antiBot = Raven.moduleManager.getModuleByClazz(AntiBot.class);
 		if (antiBot != null && !antiBot.isEnabled()) {
 			return false;
 		}

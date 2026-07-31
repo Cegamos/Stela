@@ -1,14 +1,14 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.*;
-import keystrokesmod.client.utils.*;
+import keystrokesmod.client.util.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collection;
 
 @ModuleInfo(name = "Weapon", category = Category.Macros)
-public class Weapon extends ClientModule {
+public class Weapon extends Mod {
 
     @Override
     public void onEnable() {

@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.setting.Setting;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
@@ -16,14 +16,14 @@ import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 
 public class ModuleComponent extends Component {
-    public ClientModule mod;
+    public Mod mod;
     public CategoryComponent category;
     public int o;
     public boolean open;
 
     private final ArrayList<Component> settings = new ArrayList<>();
 
-    public ModuleComponent(final ClientModule mod, final CategoryComponent parent, final int offset) {
+    public ModuleComponent(final Mod mod, final CategoryComponent parent, final int offset) {
         this.mod = mod;
         this.category = parent;
         this.o = offset;

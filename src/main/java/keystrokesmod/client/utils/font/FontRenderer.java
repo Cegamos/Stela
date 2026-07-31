@@ -42,9 +42,9 @@ import java.util.Arrays;
 
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.events.RenderTextEvent;
+import keystrokesmod.client.event.EventBus;
+import keystrokesmod.client.event.impl.RenderTextEvent;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.common.MinecraftForge;
 
 public class FontRenderer {
     private static final int[] colorCode = new int[32];
@@ -172,8 +172,8 @@ public class FontRenderer {
         GlStateManager.color(1F, 1F, 1F, 1F);
         str = str.replace("▬", "=");
         RenderTextEvent event = new RenderTextEvent(str);
-        MinecraftForge.EVENT_BUS.post(event);
-        str = event.text;
+        EventBus.INSTANCE.post(event);
+        str = event.getText();
         y = y - 2;
         x *= 2;
         y *= 2;
@@ -213,8 +213,8 @@ public class FontRenderer {
         GlStateManager.color(1F, 1F, 1F, 1F);
         str = str.replace("▬", "=");
         RenderTextEvent event = new RenderTextEvent(str);
-        MinecraftForge.EVENT_BUS.post(event);
-        str = event.text;
+        EventBus.INSTANCE.post(event);
+        str = event.getText();
         y = y - 2;
         x *= 2;
         y *= 2;
@@ -266,8 +266,8 @@ public class FontRenderer {
         }
 
         RenderTextEvent event = new RenderTextEvent(text);
-        MinecraftForge.EVENT_BUS.post(event);
-        text = event.text;
+        EventBus.INSTANCE.post(event);
+        text = event.getText();
 
         int width = 0;
         char[] currentData = text.toCharArray();
@@ -395,8 +395,8 @@ public class FontRenderer {
         int currentColor = color;
         
         RenderTextEvent event = new RenderTextEvent(text);
-        MinecraftForge.EVENT_BUS.post(event);
-        text = event.text;
+        EventBus.INSTANCE.post(event);
+        text = event.getText();
 
         char[] characters = text.toCharArray();
 

@@ -3,16 +3,16 @@ package keystrokesmod.client.module.modules.combat;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoWeapon", category = Category.Combat)
-public class AutoWeapon extends ClientModule {
+public class AutoWeapon extends Mod {
     public TickSetting onlyWhenHoldingDown = new TickSetting("Only when holding lmb", this, true);
     public TickSetting goBackToPrevSlot = new TickSetting("Revert to old slot", this, true);
     private boolean onWeapon;

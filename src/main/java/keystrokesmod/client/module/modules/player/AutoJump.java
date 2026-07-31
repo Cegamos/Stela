@@ -1,17 +1,17 @@
 package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoJump", category = Category.Player)
-public class AutoJump extends ClientModule {
+public class AutoJump extends Mod {
     private final TickSetting b = new TickSetting("Cancel when shifting", this, true);
     private boolean c = false;
     

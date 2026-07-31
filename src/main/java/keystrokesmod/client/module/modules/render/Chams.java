@@ -3,13 +3,13 @@ package keystrokesmod.client.module.modules.render;
 import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Chams", category = Category.Render)
-public class Chams extends ClientModule {
+public class Chams extends Mod {
 	@SubscribeEvent
 	public void r1(final RenderPlayerEvent.Pre e) {
 		if (e.entity != mc.thePlayer) {

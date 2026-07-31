@@ -1,13 +1,13 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 
 @ModuleInfo(name = "Fly", category = Category.Movement)
-public class Fly extends ClientModule {
+public class Fly extends Mod {
     private final ComboSetting mode = new ComboSetting("Mode", this, "Creative", "Creative", "Glide");
     private final SliderSetting b = new SliderSetting("Speed", this, 2.0, 1.0, 5.0, 0.1);
 

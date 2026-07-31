@@ -6,20 +6,20 @@ import java.awt.Robot;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.MouseManager;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.input.MouseManager;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "ClickAssist", category = Category.Combat)
-public class ClickAssist extends ClientModule {
+public class ClickAssist extends Mod {
     private final DescriptionSetting desc = new DescriptionSetting("Boost your CPS.", this);
     private final SliderSetting chance = new SliderSetting("Chance", this, 80.0, 0.0, 100.0, 1.0);
     private final TickSetting L = new TickSetting("Left click", this, true);

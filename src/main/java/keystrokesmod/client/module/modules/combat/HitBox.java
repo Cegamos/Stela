@@ -6,15 +6,15 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.ReflectUtil;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.system.ReflectUtil;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "HitBox", category = Category.Combat)
-public class HitBox extends ClientModule {
+public class HitBox extends Mod {
     private final SliderSetting a = new SliderSetting("Multiplier", this, 1.2, 1.0, 5.0, 0.05);
     private final TickSetting b = new TickSetting("Show new hitbox", this, false);
     private MovingObjectPosition mv;
@@ -54,7 +54,7 @@ public class HitBox extends ClientModule {
         if (!Utils.Player.isPlayerInGame()) {
             return;
         }
-        final ClientModule autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker != null && !autoClicker.isEnabled()) {
             return;
         }
@@ -75,7 +75,7 @@ public class HitBox extends ClientModule {
     }
     
     public double exp(final Entity en) {
-        final ClientModule hitBox = Raven.moduleManager.getModuleByClazz(HitBox.class);
+        final Mod hitBox = Raven.moduleManager.getModuleByClazz(HitBox.class);
         final AntiBot bot = (AntiBot) Raven.moduleManager.getModuleByClazz(AntiBot.class);
         return (hitBox != null && isEnabled() && !bot.bot(en)) ? a.getInput() : 1.0;
     }

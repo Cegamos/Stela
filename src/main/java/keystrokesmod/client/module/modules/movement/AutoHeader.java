@@ -4,17 +4,17 @@ import org.lwjgl.input.Keyboard;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Utils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoHeader", category = Category.Movement)
-public class AutoHeader extends ClientModule {
+public class AutoHeader extends Mod {
     private final DescriptionSetting desc = new DescriptionSetting("Spams spacebar when under blocks", this);
     private final TickSetting cancelDuringShift = new TickSetting("Cancel if snkeaing", this, true);
     private final TickSetting onlyWhenHoldingSpacebar = new TickSetting("Only when holding jump", this, true);

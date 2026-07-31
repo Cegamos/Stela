@@ -3,18 +3,18 @@ package keystrokesmod.client.module.modules.combat;
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoBlock", category = Category.Combat)
-public class AutoBlock extends ClientModule {
+public class AutoBlock extends Mod {
     public DoubleSliderSetting duration = new DoubleSliderSetting("Block duration (MS)", this, 20.0, 100.0, 1.0, 500.0, 1.0);
     public DoubleSliderSetting distance = new DoubleSliderSetting("Distance to player (blocks)", this, 0.0, 3.0, 0.0, 6.0, 0.01);
     public SliderSetting chance = new SliderSetting("Chance %", this, 100.0, 0.0, 100.0, 1.0);

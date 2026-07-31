@@ -4,15 +4,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
-import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoTool", category = Category.Player)
-public class AutoTool extends ClientModule {
+public class AutoTool extends Mod {
     private final TickSetting hotkeyBack = new TickSetting("Hotkey back", this, true);
     private final DoubleSliderSetting mineDelay = new DoubleSliderSetting("Max delay", this, 10.0, 50.0, 0.0, 2000.0, 1.0);
     private Block previousBlock;

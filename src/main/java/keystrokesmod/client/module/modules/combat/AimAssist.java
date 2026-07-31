@@ -3,15 +3,15 @@ package keystrokesmod.client.module.modules.combat;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -22,7 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
 @ModuleInfo(name = "AimAssist", category = Category.Combat)
-public class AimAssist extends ClientModule {
+public class AimAssist extends Mod {
 
 	private final SliderSetting speed = new SliderSetting("Speed 1", this, 45.0, 5.0, 100.0, 1.0);
 	private final SliderSetting compliment = new SliderSetting("Speed 2", this, 15.0, 2.0, 97.0, 1.0);

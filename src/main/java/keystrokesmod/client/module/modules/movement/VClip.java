@@ -1,12 +1,12 @@
 package keystrokesmod.client.module.modules.movement;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 
 @ModuleInfo(name = "VClip", category = Category.Movement)
-public class VClip extends ClientModule {
+public class VClip extends Mod {
     private final SliderSetting a = new SliderSetting("Distace", this, 2.0, -10.0, 10.0, 0.5);
 
     @Override

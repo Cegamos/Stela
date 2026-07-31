@@ -5,15 +5,14 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.modules.client.GuiModule;
-import keystrokesmod.client.utils.RenderUtils;
+import keystrokesmod.client.utils.render.RenderUtil;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 
 public class CategoryComponent
 {
@@ -50,7 +49,7 @@ public class CategoryComponent
         int tY = this.bh + 3;
         this.marginX = 80.0;
         this.marginY = 4.5;
-        for (final ClientModule mod : Raven.moduleManager.getModulesInCategory(this.categoryName)) {
+        for (final Mod mod : Raven.moduleManager.getModulesInCategory(this.categoryName)) {
             final ModuleComponent b = new ModuleComponent(mod, this, tY);
             this.modulesInCategory.add((Component)b);
             tY += 16;
@@ -107,9 +106,9 @@ public class CategoryComponent
             for (final Component moduleRenderManager : this.modulesInCategory) {
                 categoryHeight += moduleRenderManager.height();
             }
-            RenderUtils.drawBorderedRoundedRect1(this.x - 1, this.y, this.x + this.width + 1, this.y + this.bh + categoryHeight + 4, 10, 2, Theme.getMainColor().getRGB(), Theme.getBackColor().getRGB());
+            RenderUtil.drawBorderedRoundedRect1(this.x - 1, this.y, this.x + this.width + 1, this.y + this.bh + categoryHeight + 4, 10, 2, Theme.getMainColor().getRGB(), Theme.getBackColor().getRGB());
         } else {
-            RenderUtils.drawBorderedRoundedRect1(this.x - 1, this.y, this.x + this.width + 1, this.y + this.bh + 4, 10, 2, Theme.getMainColor().getRGB(), Theme.getBackColor().getRGB());
+            RenderUtil.drawBorderedRoundedRect1(this.x - 1, this.y, this.x + this.width + 1, this.y + this.bh + 4, 10, 2, Theme.getMainColor().getRGB(), Theme.getBackColor().getRGB());
 
         }
         String textToDraw = this.n4m ? this.pvp : this.categoryName.name();

@@ -7,13 +7,13 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 
 public abstract class Setting {
 	private final String name;
 	public Supplier<Boolean> visible;
 
-	public Setting(String name, ClientModule module, Supplier<Boolean> visible) {
+	public Setting(String name, Mod module, Supplier<Boolean> visible) {
 		this.name = name;
 		this.visible = visible;
 		Optional.ofNullable(module).ifPresent(m -> m.addSetting(this));

@@ -1,16 +1,16 @@
 package keystrokesmod.client.module.modules.macros;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 @ModuleInfo(name = "Blocks", category = Category.Macros)
-public class Blocks extends ClientModule {
+public class Blocks extends Mod {
     private final TickSetting preferSlot = new TickSetting("Prefer a slot", this, false);
     private final SliderSetting hotbarSlotPreference = new SliderSetting("Prefer wich slot", this, 9.0, 1.0, 9.0, 1.0);
 

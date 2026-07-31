@@ -5,18 +5,18 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.main.Raven;
+import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Clock;
-import keystrokesmod.client.utils.Utils;
-import keystrokesmod.client.utils.Utils.Modes.SprintResetTimings;
+import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.util.Utils.Modes.SprintResetTimings;
+import keystrokesmod.client.utils.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "BlockHit", category = Category.Combat)
-public class BlockHit extends ClientModule {
+public class BlockHit extends Mod {
     public TickSetting onlyPlayers = new TickSetting("Only combo players", this, true);
     public TickSetting onRightMBHold = new TickSetting("When holding down rmb", this, true);
     public DoubleSliderSetting waitMs = new DoubleSliderSetting("Action Time (MS)", this, 110.0, 150.0, 1.0, 500.0, 1.0);

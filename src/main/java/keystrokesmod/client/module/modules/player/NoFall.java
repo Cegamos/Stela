@@ -1,12 +1,12 @@
 package keystrokesmod.client.module.modules.player;
 
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import net.minecraft.network.play.client.C03PacketPlayer;
 
 @ModuleInfo(name = "NoFall", category = Category.Player)
-public class NoFall extends ClientModule {
+public class NoFall extends Mod {
     
 	@Override
     public void update() {

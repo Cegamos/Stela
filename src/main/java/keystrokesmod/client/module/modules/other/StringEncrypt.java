@@ -1,19 +1,19 @@
 package keystrokesmod.client.module.modules.other;
 
 import keystrokesmod.client.clickgui.raven.ClickGui;
-import keystrokesmod.client.events.RenderTextEvent;
+import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.module.Category;
-import keystrokesmod.client.module.ClientModule;
+import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.Utils;
+import keystrokesmod.client.util.Utils;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "StringEncrypt", category = Category.Other)
-public class StringEncrypt extends ClientModule {
+public class StringEncrypt extends Mod {
     private static int m3s = 1;
     private boolean m3t = false;
     public TickSetting ignoreDebug = new TickSetting("Ignore debug", this, false);
@@ -71,7 +71,7 @@ public class StringEncrypt extends ClientModule {
 
         if (ignoreAllGui.isToggled() && mc.currentScreen != null) return;
 
-        String originalText = event.text;
+        String originalText = event.getText();
 
         String newText = "";
 
@@ -108,7 +108,7 @@ public class StringEncrypt extends ClientModule {
             newText = "";
         }
 
-        event.text = newText;
+        event.setText(newText);
     }
 
 }
