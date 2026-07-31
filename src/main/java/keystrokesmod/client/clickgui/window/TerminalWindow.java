@@ -33,12 +33,16 @@ public class TerminalWindow extends Component {
     private boolean resizing;
     private boolean dragging;
     private boolean focused;
+    private boolean scrollingBar;
 
     private String inputText;
     
     private static final List<TerminalLine> out = new ArrayList<>();
     private static final List<String> commandHistory = new ArrayList<>();
     private int historyIndex = -1;
+
+    private int scrollOffset = 0;
+    private int maxScroll = 0;
 
     private double windowStartDragX;
     private double windowStartDragY;
@@ -51,6 +55,7 @@ public class TerminalWindow extends Component {
     private static final Color headerDark = new Color(20, 22, 30, 250);
     private static final Color inputBg = new Color(18, 20, 28, 240);
     private static final Color gripInactive = new Color(100, 105, 125, 180);
+    private static final Color scrollbarTrack = new Color(25, 28, 38, 150);
     
     private static final int titleColor = new Color(220, 225, 240).getRGB();
     private static final int toggleColor = Color.LIGHT_GRAY.getRGB();
@@ -65,20 +70,23 @@ public class TerminalWindow extends Component {
         this.resizing = false;
         this.dragging = false;
         this.focused = true;
+        this.scrollingBar = false;
 
         this.x = 15;
         this.y = 200;
         this.width = 280;
         this.height = 140;
-        this.minWidth = 200;
-        this.minHeight = 90;
+        
+        this.minWidth = 130;
+        this.minHeight = 80;
+        
         this.barHeight = 16;
         this.resizeHandleSize = 12;
         this.inputText = "";
 
         if (out.isEmpty()) {
-            print("Raven B+ Console [v" + Raven.VERSION + "]", textSuccess);
-            print("Type 'help' or 'list' for commands.", textDefault);
+            printWrapped("Raven B+ Console [v" + Raven.VERSION + "]", textSuccess);
+            printWrapped("Type 'help' or 'list' for commands.", textDefault);
         }
     }
 
@@ -100,6 +108,37 @@ public class TerminalWindow extends Component {
 
     private static void print(String message, int hexColor) {
         out.add(new TerminalLine(message, hexColor));
+    }
+
+    private void printWrapped(String message, int hexColor) {
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        if (fr == null) {
+            print(message, hexColor);
+            return;
+        }
+
+        int maxWidth = Math.max(50, this.width - 24);
+        String[] words = message.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            String testLine = currentLine.length() == 0 ? word : currentLine.toString() + " " + word;
+            
+            if (fr.getStringWidth(testLine) <= maxWidth) {
+                currentLine.append(currentLine.length() == 0 ? word : " " + word);
+            } else {
+                if (currentLine.length() > 0) {
+                    print(currentLine.toString(), hexColor);
+                    currentLine = new StringBuilder(word);
+                } else {
+                    print(word, hexColor);
+                    currentLine = new StringBuilder();
+                }
+            }
+        }
+        if (currentLine.length() > 0) {
+            print(currentLine.toString(), hexColor);
+        }
     }
 
     public void show() {
@@ -144,6 +183,7 @@ public class TerminalWindow extends Component {
             // Input Bar Card at Bottom
             RoundedUtil.drawRound(this.x + 4, inputBarY, this.width - 8, inputBarHeight, 3f, inputBg);
 
+            // Active Input Prompt
             int promptX = this.x + 8;
             int promptY = inputBarY + 3;
             fr.drawStringWithShadow("$ ", promptX, promptY, accentColor.getRGB());
@@ -160,30 +200,50 @@ public class TerminalWindow extends Component {
             int lineHeight = fr.FONT_HEIGHT + 2;
 
             if (contentHeight > 0) {
+                int totalContentHeight = out.size() * lineHeight;
+                maxScroll = Math.max(0, totalContentHeight - contentHeight);
+                if (scrollOffset > maxScroll) scrollOffset = maxScroll;
+                if (scrollOffset < 0) scrollOffset = 0;
+
                 int scaleFactor = getScaleFactor(mc);
                 int scaledHeight = mc.displayHeight / scaleFactor;
 
                 int scissorX = (this.x + 4) * scaleFactor;
                 int scissorY = (scaledHeight - (contentStartY + contentHeight)) * scaleFactor;
-                int scissorWidth = (this.width - 8) * scaleFactor;
+                int scissorWidth = (this.width - 12) * scaleFactor;
                 int scissorHeight = contentHeight * scaleFactor;
 
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
                 GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
 
-                int maxVisibleLines = Math.max(1, contentHeight / lineHeight);
-                int startIndex = Math.max(0, out.size() - maxVisibleLines);
-                int currentY = contentStartY;
+                int currentY = contentStartY - scrollOffset;
 
-                for (int i = startIndex; i < out.size(); i++) {
+                for (int i = 0; i < out.size(); i++) {
                     TerminalLine line = out.get(i);
                     int renderColor = (line.color == Theme.getMainColor().getRGB()) ? accentColor.getRGB() : line.color;
                     
-                    fr.drawStringWithShadow(line.text, this.x + 8, currentY, renderColor);
+                    if (currentY + lineHeight >= contentStartY && currentY <= contentStartY + contentHeight) {
+                        fr.drawStringWithShadow(line.text, this.x + 8, currentY, renderColor);
+                    }
                     currentY += lineHeight;
                 }
 
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+                if (maxScroll > 0) {
+                    int trackX = this.x + this.width - 7;
+                    int trackY = contentStartY;
+                    int trackWidth = 3;
+                    int trackHeight = contentHeight;
+
+                    RoundedUtil.drawRound(trackX, trackY, trackWidth, trackHeight, 1.5f, scrollbarTrack);
+
+                    int thumbHeight = Math.max(12, (contentHeight * contentHeight) / totalContentHeight);
+                    int thumbY = trackY + (int) ((float) scrollOffset / maxScroll * (contentHeight - thumbHeight));
+
+                    Color thumbColor = this.scrollingBar ? accentColor : new Color(100, 105, 125, 200);
+                    RoundedUtil.drawRound(trackX, thumbY, trackWidth, thumbHeight, 1.5f, thumbColor);
+                }
             }
 
             int gripX = this.x + this.width - this.resizeHandleSize;
@@ -213,12 +273,34 @@ public class TerminalWindow extends Component {
 
             this.width = Math.max(this.minWidth, Math.min(scaledWidth - this.x - 5, newWidth));
             this.height = Math.max(this.minHeight, Math.min(scaledHeight - this.y - 5, newHeight));
+        } else if (this.scrollingBar && this.opened && maxScroll > 0) {
+            int inputBarHeight = 14;
+            int inputBarY = this.y + this.height - inputBarHeight - 4;
+            int contentStartY = this.y + this.barHeight + 4;
+            int contentHeight = inputBarY - contentStartY - 3;
+
+            float mouseRelativeY = mouseY - contentStartY;
+            float scrollFraction = Math.max(0.0f, Math.min(1.0f, mouseRelativeY / contentHeight));
+            this.scrollOffset = (int) (scrollFraction * maxScroll);
         }
     }
 
     @Override
     public void mouseDown(int x, int y, int b) {
         if (this.hidden) return;
+
+        if (this.opened && maxScroll > 0 && b == 0) {
+            int inputBarHeight = 14;
+            int inputBarY = this.y + this.height - inputBarHeight - 4;
+            int contentStartY = this.y + this.barHeight + 4;
+            int contentHeight = inputBarY - contentStartY - 3;
+            int trackX = this.x + this.width - 9;
+
+            if (x >= trackX && x <= this.x + this.width && y >= contentStartY && y <= contentStartY + contentHeight) {
+                this.scrollingBar = true;
+                return;
+            }
+        }
 
         if (overToggleButton(x, y) && b == 0) {
             this.opened = !this.opened;
@@ -256,6 +338,17 @@ public class TerminalWindow extends Component {
     public void mouseReleased(int x, int y, int m) {
         this.dragging = false;
         this.resizing = false;
+        this.scrollingBar = false;
+    }
+
+    public void handleMouseInput(int dWheel) {
+        if (this.opened && maxScroll > 0) {
+            if (dWheel != 0) {
+                scrollOffset += (dWheel > 0 ? -18 : 18);
+                if (scrollOffset < 0) scrollOffset = 0;
+                if (scrollOffset > maxScroll) scrollOffset = maxScroll;
+            }
+        }
     }
 
     @Override
@@ -265,11 +358,12 @@ public class TerminalWindow extends Component {
         if (keyCode == Keyboard.KEY_RETURN) { // Enter Key
             if (!this.inputText.trim().isEmpty()) {
                 String cmd = this.inputText.trim();
-                print("$ " + cmd);
+                printWrapped("$ " + cmd, Theme.getMainColor().getRGB());
                 commandHistory.add(cmd);
                 this.historyIndex = commandHistory.size();
                 processCommand(cmd);
                 this.inputText = "";
+                scrollOffset = maxScroll; // Auto-scroll
             }
         } else if (keyCode == Keyboard.KEY_BACK) { // Backspace Key
             if (!this.inputText.isEmpty()) {
@@ -313,19 +407,31 @@ public class TerminalWindow extends Component {
 
         switch (cmd) {
             case "help":
-                print("Commands: clear, list, toggle <mod>, bind <mod> <key>, ping, config <name>, exit");
+                printWrapped("Available commands:", textSuccess);
+                printWrapped("  - help: Shows this list", textDefault);
+                printWrapped("  - clear/cls: Clears the console", textDefault);
+                printWrapped("  - list: Shows registered modules", textDefault);
+                printWrapped("  - toggle/t <mod>: Toggles a module", textDefault);
+                printWrapped("  - bind <mod> <key>: Binds a key", textDefault);
+                printWrapped("  - ping: Checks server latency", textDefault);
+                printWrapped("  - config <name>: Loads config", textDefault);
+                printWrapped("  - exit/close: Closes terminal", textDefault);
                 break;
             case "clear":
             case "cls":
                 clearTerminal();
+                scrollOffset = 0;
                 break;
             case "list":
-                print("Registered Modules (" + Raven.moduleManager.numberOfModules() + "):");
+                printWrapped("Registered Modules (" + Raven.moduleManager.numberOfModules() + "):", textSuccess);
                 StringBuilder sb = new StringBuilder();
                 for (Mod m : Raven.moduleManager.getModules()) {
                     sb.append(m.isEnabled() ? "§a" : "§7").append(m.getName()).append("§r, ");
                 }
-                print(sb.toString());
+                if (sb.length() > 2) {
+                    sb.setLength(sb.length() - 2);
+                }
+                printWrapped(sb.toString(), textDefault);
                 break;
             case "toggle":
             case "t":
@@ -333,12 +439,12 @@ public class TerminalWindow extends Component {
                     Mod mod = Raven.moduleManager.getModuleByName(parts[1]);
                     if (mod != null) {
                         mod.toggle();
-                        print("Success: Toggled " + mod.getName() + " -> " + (mod.isEnabled() ? "ENABLED" : "DISABLED"));
+                        printWrapped("Success: Toggled " + mod.getName() + " -> " + (mod.isEnabled() ? "ENABLED" : "DISABLED"), textSuccess);
                     } else {
-                        print("Error: Module '" + parts[1] + "' not found.");
+                        printWrapped("Error: Module '" + parts[1] + "' not found.", textError);
                     }
                 } else {
-                    print("Usage: toggle <module>");
+                    printWrapped("Usage: toggle <module>", textDefault);
                 }
                 break;
             case "bind":
@@ -347,24 +453,24 @@ public class TerminalWindow extends Component {
                     if (mod != null) {
                         int key = Keyboard.getKeyIndex(parts[2].toUpperCase());
                         mod.setKeycode(key);
-                        print("Success: Bound " + mod.getName() + " to " + Keyboard.getKeyName(key));
+                        printWrapped("Success: Bound " + mod.getName() + " to " + Keyboard.getKeyName(key), textSuccess);
                     } else {
-                        print("Error: Module '" + parts[1] + "' not found.");
+                        printWrapped("Error: Module '" + parts[1] + "' not found.", textError);
                     }
                 } else {
-                    print("Usage: bind <module> <key>");
+                    printWrapped("Usage: bind <module> <key>", textDefault);
                 }
                 break;
             case "ping":
                 ChatUtil.checkPing();
-                print("Checking ping...");
+                printWrapped("Checking ping...", textDefault);
                 break;
             case "config":
                 if (parts.length > 1) {
                     ConfigManager.loadConfigByName(parts[1]);
-                    print("Success: Loaded config '" + parts[1] + "'");
+                    printWrapped("Success: Loaded config '" + parts[1] + "'", textSuccess);
                 } else {
-                    print("Current config: " + ConfigManager.getCurrentProfileName());
+                    printWrapped("Current config: " + ConfigManager.getCurrentProfileName(), textDefault);
                 }
                 break;
             case "exit":
@@ -374,10 +480,11 @@ public class TerminalWindow extends Component {
             default:
                 boolean handled = CommandManager.execute("." + rawCmd);
                 if (!handled) {
-                    print("Unknown command: '" + cmd + "'. Type 'help' for commands.");
+                    printWrapped("Unknown command: '" + cmd + "'. Type 'help' for commands.", textError);
                 }
                 break;
         }
+        scrollOffset = maxScroll;
     }
 
     @Override

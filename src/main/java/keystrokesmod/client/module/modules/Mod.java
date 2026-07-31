@@ -1,28 +1,25 @@
 package keystrokesmod.client.module.modules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 import org.lwjgl.input.Keyboard;
 
-import com.google.gson.JsonObject;
-
 import keystrokesmod.client.event.EventBus;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.modules.client.HUD;
 import keystrokesmod.client.module.value.Value;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Wrapper;
 
-public class Mod extends Wrapper {
-    protected final ArrayList<Value> settings = new ArrayList<>();
+public abstract class Mod extends Wrapper {
+    protected final List<Value> settings = new ArrayList<>();
+    
     private final ModuleInfo moduleInfo;
     private final String moduleName;
     private final Category moduleCategory;
+    
     protected boolean enabled;
     protected int keycode;
     private boolean isToggled = false;
@@ -37,39 +34,13 @@ public class Mod extends Wrapper {
         this.enabled = moduleInfo.enabled();
     }
 
+    @SuppressWarnings("unchecked")
     protected <E extends Mod> E withEnabled(boolean state) {
         this.enabled = state;
         try {
             this.setToggled(state);
         } catch (Exception ignored) {}
         return (E) this;
-    }
-
-    public JsonObject getConfigAsJson() {
-        JsonObject settingsJson = new JsonObject();
-        for (Value setting : this.settings) {
-            settingsJson.add(setting.getName(), setting.getConfigAsJson());
-        }
-
-        JsonObject data = new JsonObject();
-        data.addProperty("enabled", this.enabled);
-        data.addProperty("keycode", this.keycode);
-        data.add("settings", settingsJson);
-        return data;
-    }
-
-    public void applyConfigFromJson(JsonObject data) {
-        try {
-            this.keycode = data.get("keycode").getAsInt();
-            this.setToggled(data.get("enabled").getAsBoolean());
-
-            JsonObject settingsData = data.get("settings").getAsJsonObject();
-            for (Value setting : this.settings) {
-                if (settingsData.has(setting.getName())) {
-                    setting.applyConfigFromJson(settingsData.get(setting.getName()).getAsJsonObject());
-                }
-            }
-        } catch (NullPointerException ignored) {}
     }
 
     public void keybind() {
@@ -92,23 +63,23 @@ public class Mod extends Wrapper {
     }
 
     public void toggle() {
-        if (this.enabled) {
-            this.disable();
-        } else {
-            this.enable();
-        }
+        this.setToggled(!this.enabled);
     }
 
     public void enable() {
-        this.enabled = true;
-        this.onEnable();
-        EventBus.INSTANCE.register(this);
+        if (!this.enabled) {
+            this.enabled = true;
+            this.onEnable();
+            EventBus.INSTANCE.register(this);
+        }
     }
 
     public void disable() {
-        this.enabled = false;
-        this.onDisable();
-        EventBus.INSTANCE.unregister(this);
+        if (this.enabled) {
+            this.enabled = false;
+            this.onDisable();
+            EventBus.INSTANCE.unregister(this);
+        }
     }
 
     public boolean canBeEnabled() {
@@ -127,18 +98,30 @@ public class Mod extends Wrapper {
         return this.moduleCategory;
     }
 
-    public ArrayList<Value> getSettings() {
+    public Category getCategory() {
+        return this.moduleCategory;
+    }
+
+    public List<Value> getSettings() {
         return this.settings;
     }
 
-    public void addSetting(Value... settings) {
-        this.settings.addAll(Arrays.asList(settings));
+    public void addSetting(Value... newSettings) {
+        for (int i = 0; i < newSettings.length; i++) {
+            Value setting = newSettings[i];
+            if (setting != null) {
+                this.settings.add(setting);
+            }
+        }
     }
 
     public Value getSettingByName(String name) {
-        for (Value setting : this.settings) {
-            if (setting.getName().equalsIgnoreCase(name)) {
-                return setting;
+        if (name == null) return null;
+        
+        for (int i = 0; i < this.settings.size(); i++) {
+            Value val = this.settings.get(i);
+            if (val.getName().equalsIgnoreCase(name)) {
+                return val;
             }
         }
         return null;
@@ -147,8 +130,8 @@ public class Mod extends Wrapper {
     public void resetToDefaults() {
         this.keycode = moduleInfo.key();
         this.setToggled(moduleInfo.enabled());
-        for (Value setting : this.settings) {
-            setting.resetToDefaults();
+        for (int i = 0; i < this.settings.size(); i++) {
+            this.settings.get(i).resetToDefaults();
         }
     }
 

@@ -64,21 +64,24 @@ public class ModuleButton extends Component {
         Color textColor;
         if (this.mod.isEnabled()) {
             Color mainColor = Theme.getMainColor();
-            Color pillBg = new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 45);
+            Color pillBg = new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 50);
             RoundedUtil.drawRound(x + 4, baseY + 1, width - 8, 14, 3f, pillBg);
             textColor = mainColor;
         } else if (this.mod.canBeEnabled()) {
-            textColor = new Color(200, 200, 205);
+            textColor = new Color(200, 202, 215);
         } else {
-            textColor = new Color(100, 100, 105);
+            textColor = new Color(90, 92, 105);
         }
 
+        // Draw Module Name
         mc.fontRendererObj.drawStringWithShadow(
             mod.getName(),
             x + width / 2 - mc.fontRendererObj.getStringWidth(mod.getName()) / 2,
             baseY + 4,
             textColor.getRGB()
         );
+
+        // Settings Dropdown Indicator Dot removed as requested
 
         if (open) {
             category.r3nd3r();

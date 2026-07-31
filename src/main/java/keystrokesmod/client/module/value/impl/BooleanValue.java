@@ -1,82 +1,72 @@
 package keystrokesmod.client.module.value.impl;
 
-import java.util.function.Supplier;
-
-import com.google.gson.JsonObject;
+import java.util.function.BooleanSupplier;
 
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 
 public class BooleanValue extends Value {
-	private boolean isEnabled;
-	private boolean defaultValue;
-    public boolean isMethodButton;
-    private Runnable method;
-	
-    public BooleanValue(String name, Mod module, boolean value, Supplier<Boolean> visible) {
+    private boolean isEnabled;
+    
+    private final boolean defaultValue;
+    public final boolean isMethodButton;
+    private final Runnable method;
+
+    public BooleanValue(String name, Mod module, boolean value, BooleanSupplier visible) {
         super(name, module, visible);
-		this.isEnabled = value;
-		this.defaultValue = value;
+        this.isEnabled = value;
+        this.defaultValue = value;
+        this.isMethodButton = false;
+        this.method = null;
     }
 
     public BooleanValue(String name, Mod module, boolean value) {
-        this(name, module, value, () -> true);
-    }
-    
-    public BooleanValue(String name, Runnable method) {
-        this(name, null, method, () -> true);
+        this(name, module, value, null);
     }
 
-    public BooleanValue(String name, Mod module, Runnable method, Supplier<Boolean> visibleCheck) {
-		super(name, null, visibleCheck);
+    public BooleanValue(String name, Runnable method) {
+        this(name, null, method, null);
+    }
+
+    public BooleanValue(String name, Mod module, Runnable method, BooleanSupplier visibleCheck) {
+        super(name, module, visibleCheck);
         this.isEnabled = false;
+        this.defaultValue = false;
         this.isMethodButton = true;
         this.method = method;
     }
 
-	@Override
-	public void resetToDefaults() {
-		this.isEnabled = this.defaultValue;
-	}
+    @Override
+    public void resetToDefaults() {
+        this.isEnabled = this.defaultValue;
+    }
 
-	@Override
-	public JsonObject getConfigAsJson() {
-		final JsonObject data = new JsonObject();
-		data.addProperty("type", this.getSettingType());
-		data.addProperty("value", Boolean.valueOf(this.getValue()));
-		return data;
-	}
+    @Override
+    public String getSettingType() {
+        return "tick";
+    }
 
-	@Override
-	public String getSettingType() {
-		return "tick";
-	}
+    public boolean getValue() {
+        return this.isEnabled;
+    }
 
-	@Override
-	public void applyConfigFromJson(final JsonObject data) {
-		if (!data.get("type").getAsString().equals(this.getSettingType())) {
-			return;
-		}
-		this.setEnabled(data.get("value").getAsBoolean());
-	}
+    public void toggle() {
+        this.isEnabled = !this.isEnabled;
+        
+        if (this.isMethodButton && this.method != null) {
+            this.method.run();
+        }
+    }
 
-	public boolean getValue() {
-		return this.isEnabled;
-	}
+    public void enable() {
+        this.isEnabled = true;
+    }
 
-	public void toggle() {
-		this.isEnabled = !this.isEnabled;
-	}
+    public void disable() {
+        this.isEnabled = false;
+    }
 
-	public void enable() {
-		this.isEnabled = true;
-	}
-
-	public void disable() {
-		this.isEnabled = false;
-	}
-
-	public void setEnabled(final boolean b) {
-		this.isEnabled = b;
-	}
+    public void setEnabled(final boolean b) {
+        this.isEnabled = b;
+    }
 }

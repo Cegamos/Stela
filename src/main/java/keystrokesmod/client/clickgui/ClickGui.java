@@ -9,6 +9,7 @@ import org.lwjgl.input.Mouse;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.clickgui.component.CategoryPanel;
 import keystrokesmod.client.clickgui.component.Component;
+import keystrokesmod.client.clickgui.window.ManagementWindow;
 import keystrokesmod.client.clickgui.window.TerminalWindow;
 import keystrokesmod.client.config.ConfigManager;
 import keystrokesmod.client.module.Category;
@@ -21,11 +22,13 @@ public class ClickGui extends GuiScreen {
     private static final ResourceLocation blur = new ResourceLocation("shaders/post/blur.json");
     private final ArrayList<CategoryPanel> categoryList;
     public final TerminalWindow terminal;
+    public final ManagementWindow managementWindow;
     
     private String cachedWatermark;
 
     public ClickGui() {
         this.terminal = new TerminalWindow();
+        this.managementWindow = new ManagementWindow();
         this.categoryList = new ArrayList<>(Category.values().length);
         
         int leftOffset = 10;
@@ -68,22 +71,28 @@ public class ClickGui extends GuiScreen {
             category.rf(this.fontRendererObj);
             category.up(x, y);
 
-            if (category.isOpened() && !category.getModules().isEmpty()) {
-                int adjustedMouseY = y - category.getScrollOffset();
-                for (final Component module : category.getModules()) {
-                    module.update(x, adjustedMouseY);
-                }
+            int adjustedMouseY = y - category.getScrollOffset();
+            for (final Component module : category.getModules()) {
+                module.update(x, adjustedMouseY);
             }
         }
 
         this.terminal.update(x, y);
         this.terminal.draw();
+
+        this.managementWindow.update(x, y);
+        this.managementWindow.draw();
     }
 
     @Override
     public void mouseClicked(final int x, final int y, final int mouseButton) throws IOException {
         this.terminal.mouseDown(x, y, mouseButton);
         if (this.terminal.overPosition(x, y)) {
+            return;
+        }
+
+        this.managementWindow.mouseDown(x, y, mouseButton);
+        if (this.managementWindow.overPosition(x, y)) {
             return;
         }
 
@@ -114,7 +123,8 @@ public class ClickGui extends GuiScreen {
     @Override
     public void mouseReleased(final int x, final int y, final int s) {
         this.terminal.mouseReleased(x, y, s);
-        if (this.terminal.overPosition(x, y)) {
+        this.managementWindow.mouseReleased(x, y, s);
+        if (this.terminal.overPosition(x, y) || this.managementWindow.overPosition(x, y)) {
             return;
         }
 
@@ -173,6 +183,15 @@ public class ClickGui extends GuiScreen {
             final int mouseX = (Mouse.getEventX() * this.width) / this.mc.displayWidth;
             final int mouseY = this.height - (Mouse.getEventY() * this.height) / this.mc.displayHeight - 1;
             
+            if (this.terminal.overPosition(mouseX, mouseY)) {
+                this.terminal.handleMouseInput(dWheel);
+                return;
+            }
+            if (this.managementWindow.overPosition(mouseX, mouseY)) {
+                this.managementWindow.handleMouseInput(dWheel);
+                return;
+            }
+
             final int scrollAmount = dWheel > 0 ? 18 : -18;
             boolean handled = false;
 

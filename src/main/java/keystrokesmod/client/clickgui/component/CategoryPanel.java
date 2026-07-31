@@ -29,9 +29,13 @@ public class CategoryPanel {
     public String pvp;
     public boolean pin;
 
-    // Scrolling
+    // Scrolling & Viewport Cache
     private int scrollOffset = 0;
     private int maxScroll = 0;
+    private int lastDisplayWidth = -1;
+    private int lastDisplayHeight = -1;
+    private int cachedScaleFactor = 2;
+    private int cachedScaledHeight = 240;
 
     public CategoryPanel(final Category category) {
         this.modulesInCategory = new ArrayList<Component>();
@@ -41,7 +45,7 @@ public class CategoryPanel {
         this.width = 96;
         this.x = 5;
         this.y = 5;
-        this.bh = 15;
+        this.bh = 16;
         this.xx = 0;
         this.categoryOpened = false;
         this.inUse = false;
@@ -103,9 +107,11 @@ public class CategoryPanel {
 
     private void clampScroll() {
         int totalModulesHeight = 0;
-        for (Component c : this.modulesInCategory) {
-            totalModulesHeight += c.height();
+        final int size = this.modulesInCategory.size();
+        for (int i = 0; i < size; i++) {
+            totalModulesHeight += this.modulesInCategory.get(i).height();
         }
+
         int maxVisibleHeight = 260;
         if (totalModulesHeight > maxVisibleHeight) {
             this.maxScroll = totalModulesHeight - maxVisibleHeight;
@@ -121,13 +127,24 @@ public class CategoryPanel {
         }
     }
 
+    private void updateResolutionCache(Minecraft mc) {
+        if (mc.displayWidth != lastDisplayWidth || mc.displayHeight != lastDisplayHeight) {
+            ScaledResolution sr = new ScaledResolution(mc);
+            cachedScaleFactor = sr.getScaleFactor();
+            cachedScaledHeight = sr.getScaledHeight();
+            lastDisplayWidth = mc.displayWidth;
+            lastDisplayHeight = mc.displayHeight;
+        }
+    }
+
     public void rf(final FontRenderer renderer) {
         this.width = 96;
 
         int totalModulesHeight = 0;
         if (!this.modulesInCategory.isEmpty() && this.categoryOpened) {
-            for (final Component m : this.modulesInCategory) {
-                totalModulesHeight += m.height();
+            final int size = this.modulesInCategory.size();
+            for (int i = 0; i < size; i++) {
+                totalModulesHeight += this.modulesInCategory.get(i).height();
             }
         }
 
@@ -135,51 +152,47 @@ public class CategoryPanel {
         int totalPanelHeight = this.bh + (this.categoryOpened ? maxPanelHeight + 4 : 4);
 
         Color accentColor = Theme.getMainColor();
-        Color bgDark = new Color(18, 18, 22, 235);
-        Color headerDark = new Color(28, 28, 35, 245);
+        Color bgDark = new Color(13, 14, 19, 238);
+        Color headerDark = new Color(22, 24, 32, 250);
+        Color outlineColor = new Color(45, 48, 65, 200);
 
-        // Render card body
-        RoundedUtil.drawRound(this.x, this.y, this.width, totalPanelHeight, 6f, bgDark);
-        // Header
+        // Enterprise Shader Outline Card
+        RoundedUtil.drawRoundOutline(this.x, this.y, this.width, totalPanelHeight, 6f, 1f, bgDark, outlineColor);
+
+        // Header Card Background
         RoundedUtil.drawRound(this.x, this.y, this.width, this.bh + 2, 6f, headerDark);
 
-        // Header Accent line
+        // Header Accent Underline
         RoundedUtil.drawRound(this.x + 2, this.y + this.bh + 1, this.width - 4, 1.5f, 0.75f, accentColor);
 
-        // Draw Header Text
+        // Category Name (Clean Enterprise Typography)
         String textToDraw = this.n4m ? this.pvp : this.categoryName.name();
-        int textWidth = renderer.getStringWidth(textToDraw);
-        float centeredX = this.x + (this.width - textWidth) / 2.0f;
-
-        renderer.drawString(
+        renderer.drawStringWithShadow(
             textToDraw,
-            centeredX,
+            this.x + 8,
             this.y + 4,
-            accentColor.getRGB(),
-            false
+            Color.WHITE.getRGB()
         );
 
-        // Draw toggle symbol (+ / -)
+        // Toggle Indicator (− / +)
         if (!this.n4m) {
-            renderer.drawString(
-                this.categoryOpened ? "-" : "+",
+            renderer.drawStringWithShadow(
+                this.categoryOpened ? "−" : "+",
                 this.x + this.width - 12,
                 this.y + 4,
-                Color.WHITE.getRGB(),
-                false
+                accentColor.getRGB()
             );
         }
 
-        // Draw modules with Scissor Clipping when opened
+        // Render Modules inside GL Scissor Viewport when opened
         if (this.categoryOpened && !this.modulesInCategory.isEmpty()) {
             Minecraft mc = Minecraft.getMinecraft();
-            ScaledResolution sr = new ScaledResolution(mc);
-            int scaleFactor = sr.getScaleFactor();
+            updateResolutionCache(mc);
 
-            int scissorX = this.x * scaleFactor;
-            int scissorY = (sr.getScaledHeight() - (this.y + this.bh + 3 + maxPanelHeight)) * scaleFactor;
-            int scissorWidth = this.width * scaleFactor;
-            int scissorHeight = (maxPanelHeight + 2) * scaleFactor;
+            int scissorX = this.x * cachedScaleFactor;
+            int scissorY = (cachedScaledHeight - (this.y + this.bh + 3 + maxPanelHeight)) * cachedScaleFactor;
+            int scissorWidth = this.width * cachedScaleFactor;
+            int scissorHeight = (maxPanelHeight + 2) * cachedScaleFactor;
 
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
@@ -187,8 +200,9 @@ public class CategoryPanel {
             GL11.glPushMatrix();
             GL11.glTranslatef(0, this.scrollOffset, 0);
 
-            for (final Component c2 : this.modulesInCategory) {
-                c2.draw();
+            final int size = this.modulesInCategory.size();
+            for (int i = 0; i < size; i++) {
+                this.modulesInCategory.get(i).draw();
             }
 
             GL11.glPopMatrix();
@@ -198,7 +212,9 @@ public class CategoryPanel {
 
     public void r3nd3r() {
         int o = this.bh + 3;
-        for (final Component c : this.modulesInCategory) {
+        final int size = this.modulesInCategory.size();
+        for (int i = 0; i < size; i++) {
+            final Component c = this.modulesInCategory.get(i);
             c.setComponentStartAt(o);
             o += c.height();
         }
@@ -240,8 +256,9 @@ public class CategoryPanel {
         int totalHeight = this.bh;
         if (this.categoryOpened) {
             int modulesHeight = 0;
-            for (Component c : this.modulesInCategory) {
-                modulesHeight += c.height();
+            final int size = this.modulesInCategory.size();
+            for (int i = 0; i < size; i++) {
+                modulesHeight += this.modulesInCategory.get(i).height();
             }
             totalHeight += Math.min(modulesHeight, 260) + 4;
         }
