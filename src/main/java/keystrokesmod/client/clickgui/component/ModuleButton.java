@@ -12,6 +12,9 @@ import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.util.animations.Animation;
+import keystrokesmod.client.util.animations.Direction;
+import keystrokesmod.client.util.animations.SmoothStepAnimation;
 import keystrokesmod.client.util.render.RoundedUtil;
 
 public class ModuleButton extends Component {
@@ -21,6 +24,7 @@ public class ModuleButton extends Component {
     public boolean open;
 
     private final ArrayList<Component> settings = new ArrayList<>();
+    private final Animation enableAnimation = new SmoothStepAnimation(150, 1.0);
 
     public ModuleButton(final Mod mod, final CategoryPanel parent, final int offset) {
         this.mod = mod;
@@ -61,16 +65,23 @@ public class ModuleButton extends Component {
         int width = category.getWidth();
         int baseY = category.getY() + offset;
 
-        Color textColor;
-        if (this.mod.isEnabled()) {
+        enableAnimation.setDirection(this.mod.isEnabled() ? Direction.FORWARDS : Direction.BACKWARDS);
+        double anim = enableAnimation.getOutput();
+
+        if (anim > 0.0) {
             Color mainColor = Theme.getMainColor();
-            Color pillBg = new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 50);
+            int alpha = (int) (50 * anim);
+            Color pillBg = new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), alpha);
             RoundedUtil.drawRound(x + 4, baseY + 1, width - 8, 14, 3f, pillBg);
-            textColor = mainColor;
-        } else if (this.mod.canBeEnabled()) {
-            textColor = new Color(200, 202, 215);
-        } else {
+        }
+
+        Color textColor;
+        if (!this.mod.canBeEnabled()) {
             textColor = new Color(90, 92, 105);
+        } else {
+            Color disabledColor = new Color(200, 202, 215);
+            Color mainColor = Theme.getMainColor();
+            textColor = interpolateColor(disabledColor, mainColor, (float) anim);
         }
 
         // Draw Module Name
@@ -162,5 +173,14 @@ public class ModuleButton extends Component {
 
     public CategoryPanel getCategory() {
         return category;
+    }
+
+    private Color interpolateColor(Color color1, Color color2, float factor) {
+        factor = Math.max(0.0f, Math.min(1.0f, factor));
+        int r = (int) (color1.getRed() + factor * (color2.getRed() - color1.getRed()));
+        int g = (int) (color1.getGreen() + factor * (color2.getGreen() - color1.getGreen()));
+        int b = (int) (color1.getBlue() + factor * (color2.getBlue() - color1.getBlue()));
+        int a = (int) (color1.getAlpha() + factor * (color2.getAlpha() - color1.getAlpha()));
+        return new Color(r, g, b, a);
     }
 }

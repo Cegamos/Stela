@@ -5,7 +5,6 @@ import java.util.List;
 
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
-import keystrokesmod.client.event.impl.MouseEvent;
 import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.util.IMinecraft;
 import keystrokesmod.client.util.Utils;
@@ -16,15 +15,7 @@ public class MouseManager implements IMinecraft {
     public static long leftClickTimer = 0;
     public static long rightClickTimer = 0;
     
-    @EventLink
-    public final Listener<MouseEvent> onMouseUpdate = mouse -> {
-        if (mouse.getButton() == 0) {
-            addLeftClick();
-        } else if (mouse.getButton() == 1) {
-            addRightClick();
-        }
-    };
-    
+
     @EventLink
     public final Listener<RenderTextEvent> renderTextEvent = event -> {
         if (event.getText() != null) {

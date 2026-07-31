@@ -37,7 +37,7 @@ public class ModuleManager {
 
         registerModules(
             new FPSSpoofer(), new GuiModule(), new SelfDestruct(), new Terminal(), new HUD(),
-            new AimAssist(), new AutoBlock(), new AutoWeapon(), new BlockHit(), new ClickAssist(),
+            new AimAssist(), new AutoBlock(), new AutoWeapon(), new BlockHit(),
             new DelayRemover(), new HitBox(), new LeftClicker(), new Reach(), new ShiftTap(),
             new WTap(), new STap(), new Velocity(),
             new Armour(), new Blocks(), new Healing(), new Ladders(), new Pearl(),

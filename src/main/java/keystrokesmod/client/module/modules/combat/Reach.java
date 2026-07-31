@@ -7,7 +7,6 @@ import org.lwjgl.input.Mouse;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
-import keystrokesmod.client.event.impl.MouseEvent;
 import keystrokesmod.client.event.impl.PostRenderTickEvent;
 import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.module.Category;
@@ -33,17 +32,6 @@ public class Reach extends Mod {
     private final BooleanValue sprint_only = new BooleanValue("Sprint only", this, false);
     private final BooleanValue hit_through_blocks = new BooleanValue("Hit through blocks", this, false);
 
-    @EventLink
-    private Listener<MouseEvent> mouse = event -> {
-        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
-        if (autoClicker != null && autoClicker.isEnabled() && Mouse.isButtonDown(0)) {
-            return;
-        }
-        if (event.getButton() >= 0 && event.isButtonstate()) {
-            call();
-        }
-    };
-    
     @EventLink
     private Listener<PreRenderTickEvent> preRenderTick = event -> both();
     

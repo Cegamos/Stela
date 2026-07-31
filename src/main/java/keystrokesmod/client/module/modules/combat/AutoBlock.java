@@ -21,9 +21,9 @@ import net.minecraft.item.ItemSword;
 
 @ModuleInfo(name = "AutoBlock", category = Category.Combat)
 public class AutoBlock extends Mod {
-    public RangeValue duration = new RangeValue("Block duration (MS)", this, 20.0, 100.0, 1.0, 500.0, 1.0);
-    public RangeValue distance = new RangeValue("Distance to player (blocks)", this, 0.0, 3.0, 0.0, 6.0, 0.01);
-    public NumberValue chance = new NumberValue("Chance %", this, 100.0, 0.0, 100.0, 1.0);
+    public RangeValue duration = new RangeValue("Block duration", this, 20.0, 100.0, 1.0, 500.0, 1.0);
+    public RangeValue distance = new RangeValue("Distance to player", this, 0.0, 3.0, 0.0, 6.0, 0.01);
+    public NumberValue chance = new NumberValue("Chance", this, 100.0, 0.0, 100.0, 1.0);
     
     private boolean engaged;
     private final Clock engagedTime = new Clock(0);
@@ -38,7 +38,6 @@ public class AutoBlock extends Mod {
         if (mc.thePlayer == null || mc.currentScreen != null) return;
 
         if (this.engaged) {
-            // Liberar si el tiempo terminó o el usuario soltó el clic
             if ((this.engagedTime.hasFinished() || !Mouse.isButtonDown(0)) && 
                 this.engagedTime.getElapsedTime() >= duration.getInputMin()) {
                 this.engaged = false;

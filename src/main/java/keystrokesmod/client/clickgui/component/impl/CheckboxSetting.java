@@ -9,6 +9,10 @@ import keystrokesmod.client.clickgui.component.ModuleButton;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
+import keystrokesmod.client.util.animations.Animation;
+import keystrokesmod.client.util.animations.Direction;
+import keystrokesmod.client.util.animations.SmoothStepAnimation;
+import keystrokesmod.client.util.render.ColorUtil;
 import keystrokesmod.client.util.render.RoundedUtil;
 
 public class CheckboxSetting extends Component {
@@ -16,6 +20,7 @@ public class CheckboxSetting extends Component {
     private final BooleanValue setting;
     private final ModuleButton module;
     private int offset;
+    private final Animation toggleAnimation = new SmoothStepAnimation(140, 1.0);
 
     public CheckboxSetting(final Mod mod, final BooleanValue setting, final ModuleButton module, final int offset) {
         this.mod = mod;
@@ -26,28 +31,43 @@ public class CheckboxSetting extends Component {
 
     @Override
     public void draw() {
-        int boxX = this.module.getCategory().getX() + 8;
-        int boxY = this.module.getCategory().getY() + this.offset + 4;
+        int trackX = this.module.getCategory().getX() + 8;
+        float trackY = this.module.getCategory().getY() + this.offset + 3.5f;
         boolean active = this.setting.getValue();
 
+        toggleAnimation.setDirection(active ? Direction.FORWARDS : Direction.BACKWARDS);
+        double animProgress = toggleAnimation.getOutput();
+
         Color mainColor = Theme.getMainColor();
-        Color boxBg = active ? mainColor : new Color(28, 29, 38, 240);
-        Color boxBorder = active ? mainColor : new Color(50, 52, 65, 255);
+        Color inactiveBg = new Color(30, 32, 42, 240);
+        Color trackBg = ColorUtil.interpolateColorC(inactiveBg, mainColor, (float) animProgress);
 
-        RoundedUtil.drawRound(boxX - 0.5f, boxY - 0.5f, 7f, 7f, 1.5f, boxBorder);
-        RoundedUtil.drawRound(boxX, boxY, 6f, 6f, 1f, boxBg);
+        Color inactiveKnob = new Color(130, 135, 150);
+        Color knobColor = ColorUtil.interpolateColorC(inactiveKnob, Color.BLACK, (float) animProgress);
 
-        if (active) {
-            RoundedUtil.drawRound(boxX + 2f, boxY + 2f, 2f, 2f, 0.5f, Color.WHITE);
-        }
+        RoundedUtil.drawRound(trackX, trackY, 12f, 5f, 2.5f, trackBg);
+
+        float knobX = (float) (trackX + 0.75f + (animProgress * 7.0f));
+        RoundedUtil.drawRound(knobX, trackY + 0.75f, 3.5f, 3.5f, 1.75f, knobColor);
 
         GL11.glPushMatrix();
         GL11.glScaled(0.5D, 0.5D, 0.5D);
+
+        int startX = (this.module.getCategory().getX() + 23) * 2;
+        int maxX = (this.module.getCategory().getX() + this.module.getCategory().getWidth() - 6) * 2;
+        int maxNameWidth = maxX - startX;
+
+        String displayName = this.setting.getName();
+        if (maxNameWidth > 10 && mc.fontRendererObj.getStringWidth(displayName) > maxNameWidth) {
+            displayName = mc.fontRendererObj.trimStringToWidth(displayName, maxNameWidth - mc.fontRendererObj.getStringWidth("...")) + "...";
+        }
+
+        Color textColor = ColorUtil.interpolateColorC(new Color(135, 138, 150), new Color(230, 232, 240), (float) animProgress);
         mc.fontRendererObj.drawStringWithShadow(
-            this.setting.getName(),
-            (float) ((this.module.getCategory().getX() + 19) * 2),
-            (float) ((this.module.getCategory().getY() + this.offset + 3) * 2),
-            active ? new Color(230, 232, 240).getRGB() : new Color(135, 138, 150).getRGB()
+            displayName,
+            (float) startX,
+            (float) ((this.module.getCategory().getY() + this.offset + 6) * 2),
+            textColor.getRGB()
         );
         GL11.glPopMatrix();
     }

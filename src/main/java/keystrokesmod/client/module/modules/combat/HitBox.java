@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
-import keystrokesmod.client.event.impl.MouseEvent;
 import keystrokesmod.client.event.impl.PostRenderTickEvent;
 import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.event.impl.RenderWorldLastEvent;
@@ -40,14 +39,7 @@ public class HitBox extends Mod {
     	super.update();
         gmo(1.0f);
     }
-    
-    @EventLink
-    private Listener<MouseEvent> mouse = event -> {
-    	if (checkGame()) return;
-    	if (event.getButton() == 0 && event.isButtonstate() && mv != null)
-    		mc.objectMouseOver = mv;
-    };
-    
+  
     @EventLink
     private Listener<PreRenderTickEvent> preRenderTick = event -> both();
     
