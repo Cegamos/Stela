@@ -1,11 +1,11 @@
 package keystrokesmod.client.util.font;
 
+import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
 
 public enum Fonts {
     RUBIK("rubik", "ttf"),
@@ -48,7 +48,7 @@ public enum Fonts {
         int key = generateKey(size, weight);
 
         if (!sizes.containsKey(key)) {
-            java.awt.Font awtFont = null;
+            Font awtFont = null;
 
             String[] aliases = weight.getAliases().isEmpty() ? new String[]{""} : weight.getAliases().split(",");
 
@@ -63,9 +63,11 @@ public enum Fonts {
             }
 
             if (awtFont != null) {
+                System.out.println("Fuente cargada correctamente: " + location);
                 sizes.put(key, new FontRenderer(awtFont));
             } else {
                 System.err.println("No se pudo cargar la fuente para: " + name + ", tamaño: " + size);
+                sizes.put(key, new FontRenderer(new Font("SansSerif", Font.PLAIN, Math.max(size, 1))));
             }
         }
 
@@ -76,12 +78,14 @@ public enum Fonts {
         return 31 * size + weight.getNum();
     }
 
-    public java.awt.Font getResource(final String resource, final int size) {
-        try {
-            return java.awt.Font.createFont(
-                java.awt.Font.TRUETYPE_FONT,
-                Minecraft.getMinecraft().getResourceManager().getResource(new net.minecraft.util.ResourceLocation("keystrokes", resource)).getInputStream()
-            ).deriveFont((float) size);
+    public Font getResource(final String resource, final int size) {
+        try (InputStream is = Fonts.class.getResourceAsStream("/" + resource)) {
+            if (is == null) {
+                System.err.println("Error cargando fuente: " + resource);
+                return null;
+            }
+            
+            return Font.createFont(Font.TRUETYPE_FONT, is).deriveFont((float) size);
         } catch (final FontFormatException | IOException e) {
             System.err.println("Error cargando fuente: " + resource);
             e.printStackTrace();

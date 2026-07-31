@@ -107,8 +107,13 @@ public class ConfigManager {
 
                 Mod module = findModule(modules, moduleName);
                 if (module != null) {
-                    if (enabled != module.isEnabled()) {
-                        module.toggle();
+                    try {
+                        if (enabled != module.isEnabled()) {
+                            module.toggle();
+                        }
+                    } catch (Exception toggleError) {
+                        System.err.println("[Config] Failed to toggle module '" + moduleName + "': " + toggleError);
+                        toggleError.printStackTrace();
                     }
                     module.setKeycode(keycode);
                 }
@@ -120,35 +125,40 @@ public class ConfigManager {
 
                     Value setting = module != null ? findSetting(module, settingName) : null;
 
-                    switch (type) {
-                        case 1: // TickSetting
-                            boolean bVal = dis.readBoolean();
-                            if (setting instanceof BooleanValue) {
-                                ((BooleanValue) setting).setEnabled(bVal);
-                            }
-                            break;
-                        case 2: // SliderSetting
-                            double sVal = dis.readDouble();
-                            if (setting instanceof NumberValue) {
-                                ((NumberValue) setting).setValue(sVal);
-                            }
-                            break;
-                        case 3: // DoubleSliderSetting
-                            double minVal = dis.readDouble();
-                            double maxVal = dis.readDouble();
-                            if (setting instanceof RangeValue) {
-                                ((RangeValue) setting).setValueMin(minVal);
-                                ((RangeValue) setting).setValueMax(maxVal);
-                            }
-                            break;
-                        case 4: // ComboSetting
-                            String mVal = dis.readUTF();
-                            if (setting instanceof ModeValue) {
-                                ((ModeValue) setting).setMode(mVal);
-                            }
-                            break;
-                        case 0:
-                            break;
+                    try {
+                        switch (type) {
+                            case 1: // TickSetting
+                                boolean bVal = dis.readBoolean();
+                                if (setting instanceof BooleanValue) {
+                                    ((BooleanValue) setting).setEnabled(bVal);
+                                }
+                                break;
+                            case 2: // SliderSetting
+                                double sVal = dis.readDouble();
+                                if (setting instanceof NumberValue) {
+                                    ((NumberValue) setting).setValue(sVal);
+                                }
+                                break;
+                            case 3: // DoubleSliderSetting
+                                double minVal = dis.readDouble();
+                                double maxVal = dis.readDouble();
+                                if (setting instanceof RangeValue) {
+                                    ((RangeValue) setting).setValueMin(minVal);
+                                    ((RangeValue) setting).setValueMax(maxVal);
+                                }
+                                break;
+                            case 4: // ComboSetting
+                                String mVal = dis.readUTF();
+                                if (setting instanceof ModeValue) {
+                                    ((ModeValue) setting).setMode(mVal);
+                                }
+                                break;
+                            case 0:
+                                break;
+                        }
+                    } catch (Exception settingError) {
+                        System.err.println("[Config] Failed to apply setting '" + settingName + "' on '" + moduleName + "': " + settingError);
+                        settingError.printStackTrace();
                     }
                 }
             }
