@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.setting.impl;
+package keystrokesmod.client.module.value.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,27 +11,27 @@ import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.Mod;
-import keystrokesmod.client.module.setting.Setting;
+import keystrokesmod.client.module.value.Value;
 
-public class ComboSetting extends Setting {
+public class ModeValue extends Value {
 	private int index;
 	private final List<String> list;
 	
-    public ComboSetting(String name, Mod module, Supplier<Boolean> visible, String current, String... modes) {
+    public ModeValue(String name, Mod module, Supplier<Boolean> visible, String current, String... modes) {
         super(name, module, visible);
         this.list = Collections.unmodifiableList(Arrays.asList(modes));
         setMode(current);
     }
 
-    public ComboSetting(String name, Mod module, String current, String... modes) {
+    public ModeValue(String name, Mod module, String current, String... modes) {
         this(name, module, () -> true, current, modes);
     }
 
-    public ComboSetting(String name, Mod module, Enum<?> current, Enum<?>... enumModes) {
+    public ModeValue(String name, Mod module, Enum<?> current, Enum<?>... enumModes) {
         this(name, module, () -> true, current, enumModes);
     }
 
-    public ComboSetting(String name, Mod module, Supplier<Boolean> visible, Enum<?> current, Enum<?>... enumModes) {
+    public ModeValue(String name, Mod module, Supplier<Boolean> visible, Enum<?> current, Enum<?>... enumModes) {
         super(name, module, visible);
         this.list = Arrays.stream(enumModes).map(Enum::toString).collect(Collectors.toList());
         setMode(current.name());

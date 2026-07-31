@@ -8,8 +8,8 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.block.Block;
@@ -24,16 +24,16 @@ import net.minecraft.util.BlockPos;
 @ModuleInfo(name = "AimAssist", category = Category.Combat)
 public class AimAssist extends Mod {
 
-	private final SliderSetting speed = new SliderSetting("Speed 1", this, 45.0, 5.0, 100.0, 1.0);
-	private final SliderSetting compliment = new SliderSetting("Speed 2", this, 15.0, 2.0, 97.0, 1.0);
-	private final SliderSetting fov = new SliderSetting("FOV", this, 90.0, 15.0, 360.0, 1.0);
-	private final SliderSetting distance = new SliderSetting("Distance", this, 4.5, 1.0, 10.0, 0.5);
-	private final TickSetting clickAim = new TickSetting("Click aim", this, true);
-	private final TickSetting weaponOnly = new TickSetting("Weapon only", this, false);
-	private final TickSetting aimInvis = new TickSetting("Aim invis", this, false);
-	private final TickSetting breakBlocks = new TickSetting("Break blocks", this, true);
-	private final TickSetting blatantMode = new TickSetting("Blatant mode", this, false);
-	private final TickSetting ignoreFriends = new TickSetting("Ignore Friends", this, true);
+	private final NumberValue speed = new NumberValue("Speed 1", this, 45.0, 5.0, 100.0, 1.0);
+	private final NumberValue compliment = new NumberValue("Speed 2", this, 15.0, 2.0, 97.0, 1.0);
+	private final NumberValue fov = new NumberValue("FOV", this, 90.0, 15.0, 360.0, 1.0);
+	private final NumberValue distance = new NumberValue("Distance", this, 4.5, 1.0, 10.0, 0.5);
+	private final BooleanValue clickAim = new BooleanValue("Click aim", this, true);
+	private final BooleanValue weaponOnly = new BooleanValue("Weapon only", this, false);
+	private final BooleanValue aimInvis = new BooleanValue("Aim invis", this, false);
+	private final BooleanValue breakBlocks = new BooleanValue("Break blocks", this, true);
+	private final BooleanValue blatantMode = new BooleanValue("Blatant mode", this, false);
+	private final BooleanValue ignoreFriends = new BooleanValue("Ignore Friends", this, true);
 
 	private final Clock clock = new Clock(0);
 	private final ArrayList<Entity> friends = new ArrayList<Entity>();

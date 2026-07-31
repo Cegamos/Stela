@@ -5,10 +5,10 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,11 +16,11 @@ import net.minecraft.util.Vec3;
 
 @ModuleInfo(name = "SlyPort", category = Category.Movement)
 public class SlyPort extends Mod {
-    private final DescriptionSetting f = new DescriptionSetting("Teleport behind enemies.", this);
-    private final SliderSetting r = new SliderSetting("Range", this, 6.0, 2.0, 15.0, 1.0);
-    private final TickSetting b = new TickSetting("Play sound", this, true);
-    private final TickSetting d = new TickSetting("Players only", this, true);
-    private final TickSetting e = new TickSetting("Aim", this, true);
+    private final DescriptionValue f = new DescriptionValue("Teleport behind enemies.", this);
+    private final NumberValue r = new NumberValue("Range", this, 6.0, 2.0, 15.0, 1.0);
+    private final BooleanValue b = new BooleanValue("Play sound", this, true);
+    private final BooleanValue d = new BooleanValue("Players only", this, true);
+    private final BooleanValue e = new BooleanValue("Aim", this, true);
     private final boolean s = false;
     
     @Override

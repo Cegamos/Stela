@@ -17,9 +17,9 @@ import keystrokesmod.client.event.impl.DrawEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.font.FontRenderer;
 import keystrokesmod.client.util.font.Fonts;
@@ -29,18 +29,18 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 @ModuleInfo(name = "HUD", category = Category.Client)
 public class HUD extends Mod {
 
-    public final ComboSetting mode = new ComboSetting("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
-    private final ComboSetting fontMode = new ComboSetting("Font Mode", this, "Rubik", "Rubik", "Drip", "Semi bold");
-    public final TickSetting alphabeticalSort = new TickSetting("Alphabetical sort", this, false);
+    public final ModeValue mode = new ModeValue("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
+    private final ModeValue fontMode = new ModeValue("Font Mode", this, "Rubik", "Rubik", "Drip", "Semi bold");
+    public final BooleanValue alphabeticalSort = new BooleanValue("Alphabetical sort", this, false);
 
-    private final DescriptionSetting desc = new DescriptionSetting("Hide Category", this);
-    public final TickSetting hideClient = new TickSetting("Hide Client", this, false);
-    public final TickSetting hideCombat = new TickSetting("Hide Combat", this, false);
-    public final TickSetting hideMovement = new TickSetting("Hide Movement", this, false);
-    public final TickSetting hideOther = new TickSetting("Hide Other", this, false);
-    public final TickSetting hidePlayer = new TickSetting("Hide Player", this, false);
-    public final TickSetting hideRender = new TickSetting("Hide Render", this, false);
-    public final TickSetting hideWorld = new TickSetting("Hide World", this, false);
+    private final DescriptionValue desc = new DescriptionValue("Hide Category", this);
+    public final BooleanValue hideClient = new BooleanValue("Hide Client", this, false);
+    public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false);
+    public final BooleanValue hideMovement = new BooleanValue("Hide Movement", this, false);
+    public final BooleanValue hideOther = new BooleanValue("Hide Other", this, false);
+    public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false);
+    public final BooleanValue hideRender = new BooleanValue("Hide Render", this, false);
+    public final BooleanValue hideWorld = new BooleanValue("Hide World", this, false);
 
     public static final AtomicInteger hudX = new AtomicInteger(5);
     public static final AtomicInteger hudY = new AtomicInteger(70);
@@ -56,7 +56,7 @@ public class HUD extends Mod {
     }
 
     @Override
-    public void guiButtonToggled(final TickSetting setting) {
+    public void guiButtonToggled(final BooleanValue setting) {
         if (setting == alphabeticalSort) Raven.moduleManager.sort();
     }
 
@@ -158,7 +158,7 @@ public class HUD extends Mod {
         }
     }
 
-    private int getColorForMode(ComboSetting mode, int del) {
+    private int getColorForMode(ModeValue mode, int del) {
         if (mode.is(ColourModes.RAVEN) || mode.is(ColourModes.RAVEN2))
             return Utils.Client.rainbowDraw(2L, del);
         if (mode.is(ColourModes.ASTOLFO))
@@ -168,7 +168,7 @@ public class HUD extends Mod {
         return 0xFFFFFFFF;
     }
 
-    private int getDeltaForMode(ComboSetting mode) {
+    private int getDeltaForMode(ModeValue mode) {
         return (mode.is(ColourModes.RAVEN2) || mode.is(ColourModes.ASTOLFO3)) ? 10 : 120;
     }
 

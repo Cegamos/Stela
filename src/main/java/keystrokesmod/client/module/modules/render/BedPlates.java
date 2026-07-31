@@ -22,8 +22,8 @@ import java.util.Set;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.block.Block;
@@ -46,11 +46,11 @@ public class BedPlates extends Mod {
     private BlockPos[] bed = null;
     private Clock clock = new Clock(0);
     
-    private final TickSetting firstBed = new TickSetting("Render First Bed", this, true);
-    private final TickSetting showDistance = new TickSetting("Show Distance", this, true);
-    private final SliderSetting range = new SliderSetting("Range", this, 10, 2, 30, 1);
-    private final SliderSetting layers = new SliderSetting("Layers", this, 3, 1, 10, 1);
-    public final SliderSetting plateScale = new SliderSetting("Scale", this, 1.0, 0.5, 3.0, 0.05);
+    private final BooleanValue firstBed = new BooleanValue("Render First Bed", this, true);
+    private final BooleanValue showDistance = new BooleanValue("Show Distance", this, true);
+    private final NumberValue range = new NumberValue("Range", this, 10, 2, 30, 1);
+    private final NumberValue layers = new NumberValue("Layers", this, 3, 1, 10, 1);
+    public final NumberValue plateScale = new NumberValue("Scale", this, 1.0, 0.5, 3.0, 0.05);
     
     @Override
     public void update() {

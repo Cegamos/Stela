@@ -6,7 +6,7 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.KeyEvent;
@@ -14,7 +14,7 @@ import keystrokesmod.client.event.impl.KeyEvent;
 @ModuleInfo(name = "Gui", category = Category.Client, key = 54)
 public class GuiModule extends Mod {
 
-	public final ComboSetting mode = new ComboSetting("Mode", this, Colors.PastelPink, Colors.values());
+	public final ModeValue mode = new ModeValue("Mode", this, Colors.PastelPink, Colors.values());
 	
 	public GuiModule() {
 		this.withEnabled(false);

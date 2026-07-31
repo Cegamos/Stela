@@ -3,9 +3,9 @@ package keystrokesmod.client.module.modules.player;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.potion.Potion;
@@ -17,10 +17,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @ModuleInfo(name = "FastBreak", category = Category.Player)
 public class FastBreak extends Mod {
 	
-	private final ComboSetting mode = new ComboSetting("Mode", this, "Normal", "Normal", "Ticks", "Instant");
-    private final SliderSetting speed = new SliderSetting("Speed", this, 50, 0, 100, 1, () -> mode.is("Normal"));
-    private final SliderSetting ticks = new SliderSetting("Ticks", this, 1, 1, 50, 1, () -> mode.is("Ticks"));
-    private final TickSetting ignoringMiningFatigue = new TickSetting("Ignore Mining Fatigue", this, false);
+	private final ModeValue mode = new ModeValue("Mode", this, "Normal", "Normal", "Ticks", "Instant");
+    private final NumberValue speed = new NumberValue("Speed", this, 50, 0, 100, 1, () -> mode.is("Normal"));
+    private final NumberValue ticks = new NumberValue("Ticks", this, 1, 1, 50, 1, () -> mode.is("Ticks"));
+    private final BooleanValue ignoringMiningFatigue = new BooleanValue("Ignore Mining Fatigue", this, false);
 
     @SubscribeEvent
     public void onPlayerTick(final TickEvent.PlayerTickEvent event) {

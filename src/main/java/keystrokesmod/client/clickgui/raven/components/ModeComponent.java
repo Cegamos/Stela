@@ -6,12 +6,12 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
 import net.minecraft.client.Minecraft;
 
 public class ModeComponent extends Component {
     private final int c;
-    private final ComboSetting mode;
+    private final ModeValue mode;
     private final ModuleComponent module;
     private int x;
     private int y;
@@ -19,7 +19,7 @@ public class ModeComponent extends Component {
     private boolean registeredClick;
     private boolean md;
     
-    public ModeComponent(final ComboSetting desc, final ModuleComponent b, final int o) {
+    public ModeComponent(final ModeValue desc, final ModuleComponent b, final int o) {
         this.c = new Color(30, 144, 255).getRGB();
         this.registeredClick = false;
         this.md = false;

@@ -4,14 +4,14 @@ import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 
 @ModuleInfo(name = "Timer", category = Category.Movement)
 public class Timer extends Mod {
-    private final SliderSetting a = new SliderSetting("Speed", this, 1.0, 0.5, 2.5, 0.01);
-    private final TickSetting b = new TickSetting("Strafe only", this, false);
+    private final NumberValue a = new NumberValue("Speed", this, 1.0, 0.5, 2.5, 0.01);
+    private final BooleanValue b = new BooleanValue("Strafe only", this, false);
     
     @Override
     public void update() {

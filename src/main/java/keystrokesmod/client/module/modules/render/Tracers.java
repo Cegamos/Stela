@@ -7,9 +7,9 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,14 +19,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @ModuleInfo(name = "Tracers", category = Category.Render)
 public class Tracers extends Mod {
 
-    private final TickSetting showInvis = new TickSetting("Show invis", this, true);
-    private final SliderSetting lineWidth = new SliderSetting("Line Width", this, 1.0, 1.0, 5.0, 1.0);
+    private final BooleanValue showInvis = new BooleanValue("Show invis", this, true);
+    private final NumberValue lineWidth = new NumberValue("Line Width", this, 1.0, 1.0, 5.0, 1.0);
 
-    private final SliderSetting red = new SliderSetting("Red", this, 0.0, 0.0, 255.0, 1.0);
-    private final SliderSetting green = new SliderSetting("Green", this, 255.0, 0.0, 255.0, 1.0);
-    private final SliderSetting blue = new SliderSetting("Blue", this, 0.0, 0.0, 255.0, 1.0);
+    private final NumberValue red = new NumberValue("Red", this, 0.0, 0.0, 255.0, 1.0);
+    private final NumberValue green = new NumberValue("Green", this, 255.0, 0.0, 255.0, 1.0);
+    private final NumberValue blue = new NumberValue("Blue", this, 0.0, 0.0, 255.0, 1.0);
 
-    private final TickSetting rainbow = new TickSetting("Rainbow", this, false);
+    private final BooleanValue rainbow = new BooleanValue("Rainbow", this, false);
 
     private boolean previousViewBobbing;
     private int rgbColor;

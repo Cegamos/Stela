@@ -9,9 +9,9 @@ import keystrokesmod.client.event.impl.PacketReceiveEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,14 +21,14 @@ import net.minecraft.network.play.server.S12PacketEntityVelocity;
 @ModuleInfo(name = "Velocity", category = Category.Combat)
 public class Velocity extends Mod {
 	
-	private final ComboSetting mode = new ComboSetting("Mode", this, Mode.MOTION, Mode.values());
-	private final ComboSetting intaveMode = new ComboSetting("Intave Mode", this, () -> mode.is(Mode.INTAVE), IntaveMode.SAFE, IntaveMode.values());
+	private final ModeValue mode = new ModeValue("Mode", this, Mode.MOTION, Mode.values());
+	private final ModeValue intaveMode = new ModeValue("Intave Mode", this, () -> mode.is(Mode.INTAVE), IntaveMode.SAFE, IntaveMode.values());
 	
-    private final SliderSetting horizontal = new SliderSetting("Horizontal", this, 90, 0, 100, 1, () -> mode.is(Mode.MOTION));
-    private final SliderSetting vertical = new SliderSetting("Vertical", this, 100, 0, 100, 1, () -> mode.is(Mode.MOTION));
-    private final SliderSetting chance = new SliderSetting("Chance", this, 100, 0, 100, 1);
-    private final TickSetting d = new TickSetting("Only while targeting", this, false);
-    private final TickSetting e = new TickSetting("Disable while holding S", this, false);
+    private final NumberValue horizontal = new NumberValue("Horizontal", this, 90, 0, 100, 1, () -> mode.is(Mode.MOTION));
+    private final NumberValue vertical = new NumberValue("Vertical", this, 100, 0, 100, 1, () -> mode.is(Mode.MOTION));
+    private final NumberValue chance = new NumberValue("Chance", this, 100, 0, 100, 1);
+    private final BooleanValue d = new BooleanValue("Only while targeting", this, false);
+    private final BooleanValue e = new BooleanValue("Disable while holding S", this, false);
     
     @EventLink
     private Listener<PacketReceiveEvent> packetReceive = event -> {

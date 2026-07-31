@@ -10,11 +10,11 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.block.Block;
@@ -30,14 +30,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "LeftClicker", category = Category.Combat)
 public class LeftClicker extends Mod {
-	private final DescriptionSetting desc = new DescriptionSetting("Best with delay remover", this);
-	public DoubleSliderSetting leftCPS = new DoubleSliderSetting("Left CPS", this, 9.0, 13.0, 1.0, 60.0, 0.5);
-	public SliderSetting jitterLeft = new SliderSetting("Jitter left", this, 0.0, 0.0, 3.0, 0.1);
-	public TickSetting inventoryFill = new TickSetting("Inventory fill", this, false);
-	public TickSetting weaponOnly = new TickSetting("Weapon only", this, false);
-	public TickSetting breakBlocks = new TickSetting("Break blocks", this, false);
-	public ComboSetting clickTimings = new ComboSetting("Click event", this, "Render", "Render", "Tick");
-	public ComboSetting clickStyle = new ComboSetting("Click Style", this, "Raven", "Raven", "Skid");
+	private final DescriptionValue desc = new DescriptionValue("Best with delay remover", this);
+	public RangeValue leftCPS = new RangeValue("Left CPS", this, 9.0, 13.0, 1.0, 60.0, 0.5);
+	public NumberValue jitterLeft = new NumberValue("Jitter left", this, 0.0, 0.0, 3.0, 0.1);
+	public BooleanValue inventoryFill = new BooleanValue("Inventory fill", this, false);
+	public BooleanValue weaponOnly = new BooleanValue("Weapon only", this, false);
+	public BooleanValue breakBlocks = new BooleanValue("Break blocks", this, false);
+	public ModeValue clickTimings = new ModeValue("Click event", this, "Render", "Render", "Tick");
+	public ModeValue clickStyle = new ModeValue("Click Style", this, "Raven", "Raven", "Skid");
 
     private long lastClick;
     private long leftHold;

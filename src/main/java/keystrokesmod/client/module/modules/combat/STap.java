@@ -10,10 +10,10 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.Utils.Modes.SprintResetTimings;
 import keystrokesmod.client.util.timing.Clock;
@@ -25,13 +25,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "STap", category = Category.Combat)
 public class STap extends Mod {
-    public TickSetting onlyPlayers = new TickSetting("Only combo players", this, true);
-    public DoubleSliderSetting actionTicks = new DoubleSliderSetting("Action Time (MS)", this, 25.0, 55.0, 1.0, 500.0, 1.0);
-    public DoubleSliderSetting onceEvery = new DoubleSliderSetting("Once every ... hits", this, 1.0, 1.0, 1.0, 10.0, 1.0);
-    public DoubleSliderSetting postDelay = new DoubleSliderSetting("Post delay (MS)", this, 25.0, 55.0, 1.0, 500.0, 1.0);
-    public SliderSetting chance = new SliderSetting("Chance %", this, 100.0, 0.0, 100.0, 1.0);
-    public SliderSetting range = new SliderSetting("Range: ", this, 3.0, 1.0, 6.0, 0.05);
-    private final ComboSetting mode = new ComboSetting("Mode", this, SprintResetTimings.PRE, SprintResetTimings.values());
+    public BooleanValue onlyPlayers = new BooleanValue("Only combo players", this, true);
+    public RangeValue actionTicks = new RangeValue("Action Time (MS)", this, 25.0, 55.0, 1.0, 500.0, 1.0);
+    public RangeValue onceEvery = new RangeValue("Once every ... hits", this, 1.0, 1.0, 1.0, 10.0, 1.0);
+    public RangeValue postDelay = new RangeValue("Post delay (MS)", this, 25.0, 55.0, 1.0, 500.0, 1.0);
+    public NumberValue chance = new NumberValue("Chance %", this, 100.0, 0.0, 100.0, 1.0);
+    public NumberValue range = new NumberValue("Range: ", this, 3.0, 1.0, 6.0, 0.05);
+    private final ModeValue mode = new ModeValue("Mode", this, SprintResetTimings.PRE, SprintResetTimings.values());
     public static boolean comboing;
     public static boolean hitCoolDown;
     public static boolean alreadyHit;

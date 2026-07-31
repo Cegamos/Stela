@@ -8,12 +8,12 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 public class SliderComponent extends Component {
-    private final SliderSetting v;
+    private final NumberValue v;
     private final ModuleComponent p;
     private int o;
     private int x;
@@ -22,7 +22,7 @@ public class SliderComponent extends Component {
     private double w;
     private final int msl = 84;
     
-    public SliderComponent(final SliderSetting v, final ModuleComponent b, final int o) {
+    public SliderComponent(final NumberValue v, final ModuleComponent b, final int o) {
         this.d = false;
         this.v = v;
         this.p = b;

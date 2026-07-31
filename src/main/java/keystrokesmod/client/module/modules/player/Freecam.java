@@ -7,9 +7,9 @@ import org.lwjgl.input.Keyboard;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -17,8 +17,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Freecam", category = Category.Player)
 public class Freecam extends Mod {
-    private final SliderSetting speed = new SliderSetting("Speed", this, 2.5, 0.5, 10.0, 0.5);
-    private final TickSetting disableOnDamage = new TickSetting("Disable on damage", this, true);
+    private final NumberValue speed = new NumberValue("Speed", this, 2.5, 0.5, 10.0, 0.5);
+    private final BooleanValue disableOnDamage = new BooleanValue("Disable on damage", this, true);
     
     public static EntityOtherPlayerMP fakePlayer = null;
     private final float[] savedAngles = new float[2];

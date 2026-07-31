@@ -7,10 +7,10 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,25 +19,25 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "PlayerESP", category = Category.Render)
 public class PlayerESP extends Mod {
-    private final SliderSetting red = new SliderSetting("Red", this, 0.0, 0.0, 255.0, 1.0);
-    private final SliderSetting green = new SliderSetting("Green", this, 255.0, 0.0, 255.0, 1.0);
-    private final SliderSetting blue = new SliderSetting("Blue", this, 0.0, 0.0, 255.0, 1.0);
-    private final TickSetting rainbow = new TickSetting("Rainbow", this, false);
+    private final NumberValue red = new NumberValue("Red", this, 0.0, 0.0, 255.0, 1.0);
+    private final NumberValue green = new NumberValue("Green", this, 255.0, 0.0, 255.0, 1.0);
+    private final NumberValue blue = new NumberValue("Blue", this, 0.0, 0.0, 255.0, 1.0);
+    private final BooleanValue rainbow = new BooleanValue("Rainbow", this, false);
 
-    private final DescriptionSetting espTypes = new DescriptionSetting("ESP Types", this);
+    private final DescriptionValue espTypes = new DescriptionValue("ESP Types", this);
 
-    private final TickSetting esp2D = new TickSetting("2D", this, false);
-    private final TickSetting arrow = new TickSetting("Arrow", this, false);
-    private final TickSetting box = new TickSetting("Box", this, false);
-    private final TickSetting health = new TickSetting("Health", this, true);
-    private final TickSetting ring = new TickSetting("Ring", this, false);
-    private final TickSetting shaded = new TickSetting("Shaded", this, false);
+    private final BooleanValue esp2D = new BooleanValue("2D", this, false);
+    private final BooleanValue arrow = new BooleanValue("Arrow", this, false);
+    private final BooleanValue box = new BooleanValue("Box", this, false);
+    private final BooleanValue health = new BooleanValue("Health", this, true);
+    private final BooleanValue ring = new BooleanValue("Ring", this, false);
+    private final BooleanValue shaded = new BooleanValue("Shaded", this, false);
 
-    private final SliderSetting expand = new SliderSetting("Expand", this, 0.0, -0.3, 2.0, 0.1);
-    private final SliderSetting xShift = new SliderSetting("X-Shift", this, 0.0, -35.0, 10.0, 1.0);
+    private final NumberValue expand = new NumberValue("Expand", this, 0.0, -0.3, 2.0, 0.1);
+    private final NumberValue xShift = new NumberValue("X-Shift", this, 0.0, -35.0, 10.0, 1.0);
 
-    private final TickSetting showInvis = new TickSetting("Show invis", this, true);
-    private final TickSetting redOnDamage = new TickSetting("Red on damage", this, true);
+    private final BooleanValue showInvis = new BooleanValue("Show invis", this, true);
+    private final BooleanValue redOnDamage = new BooleanValue("Red on damage", this, true);
 
     private int rgb_c = 0;
 

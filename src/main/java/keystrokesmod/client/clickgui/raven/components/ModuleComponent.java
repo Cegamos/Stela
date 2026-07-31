@@ -8,12 +8,12 @@ import org.lwjgl.opengl.GL11;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.Mod;
-import keystrokesmod.client.module.setting.Setting;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.Value;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 
 public class ModuleComponent extends Component {
     public Mod mod;
@@ -31,7 +31,7 @@ public class ModuleComponent extends Component {
 
         int y = offset + 12;
 
-        for (final Setting setting : mod.getSettings()) {
+        for (final Value setting : mod.getSettings()) {
             Component component = createComponentForSetting(setting, y);
             if (component != null) {
                 settings.add(component);
@@ -42,17 +42,17 @@ public class ModuleComponent extends Component {
         settings.add(new BindComponent(this, y));
     }
 
-    private Component createComponentForSetting(Setting setting, int y) {
-        if (setting instanceof SliderSetting)
-            return new SliderComponent((SliderSetting) setting, this, y);
-        if (setting instanceof TickSetting)
-            return new TickComponent(mod, (TickSetting) setting, this, y);
-        if (setting instanceof DescriptionSetting)
-            return new DescriptionComponent((DescriptionSetting) setting, this, y);
-        if (setting instanceof DoubleSliderSetting)
-            return new RangeSliderComponent((DoubleSliderSetting) setting, this, y);
-        if (setting instanceof ComboSetting)
-            return new ModeComponent((ComboSetting) setting, this, y);
+    private Component createComponentForSetting(Value setting, int y) {
+        if (setting instanceof NumberValue)
+            return new SliderComponent((NumberValue) setting, this, y);
+        if (setting instanceof BooleanValue)
+            return new TickComponent(mod, (BooleanValue) setting, this, y);
+        if (setting instanceof DescriptionValue)
+            return new DescriptionComponent((DescriptionValue) setting, this, y);
+        if (setting instanceof RangeValue)
+            return new RangeSliderComponent((RangeValue) setting, this, y);
+        if (setting instanceof ModeValue)
+            return new ModeComponent((ModeValue) setting, this, y);
         return null;
     }
 

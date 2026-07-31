@@ -3,14 +3,14 @@ package keystrokesmod.client.module.modules.macros;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
 @ModuleInfo(name = "Armor", category = Category.Macros)
 public class Armour extends Mod {
-    public TickSetting ignoreIfAlreadyEquipped = new TickSetting("Ignore if already equipped", this, true);
+    public BooleanValue ignoreIfAlreadyEquipped = new BooleanValue("Ignore if already equipped", this, true);
     
     @Override
     public void onEnable() {

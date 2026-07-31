@@ -5,16 +5,16 @@ import org.lwjgl.input.Keyboard;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 
 @ModuleInfo(name = "Speed", category = Category.Movement)
 public class Speed extends Mod {
-    private final DescriptionSetting dc = new DescriptionSetting("Hypixel max: 1.13", this);
-    private final SliderSetting a = new SliderSetting("Speed", this, 1.2, 1.0, 1.5, 0.01);
-    private final TickSetting b = new TickSetting("Strafe only", this, false);
+    private final DescriptionValue dc = new DescriptionValue("Hypixel max: 1.13", this);
+    private final NumberValue a = new NumberValue("Speed", this, 1.2, 1.0, 1.5, 0.01);
+    private final BooleanValue b = new BooleanValue("Strafe only", this, false);
 
     @Override
     public void update() {

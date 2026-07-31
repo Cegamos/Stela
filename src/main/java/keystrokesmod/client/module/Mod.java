@@ -12,13 +12,13 @@ import com.google.gson.JsonObject;
 
 import keystrokesmod.client.event.EventBus;
 import keystrokesmod.client.module.modules.client.HUD;
-import keystrokesmod.client.module.setting.Setting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.Value;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.IMinecraft;
 import net.minecraft.entity.Entity;
 
 public class Mod implements IMinecraft {
-    protected final ArrayList<Setting> settings = new ArrayList<>();
+    protected final ArrayList<Value> settings = new ArrayList<>();
     private final ModuleInfo moduleInfo;
     private final String moduleName;
     private final Category moduleCategory;
@@ -46,7 +46,7 @@ public class Mod implements IMinecraft {
 
     public JsonObject getConfigAsJson() {
         JsonObject settingsJson = new JsonObject();
-        for (Setting setting : this.settings) {
+        for (Value setting : this.settings) {
             settingsJson.add(setting.getName(), setting.getConfigAsJson());
         }
 
@@ -63,7 +63,7 @@ public class Mod implements IMinecraft {
             this.setToggled(data.get("enabled").getAsBoolean());
 
             JsonObject settingsData = data.get("settings").getAsJsonObject();
-            for (Setting setting : this.settings) {
+            for (Value setting : this.settings) {
                 if (settingsData.has(setting.getName())) {
                     setting.applyConfigFromJson(settingsData.get(setting.getName()).getAsJsonObject());
                 }
@@ -126,16 +126,16 @@ public class Mod implements IMinecraft {
         return this.moduleCategory;
     }
 
-    public ArrayList<Setting> getSettings() {
+    public ArrayList<Value> getSettings() {
         return this.settings;
     }
 
-    public void addSetting(Setting... settings) {
+    public void addSetting(Value... settings) {
         this.settings.addAll(Arrays.asList(settings));
     }
 
-    public Setting getSettingByName(String name) {
-        for (Setting setting : this.settings) {
+    public Value getSettingByName(String name) {
+        for (Value setting : this.settings) {
             if (setting.getName().equalsIgnoreCase(name)) {
                 return setting;
             }
@@ -146,7 +146,7 @@ public class Mod implements IMinecraft {
     public void resetToDefaults() {
         this.keycode = moduleInfo.key();
         this.setToggled(moduleInfo.enabled());
-        for (Setting setting : this.settings) {
+        for (Value setting : this.settings) {
             setting.resetToDefaults();
         }
     }
@@ -192,7 +192,7 @@ public class Mod implements IMinecraft {
 
     public void guiUpdate() {}
 
-    public void guiButtonToggled(TickSetting setting) {}
+    public void guiButtonToggled(BooleanValue setting) {}
 
     public void onGuiClose() {}
 

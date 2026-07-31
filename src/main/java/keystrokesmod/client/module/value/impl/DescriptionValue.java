@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.setting.impl;
+package keystrokesmod.client.module.value.impl;
 
 import java.util.function.Supplier;
 
@@ -7,19 +7,19 @@ import com.google.gson.JsonObject;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.Mod;
-import keystrokesmod.client.module.setting.Setting;
+import keystrokesmod.client.module.value.Value;
 
-public class DescriptionSetting extends Setting {
+public class DescriptionValue extends Value {
 	private String desc;
 	private String defaultDesc;
 
-	public DescriptionSetting(final String desc, Mod module, Supplier<Boolean> visible) {
+	public DescriptionValue(final String desc, Mod module, Supplier<Boolean> visible) {
 		super(desc, module, visible);
 		this.desc = desc;
 		this.defaultDesc = desc;
 	}
 	
-    public DescriptionSetting(String name, Mod module) {
+    public DescriptionValue(String name, Mod module) {
         this(name, module, () -> true);
     }
 

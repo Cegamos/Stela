@@ -7,20 +7,20 @@ import org.lwjgl.opengl.GL11;
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.Mod;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 
 public class TickComponent extends Component {
     private final int c;
     private final int boxC;
     private final Mod mod;
-    private final TickSetting cl1ckbUtt0n;
+    private final BooleanValue cl1ckbUtt0n;
     private final ModuleComponent module;
     private int o;
     private int x;
     private int y;
     private int boxSize;
     
-    public TickComponent(final Mod mod, final TickSetting op, final ModuleComponent b, final int o) {
+    public TickComponent(final Mod mod, final BooleanValue op, final ModuleComponent b, final int o) {
         this.c = new Color(20, 255, 0).getRGB();
         this.boxC = new Color(169, 169, 169).getRGB();
         this.boxSize = 6;

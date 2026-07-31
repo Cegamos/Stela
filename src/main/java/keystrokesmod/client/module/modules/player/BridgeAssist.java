@@ -4,25 +4,25 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "BridgeAssist", category = Category.Player)
 public class BridgeAssist extends Mod {
-	private final DescriptionSetting desc = new DescriptionSetting("Best with fastplace, not autoplace", this);
-	private final SliderSetting waitFor = new SliderSetting("Wait time (ms)", this, 500.0, 0.0, 5000.0, 25.0);
-	private final TickSetting setLook = new TickSetting("Set look pos", this, true);
-    private final TickSetting onSneak = new TickSetting("Work only when sneaking", this, true);
-    private final TickSetting workWithSafeWalk = new TickSetting("Work with safewalk", this, false);
-    private final SliderSetting assistRange = new SliderSetting("Assist range", this, 10.0, 1.0, 40.0, 1.0);
-    private final SliderSetting glideTime = new SliderSetting("Glide speed", this, 500.0, 1.0, 201.0, 5.0);
-    private final SliderSetting assistMode = new SliderSetting("Value", this, 1.0, 1.0, 4.0, 1.0);
-    private final DescriptionSetting assistModeDesc = new DescriptionSetting("Mode: GodBridge", this);
+	private final DescriptionValue desc = new DescriptionValue("Best with fastplace, not autoplace", this);
+	private final NumberValue waitFor = new NumberValue("Wait time (ms)", this, 500.0, 0.0, 5000.0, 25.0);
+	private final BooleanValue setLook = new BooleanValue("Set look pos", this, true);
+    private final BooleanValue onSneak = new BooleanValue("Work only when sneaking", this, true);
+    private final BooleanValue workWithSafeWalk = new BooleanValue("Work with safewalk", this, false);
+    private final NumberValue assistRange = new NumberValue("Assist range", this, 10.0, 1.0, 40.0, 1.0);
+    private final NumberValue glideTime = new NumberValue("Glide speed", this, 500.0, 1.0, 201.0, 5.0);
+    private final NumberValue assistMode = new NumberValue("Value", this, 1.0, 1.0, 4.0, 1.0);
+    private final DescriptionValue assistModeDesc = new DescriptionValue("Mode: GodBridge", this);
     private boolean waitingForAim;
     private boolean gliding;
     private long startWaitTime;

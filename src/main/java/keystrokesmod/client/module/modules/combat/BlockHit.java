@@ -10,10 +10,10 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.Utils.Modes.SprintResetTimings;
 import keystrokesmod.client.util.timing.Clock;
@@ -25,14 +25,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "BlockHit", category = Category.Combat)
 public class BlockHit extends Mod {
-    public TickSetting onlyPlayers = new TickSetting("Only combo players", this, true);
-    public TickSetting onRightMBHold = new TickSetting("When holding down rmb", this, true);
-    public DoubleSliderSetting waitMs = new DoubleSliderSetting("Action Time (MS)", this, 110.0, 150.0, 1.0, 500.0, 1.0);
-    public DoubleSliderSetting hitPer = new DoubleSliderSetting("Once every ... hits", this, 1.0, 1.0, 1.0, 10.0, 1.0);
-    public DoubleSliderSetting postDelay = new DoubleSliderSetting("Post Delay (MS)", this, 10.0, 40.0, 0.0, 500.0, 1.0);
-    public SliderSetting chance = new SliderSetting("Chance %", this, 100.0, 0.0, 100.0, 1.0);
-    public SliderSetting range = new SliderSetting("Range: ", this, 3.0, 1.0, 6.0, 0.05);
-    private final ComboSetting mode = new ComboSetting("Mode", this, SprintResetTimings.PRE, SprintResetTimings.values());
+    public BooleanValue onlyPlayers = new BooleanValue("Only combo players", this, true);
+    public BooleanValue onRightMBHold = new BooleanValue("When holding down rmb", this, true);
+    public RangeValue waitMs = new RangeValue("Action Time (MS)", this, 110.0, 150.0, 1.0, 500.0, 1.0);
+    public RangeValue hitPer = new RangeValue("Once every ... hits", this, 1.0, 1.0, 1.0, 10.0, 1.0);
+    public RangeValue postDelay = new RangeValue("Post Delay (MS)", this, 10.0, 40.0, 0.0, 500.0, 1.0);
+    public NumberValue chance = new NumberValue("Chance %", this, 100.0, 0.0, 100.0, 1.0);
+    public NumberValue range = new NumberValue("Range: ", this, 3.0, 1.0, 6.0, 0.05);
+    private final ModeValue mode = new ModeValue("Mode", this, SprintResetTimings.PRE, SprintResetTimings.values());
     public boolean executingAction;
     public boolean hitCoolDown;
     public boolean alreadyHit;

@@ -6,19 +6,19 @@ import io.netty.util.internal.ThreadLocalRandom;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoHeader", category = Category.Movement)
 public class AutoHeader extends Mod {
-    private final DescriptionSetting desc = new DescriptionSetting("Spams spacebar when under blocks", this);
-    private final TickSetting cancelDuringShift = new TickSetting("Cancel if snkeaing", this, true);
-    private final TickSetting onlyWhenHoldingSpacebar = new TickSetting("Only when holding jump", this, true);
-    private final SliderSetting pbs = new SliderSetting("Jump Presses per second", this, 12.0, 1.0, 20.0, 1.0);
+    private final DescriptionValue desc = new DescriptionValue("Spams spacebar when under blocks", this);
+    private final BooleanValue cancelDuringShift = new BooleanValue("Cancel if snkeaing", this, true);
+    private final BooleanValue onlyWhenHoldingSpacebar = new BooleanValue("Only when holding jump", this, true);
+    private final NumberValue pbs = new NumberValue("Jump Presses per second", this, 12.0, 1.0, 20.0, 1.0);
     private double startWait;
     
     @Override

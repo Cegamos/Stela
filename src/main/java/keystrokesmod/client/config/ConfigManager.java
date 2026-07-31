@@ -2,8 +2,8 @@ package keystrokesmod.client.config;
 
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Mod;
-import keystrokesmod.client.module.setting.Setting;
-import keystrokesmod.client.module.setting.impl.*;
+import keystrokesmod.client.module.value.Value;
+import keystrokesmod.client.module.value.impl.*;
 
 import java.io.*;
 import java.util.List;
@@ -45,26 +45,26 @@ public class ConfigManager {
                     dos.writeBoolean(module.isEnabled());
                     dos.writeInt(module.getKeycode());
 
-                    List<Setting> settings = module.getSettings();
+                    List<Value> settings = module.getSettings();
                     dos.writeShort(settings != null ? settings.size() : 0);
 
                     if (settings != null) {
-                        for (Setting setting : settings) {
+                        for (Value setting : settings) {
                             dos.writeUTF(setting.getName());
 
-                            if (setting instanceof TickSetting) {
+                            if (setting instanceof BooleanValue) {
                                 dos.writeByte(1);
-                                dos.writeBoolean(((TickSetting) setting).isToggled());
-                            } else if (setting instanceof SliderSetting) {
+                                dos.writeBoolean(((BooleanValue) setting).isToggled());
+                            } else if (setting instanceof NumberValue) {
                                 dos.writeByte(2);
-                                dos.writeDouble(((SliderSetting) setting).getInput());
-                            } else if (setting instanceof DoubleSliderSetting) {
+                                dos.writeDouble(((NumberValue) setting).getInput());
+                            } else if (setting instanceof RangeValue) {
                                 dos.writeByte(3);
-                                dos.writeDouble(((DoubleSliderSetting) setting).getInputMin());
-                                dos.writeDouble(((DoubleSliderSetting) setting).getInputMax());
-                            } else if (setting instanceof ComboSetting) {
+                                dos.writeDouble(((RangeValue) setting).getInputMin());
+                                dos.writeDouble(((RangeValue) setting).getInputMax());
+                            } else if (setting instanceof ModeValue) {
                                 dos.writeByte(4);
-                                ComboSetting cs = (ComboSetting) setting;
+                                ModeValue cs = (ModeValue) setting;
                                 dos.writeUTF(cs.getMode() != null ? cs.getMode() : "");
                             } else {
                                 dos.writeByte(0);
@@ -118,33 +118,33 @@ public class ConfigManager {
                     String settingName = dis.readUTF();
                     byte type = dis.readByte();
 
-                    Setting setting = module != null ? findSetting(module, settingName) : null;
+                    Value setting = module != null ? findSetting(module, settingName) : null;
 
                     switch (type) {
                         case 1: // TickSetting
                             boolean bVal = dis.readBoolean();
-                            if (setting instanceof TickSetting) {
-                                ((TickSetting) setting).setEnabled(bVal);
+                            if (setting instanceof BooleanValue) {
+                                ((BooleanValue) setting).setEnabled(bVal);
                             }
                             break;
                         case 2: // SliderSetting
                             double sVal = dis.readDouble();
-                            if (setting instanceof SliderSetting) {
-                                ((SliderSetting) setting).setValue(sVal);
+                            if (setting instanceof NumberValue) {
+                                ((NumberValue) setting).setValue(sVal);
                             }
                             break;
                         case 3: // DoubleSliderSetting
                             double minVal = dis.readDouble();
                             double maxVal = dis.readDouble();
-                            if (setting instanceof DoubleSliderSetting) {
-                                ((DoubleSliderSetting) setting).setValueMin(minVal);
-                                ((DoubleSliderSetting) setting).setValueMax(maxVal);
+                            if (setting instanceof RangeValue) {
+                                ((RangeValue) setting).setValueMin(minVal);
+                                ((RangeValue) setting).setValueMax(maxVal);
                             }
                             break;
                         case 4: // ComboSetting
                             String mVal = dis.readUTF();
-                            if (setting instanceof ComboSetting) {
-                                ((ComboSetting) setting).setMode(mVal);
+                            if (setting instanceof ModeValue) {
+                                ((ModeValue) setting).setMode(mVal);
                             }
                             break;
                         case 0:
@@ -165,9 +165,9 @@ public class ConfigManager {
         return null;
     }
 
-    private static Setting findSetting(Mod module, String name) {
+    private static Value findSetting(Mod module, String name) {
         if (module == null || module.getSettings() == null) return null;
-        for (Setting s : module.getSettings()) {
+        for (Value s : module.getSettings()) {
             if (s.getName().equalsIgnoreCase(name)) return s;
         }
         return null;

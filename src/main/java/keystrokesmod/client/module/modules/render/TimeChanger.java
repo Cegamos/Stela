@@ -6,7 +6,7 @@ import keystrokesmod.client.event.impl.PacketReceiveEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @ModuleInfo(name = "TimeChanger", category = Category.Render)
 public class TimeChanger extends Mod {
 
-	public final SliderSetting time = new SliderSetting("Time", this, 0, 0, 1, 0.01f);
+	public final NumberValue time = new NumberValue("Time", this, 0, 0, 1, 0.01f);
 	
 	@Override
 	public void onDisable() {

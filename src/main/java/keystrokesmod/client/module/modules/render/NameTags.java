@@ -7,8 +7,8 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,11 +21,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "Nametags", category = Category.Render)
 public class NameTags extends Mod {
-    private final SliderSetting a = new SliderSetting("Offset", this, 0.0, -40.0, 40.0, 1.0);
-    private final TickSetting b = new TickSetting("Rect", this, true);
-    private final TickSetting c = new TickSetting("Show health", this, true);
-    private final TickSetting d = new TickSetting("Show invis", this, true);
-    private final TickSetting rm = new TickSetting("Remove tags", this, false);
+    private final NumberValue a = new NumberValue("Offset", this, 0.0, -40.0, 40.0, 1.0);
+    private final BooleanValue b = new BooleanValue("Rect", this, true);
+    private final BooleanValue c = new BooleanValue("Show health", this, true);
+    private final BooleanValue d = new BooleanValue("Show invis", this, true);
+    private final BooleanValue rm = new BooleanValue("Remove tags", this, false);
 
     @SubscribeEvent
     public void r(final RenderLivingEvent.Specials.Pre e) {

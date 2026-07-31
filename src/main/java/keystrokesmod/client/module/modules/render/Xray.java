@@ -9,9 +9,9 @@ import java.util.TimerTask;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -21,16 +21,16 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @ModuleInfo(name = "Xray", category = Category.Render)
 public class Xray extends Mod {
 
-    private final SliderSetting range = new SliderSetting("Range", this, 20.0, 5.0, 50.0, 1.0);
+    private final NumberValue range = new NumberValue("Range", this, 20.0, 5.0, 50.0, 1.0);
 
-    private final TickSetting iron = new TickSetting("Iron", this, true);
-    private final TickSetting gold = new TickSetting("Gold", this, true);
-    private final TickSetting diamond = new TickSetting("Diamond", this, true);
-    private final TickSetting emerald = new TickSetting("Emerald", this, true);
-    private final TickSetting lapis = new TickSetting("Lapis", this, true);
-    private final TickSetting redstone = new TickSetting("Redstone", this, true);
-    private final TickSetting coal = new TickSetting("Coal", this, true);
-    private final TickSetting spawner = new TickSetting("Spawner", this, true);
+    private final BooleanValue iron = new BooleanValue("Iron", this, true);
+    private final BooleanValue gold = new BooleanValue("Gold", this, true);
+    private final BooleanValue diamond = new BooleanValue("Diamond", this, true);
+    private final BooleanValue emerald = new BooleanValue("Emerald", this, true);
+    private final BooleanValue lapis = new BooleanValue("Lapis", this, true);
+    private final BooleanValue redstone = new BooleanValue("Redstone", this, true);
+    private final BooleanValue coal = new BooleanValue("Coal", this, true);
+    private final BooleanValue spawner = new BooleanValue("Spawner", this, true);
 
     private final List<BlockPos> renderList = new ArrayList<>();
     private final long scanInterval = 200L;

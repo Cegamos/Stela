@@ -8,9 +8,9 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -25,11 +25,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "Reach", category = Category.Combat)
 public class Reach extends Mod {
-    private final DoubleSliderSetting reach = new DoubleSliderSetting("Reach (Blocks)", this, 3.1, 3.3, 3.0, 6.0, 0.05);
-    private final TickSetting weapon_only = new TickSetting("Weapon only", this, false);
-    private final TickSetting moving_only = new TickSetting("Moving only", this, false);
-    private final TickSetting sprint_only = new TickSetting("Sprint only", this, false);
-    private final TickSetting hit_through_blocks = new TickSetting("Hit through blocks", this, false);
+    private final RangeValue reach = new RangeValue("Reach (Blocks)", this, 3.1, 3.3, 3.0, 6.0, 0.05);
+    private final BooleanValue weapon_only = new BooleanValue("Weapon only", this, false);
+    private final BooleanValue moving_only = new BooleanValue("Moving only", this, false);
+    private final BooleanValue sprint_only = new BooleanValue("Sprint only", this, false);
+    private final BooleanValue hit_through_blocks = new BooleanValue("Hit through blocks", this, false);
 
     @SubscribeEvent
     public void onMouse(final MouseEvent ev) {

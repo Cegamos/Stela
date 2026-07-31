@@ -5,7 +5,7 @@ import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.animations.TimeAnimation;
 import keystrokesmod.client.event.EventLink;
@@ -17,7 +17,7 @@ public class Terminal extends Mod {
 	public static boolean visible = false;
 	public static boolean b = false;
 	public static TimeAnimation animation;
-	public static TickSetting animate;
+	public static BooleanValue animate;
 	
 	@Override
 	public void onEnable() {

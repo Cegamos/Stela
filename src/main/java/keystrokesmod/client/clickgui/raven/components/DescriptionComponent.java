@@ -5,16 +5,16 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
 import net.minecraft.client.Minecraft;
 
 public class DescriptionComponent extends Component {
     private final int c;
-    private final DescriptionSetting desc;
+    private final DescriptionValue desc;
     private final ModuleComponent p;
     private int o;
     
-    public DescriptionComponent(final DescriptionSetting desc, final ModuleComponent b, final int o) {
+    public DescriptionComponent(final DescriptionValue desc, final ModuleComponent b, final int o) {
         this.c = new Color(226, 83, 47).getRGB();
         this.desc = desc;
         this.p = b;

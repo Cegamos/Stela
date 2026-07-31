@@ -3,9 +3,9 @@ package keystrokesmod.client.module.modules.macros;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAppleGold;
@@ -15,10 +15,10 @@ import net.minecraft.item.ItemStack;
 
 @ModuleInfo(name = "Healing", category = Category.Macros)
 public class Healing extends Mod {
-    private final TickSetting preferSlot = new TickSetting("Prefer a slot", this, false);
-    private final SliderSetting hotbarSlotPreference = new SliderSetting("Preferred slot", this, 8.0, 1.0, 9.0, 1.0);
-    private final SliderSetting itemMode = new SliderSetting("Healing item", this, 1.0, 1.0, HealingItems.values().length, 1.0);
-    private final DescriptionSetting modeDesc = new DescriptionSetting("Mode: SOUP", this);
+    private final BooleanValue preferSlot = new BooleanValue("Prefer a slot", this, false);
+    private final NumberValue hotbarSlotPreference = new NumberValue("Preferred slot", this, 8.0, 1.0, 9.0, 1.0);
+    private final NumberValue itemMode = new NumberValue("Healing item", this, 1.0, 1.0, HealingItems.values().length, 1.0);
+    private final DescriptionValue modeDesc = new DescriptionValue("Mode: SOUP", this);
 
     @Override
     public void guiUpdate() {

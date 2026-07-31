@@ -24,8 +24,8 @@ import com.google.gson.JsonParser;
 import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -372,7 +372,7 @@ public class Utils implements IMinecraft {
 		    ObfuscationReflectionHelper.setPrivateValue(Mouse.class, null, buttons, "buttons");
 		}
 		
-		public static void correctSliders(final SliderSetting c, final SliderSetting d) {
+		public static void correctSliders(final NumberValue c, final NumberValue d) {
 			if (c.getInput() > d.getInput()) {
 				final double p = c.getInput();
 				c.setValue(d.getInput());
@@ -380,12 +380,12 @@ public class Utils implements IMinecraft {
 			}
 		}
 
-		public static double ranModuleVal(final SliderSetting a, final SliderSetting b, final Random r) {
+		public static double ranModuleVal(final NumberValue a, final NumberValue b, final Random r) {
 			return (a.getInput() == b.getInput()) ? a.getInput()
 					: (a.getInput() + r.nextDouble() * (b.getInput() - a.getInput()));
 		}
 
-		public static double ranModuleVal(final DoubleSliderSetting a, final Random r) {
+		public static double ranModuleVal(final RangeValue a, final Random r) {
 			return (a.getInputMin() == a.getInputMax()) ? a.getInputMin()
 					: (a.getInputMin() + r.nextDouble() * (a.getInputMax() - a.getInputMin()));
 		}

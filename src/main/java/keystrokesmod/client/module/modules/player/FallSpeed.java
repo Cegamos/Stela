@@ -5,15 +5,15 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.movement.Fly;
-import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 
 @ModuleInfo(name = "FallSpeed", category = Category.Player)
 public class FallSpeed extends Mod {
-    private final DescriptionSetting dc = new DescriptionSetting("Vanilla max: 3.92", this);
-    private final SliderSetting a = new SliderSetting("Motion", this, 5.0, 0.0, 8.0, 0.1);
-    private final TickSetting b = new TickSetting("Disable XZ motion", this, true);
+    private final DescriptionValue dc = new DescriptionValue("Vanilla max: 3.92", this);
+    private final NumberValue a = new NumberValue("Motion", this, 5.0, 0.0, 8.0, 0.1);
+    private final BooleanValue b = new BooleanValue("Disable XZ motion", this, true);
 
     @Override
     public void update() {

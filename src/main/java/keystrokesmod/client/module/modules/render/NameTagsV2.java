@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL11;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.render.RenderUtil;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,11 +31,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "NameTagsV2", category = Category.Render)
 public class NameTagsV2 extends Mod {
-    private final SliderSetting scaleSetting = new SliderSetting("Scale", this, 5.0D, 0.1D, 10.0D, 0.1D);
-    private final SliderSetting rangeSetting = new SliderSetting("Range", this, 0.0D, 0.0D, 512.0D, 1.0D);
-    private final TickSetting armorSetting = new TickSetting("Armor", this, true);
-    private final TickSetting durabilitySetting = new TickSetting("Durability", this, false);
-    private final TickSetting distanceSetting = new TickSetting("Distance", this, false);
+    private final NumberValue scaleSetting = new NumberValue("Scale", this, 5.0D, 0.1D, 10.0D, 0.1D);
+    private final NumberValue rangeSetting = new NumberValue("Range", this, 0.0D, 0.0D, 512.0D, 1.0D);
+    private final BooleanValue armorSetting = new BooleanValue("Armor", this, true);
+    private final BooleanValue durabilitySetting = new BooleanValue("Durability", this, false);
+    private final BooleanValue distanceSetting = new BooleanValue("Distance", this, false);
     
     private float _x, _y, _z;
 

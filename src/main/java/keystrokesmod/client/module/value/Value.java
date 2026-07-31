@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.setting;
+package keystrokesmod.client.module.value;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -9,11 +9,11 @@ import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.raven.components.ModuleComponent;
 import keystrokesmod.client.module.Mod;
 
-public abstract class Setting {
+public abstract class Value {
 	private final String name;
 	public Supplier<Boolean> visible;
 
-	public Setting(String name, Mod module, Supplier<Boolean> visible) {
+	public Value(String name, Mod module, Supplier<Boolean> visible) {
 		this.name = name;
 		this.visible = visible;
 		Optional.ofNullable(module).ifPresent(m -> m.addSetting(this));

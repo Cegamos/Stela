@@ -8,9 +8,9 @@ import org.lwjgl.input.Mouse;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.input.MouseManager;
 import net.minecraft.item.ItemBlock;
@@ -20,14 +20,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "ClickAssist", category = Category.Combat)
 public class ClickAssist extends Mod {
-    private final DescriptionSetting desc = new DescriptionSetting("Boost your CPS.", this);
-    private final SliderSetting chance = new SliderSetting("Chance", this, 80.0, 0.0, 100.0, 1.0);
-    private final TickSetting L = new TickSetting("Left click", this, true);
-    private final TickSetting weaponOnly = new TickSetting("Weapon only", this, true);
-    private final TickSetting onlyWhileTargeting = new TickSetting("Only while targeting", this, false);
-    private final TickSetting above5 = new TickSetting("Above 5 cps",this,  false);
-    private final TickSetting R = new TickSetting("Right click", this, false);
-    private final TickSetting blocksOnly = new TickSetting("Blocks only", this, true);
+    private final DescriptionValue desc = new DescriptionValue("Boost your CPS.", this);
+    private final NumberValue chance = new NumberValue("Chance", this, 80.0, 0.0, 100.0, 1.0);
+    private final BooleanValue L = new BooleanValue("Left click", this, true);
+    private final BooleanValue weaponOnly = new BooleanValue("Weapon only", this, true);
+    private final BooleanValue onlyWhileTargeting = new BooleanValue("Only while targeting", this, false);
+    private final BooleanValue above5 = new BooleanValue("Above 5 cps",this,  false);
+    private final BooleanValue R = new BooleanValue("Right click", this, false);
+    private final BooleanValue blocksOnly = new BooleanValue("Blocks only", this, true);
     private Robot bot;
     private boolean engagedLeft;
     private boolean engagedRight;

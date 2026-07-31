@@ -8,14 +8,14 @@ import keystrokesmod.client.event.impl.PreTickEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.system.ReflectUtil;
 
 @ModuleInfo(name = "FPSSpoofer", category = Category.Client)
 public class FPSSpoofer extends Mod {
-	private final DescriptionSetting desc = new DescriptionSetting("Spoofs your fps", this);
-    private final DoubleSliderSetting fps = new DoubleSliderSetting("FPS", this, 99860, 100000, 0, 100000, 100);
+	private final DescriptionValue desc = new DescriptionValue("Spoofs your fps", this);
+    private final RangeValue fps = new RangeValue("FPS", this, 99860, 100000, 0, 100000, 100);
 
     private int ticksPassed;
     

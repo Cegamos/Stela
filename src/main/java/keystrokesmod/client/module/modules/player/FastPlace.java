@@ -3,8 +3,8 @@ package keystrokesmod.client.module.modules.player;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.item.ItemBlock;
@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "FastPlace", category = Category.Player)
 public class FastPlace extends Mod {
-    private final SliderSetting delaySlider = new SliderSetting("Delay", this, 0.0, 0.0, 4.0, 1.0);
-    private final TickSetting blockOnly = new TickSetting("Blocks only", this, true);
+    private final NumberValue delaySlider = new NumberValue("Delay", this, 0.0, 0.0, 4.0, 1.0);
+    private final BooleanValue blockOnly = new BooleanValue("Blocks only", this, true);
 
     @SubscribeEvent
     public void onPlayerTick(final TickEvent.PlayerTickEvent event) {

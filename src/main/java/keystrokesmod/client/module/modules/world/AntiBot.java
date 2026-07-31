@@ -7,7 +7,7 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.player.Freecam;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class AntiBot extends Mod {
 	private static final HashMap<EntityPlayer, Long> newEnt;
 	private final long ms = 4000L;
-	public TickSetting a = new TickSetting("Wait 80 ticks", this, false);
+	public BooleanValue a = new BooleanValue("Wait 80 ticks", this, false);
 
 	@Override
 	public void onDisable() {

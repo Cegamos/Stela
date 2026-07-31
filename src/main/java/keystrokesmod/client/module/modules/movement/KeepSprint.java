@@ -7,16 +7,16 @@ package keystrokesmod.client.module.modules.movement;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import net.minecraft.entity.Entity;
 
 @ModuleInfo(name = "KeepSprint", category = Category.Movement)
 public class KeepSprint extends Mod {
-    private final DescriptionSetting a = new DescriptionSetting("Default is 40% motion reduction.", this);
-    private final SliderSetting b = new SliderSetting("Slow %", this, 40.0, 0.0, 100.0, 1.0);
-    private final TickSetting c = new TickSetting("Only reduce reach hits", this, false);
+    private final DescriptionValue a = new DescriptionValue("Default is 40% motion reduction.", this);
+    private final NumberValue b = new NumberValue("Slow %", this, 40.0, 0.0, 100.0, 1.0);
+    private final BooleanValue c = new BooleanValue("Only reduce reach hits", this, false);
     
     @Override
     public void onAttackTargetEntityWithCurrentItem(final Entity en) {

@@ -7,8 +7,8 @@ import java.util.Map;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.network.play.client.C01PacketChatMessage;
@@ -19,8 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @ModuleInfo(name = "AutoPlay", category = Category.Other)
 public class AutoPlay extends Mod {
 	
-	private final DescriptionSetting desc = new DescriptionSetting("Only for Universocraft", this);
-	private final SliderSetting delay = new SliderSetting("Delay", this, 0, 0, 600, 50);
+	private final DescriptionValue desc = new DescriptionValue("Only for Universocraft", this);
+	private final NumberValue delay = new NumberValue("Delay", this, 0, 0, 600, 50);
 	 private Clock clock = new Clock(0);
 	
 	private Map<String, String> uniCommands = new HashMap<>();

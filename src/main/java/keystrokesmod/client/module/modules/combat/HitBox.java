@@ -11,8 +11,8 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.world.AntiBot;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -30,8 +30,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "HitBox", category = Category.Combat)
 public class HitBox extends Mod {
-    private final SliderSetting a = new SliderSetting("Multiplier", this, 1.2, 1.0, 5.0, 0.05);
-    private final TickSetting b = new TickSetting("Show new hitbox", this, false);
+    private final NumberValue a = new NumberValue("Multiplier", this, 1.2, 1.0, 5.0, 0.05);
+    private final BooleanValue b = new BooleanValue("Show new hitbox", this, false);
     private MovingObjectPosition mv;
     
     @Override

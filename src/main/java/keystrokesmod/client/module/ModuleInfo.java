@@ -9,10 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ModuleInfo {
     String name();
-    
     Category category();
-
     boolean enabled() default false;
-
     int key() default 0;
 }

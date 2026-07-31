@@ -10,8 +10,8 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.combat.AimAssist;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemEnderPearl;
@@ -21,8 +21,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "MiddleClick", category = Category.Other)
 public class MiddleClick extends Mod {
-	public ComboSetting mode = new ComboSetting("On click", this, "Add friend", "Addfriend", "Remove Friend", "Throw pearl");
-	public TickSetting showHelp = new TickSetting("Show friend help in chat", this, true);
+	public ModeValue mode = new ModeValue("On click", this, "Add friend", "Addfriend", "Remove Friend", "Throw pearl");
+	public BooleanValue showHelp = new BooleanValue("Show friend help in chat", this, true);
 	int prevSlot;
 	public static boolean a;
 	private Robot bot;

@@ -5,9 +5,9 @@ import java.awt.Color;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
@@ -16,10 +16,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @ModuleInfo(name = "ChestESP", category = Category.Render)
 public class ChestESP extends Mod {
-    private final SliderSetting a = new SliderSetting("Red", this, 0.0, 0.0, 255.0, 1.0);
-    private final SliderSetting b = new SliderSetting("Green", this, 0.0, 0.0, 255.0, 1.0);
-    private final SliderSetting c = new SliderSetting("Blue", this, 255.0, 0.0, 255.0, 1.0);
-    private final TickSetting d = new TickSetting("Rainbow", this, false);
+    private final NumberValue a = new NumberValue("Red", this, 0.0, 0.0, 255.0, 1.0);
+    private final NumberValue b = new NumberValue("Green", this, 0.0, 0.0, 255.0, 1.0);
+    private final NumberValue c = new NumberValue("Blue", this, 255.0, 0.0, 255.0, 1.0);
+    private final BooleanValue d = new BooleanValue("Rainbow", this, false);
 
     @SubscribeEvent
     public void onRenderWorldLast(final RenderWorldLastEvent ev) {

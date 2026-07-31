@@ -10,7 +10,7 @@ import keystrokesmod.client.event.impl.RenderEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.render.RenderUtil;
 import net.minecraft.entity.Entity;
@@ -21,11 +21,11 @@ import net.minecraft.util.EnumChatFormatting;
 
 @ModuleInfo(name = "MurderMystery", category = Category.Other)
 public class MurderMystery extends Mod {
-	private final TickSetting alertMurder = new TickSetting("Alert murder", this, true);
-	private final TickSetting alertDetective = new TickSetting("Alert detective", this, true);
+	private final BooleanValue alertMurder = new BooleanValue("Alert murder", this, true);
+	private final BooleanValue alertDetective = new BooleanValue("Alert detective", this, true);
 
-	private final TickSetting drawMurder = new TickSetting("Draw murder esp", this, false);
-	private final TickSetting drawDetective = new TickSetting("Draw detective esp", this, false);
+	private final BooleanValue drawMurder = new BooleanValue("Draw murder esp", this, false);
+	private final BooleanValue drawDetective = new BooleanValue("Draw detective esp", this, false);
 
 	private final ArrayList<EntityPlayer> murderers = new ArrayList<>();
 	private final ArrayList<EntityPlayer> detectives = new ArrayList<>();

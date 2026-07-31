@@ -7,12 +7,12 @@ import org.lwjgl.opengl.GL11;
 
 import keystrokesmod.client.clickgui.raven.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
+import keystrokesmod.client.module.value.impl.RangeValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.client.gui.Gui;
 
 public class RangeSliderComponent extends Component {
-    private final DoubleSliderSetting doubleSlider;
+    private final RangeValue doubleSlider;
     private final ModuleComponent module;
     private double barWidth;
     private double blankWidth;
@@ -26,7 +26,7 @@ public class RangeSliderComponent extends Component {
     private final int boxHeight = 4;
     private final int textSize = 11;
     
-    public RangeSliderComponent(final DoubleSliderSetting doubleSlider, final ModuleComponent module, final int moduleStartY) {
+    public RangeSliderComponent(final RangeValue doubleSlider, final ModuleComponent module, final int moduleStartY) {
         this.mode = Helping.NONE;
         this.doubleSlider = doubleSlider;
         this.module = module;

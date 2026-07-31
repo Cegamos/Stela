@@ -9,11 +9,11 @@ import keystrokesmod.client.Raven;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -32,17 +32,17 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "RightClicker", category = Category.Player)
 public class RightClicker extends Mod {
-    private final DoubleSliderSetting rightCPS = new DoubleSliderSetting("RightCPS", this, 12.0, 16.0, 1.0, 60.0, 0.5);
-    private final SliderSetting jitterRight = new SliderSetting("Jitter right", this, 0.0, 0.0, 3.0, 0.1);
-    private final SliderSetting rightClickDelay = new SliderSetting("Rightclick delay (ms)", this, 85.0, 0.0, 500.0, 1.0);
-    private final TickSetting noBlockSword = new TickSetting("Don't rightclick sword", this, true);
-    private final TickSetting ignoreRods = new TickSetting("Ignore rods", this, true);
-    private final TickSetting onlyBlocks = new TickSetting("Only rightclick with blocks", this, false);
-    private final TickSetting preferFastPlace = new TickSetting("Prefer fast place", this, false);
-    private final TickSetting allowEat = new TickSetting("Allow eat & drink", this, true);
-    private final TickSetting allowBow = new TickSetting("Allow bow", this, true);
-    private final ComboSetting clickTimings = new ComboSetting("Click event", this, "Render", "Render", "Tick");
-    private final ComboSetting clickStyle = new ComboSetting("Click Style", this, "Raven", "Raven", "Skid");
+    private final RangeValue rightCPS = new RangeValue("RightCPS", this, 12.0, 16.0, 1.0, 60.0, 0.5);
+    private final NumberValue jitterRight = new NumberValue("Jitter right", this, 0.0, 0.0, 3.0, 0.1);
+    private final NumberValue rightClickDelay = new NumberValue("Rightclick delay (ms)", this, 85.0, 0.0, 500.0, 1.0);
+    private final BooleanValue noBlockSword = new BooleanValue("Don't rightclick sword", this, true);
+    private final BooleanValue ignoreRods = new BooleanValue("Ignore rods", this, true);
+    private final BooleanValue onlyBlocks = new BooleanValue("Only rightclick with blocks", this, false);
+    private final BooleanValue preferFastPlace = new BooleanValue("Prefer fast place", this, false);
+    private final BooleanValue allowEat = new BooleanValue("Allow eat & drink", this, true);
+    private final BooleanValue allowBow = new BooleanValue("Allow bow", this, true);
+    private final ModeValue clickTimings = new ModeValue("Click event", this, "Render", "Render", "Tick");
+    private final ModeValue clickStyle = new ModeValue("Click Style", this, "Raven", "Raven", "Skid");
 
     private Random rand = null;
     private long righti;

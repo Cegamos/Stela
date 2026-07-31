@@ -9,8 +9,8 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
-import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.RangeValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.block.Block;
@@ -25,8 +25,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoTool", category = Category.Player)
 public class AutoTool extends Mod {
-    private final TickSetting hotkeyBack = new TickSetting("Hotkey back", this, true);
-    private final DoubleSliderSetting mineDelay = new DoubleSliderSetting("Max delay", this, 10.0, 50.0, 0.0, 2000.0, 1.0);
+    private final BooleanValue hotkeyBack = new BooleanValue("Hotkey back", this, true);
+    private final RangeValue mineDelay = new RangeValue("Max delay", this, 10.0, 50.0, 0.0, 2000.0, 1.0);
     private Block previousBlock;
     private boolean isWaiting;
     public static int previousSlot;

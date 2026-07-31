@@ -3,15 +3,15 @@ package keystrokesmod.client.module.modules.macros;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.item.ItemStack;
 
 @ModuleInfo(name = "Ladders", category = Category.Macros)
 public class Ladders extends Mod {
-    private final TickSetting preferSlot = new TickSetting("Prefer a slot", this, false);
-    private final SliderSetting hotbarSlotPreference = new SliderSetting("Preferred slot", this, 8.0, 1.0, 9.0, 1.0);
+    private final BooleanValue preferSlot = new BooleanValue("Prefer a slot", this, false);
+    private final NumberValue hotbarSlotPreference = new NumberValue("Preferred slot", this, 8.0, 1.0, 9.0, 1.0);
 
     @Override
     public void onEnable() {

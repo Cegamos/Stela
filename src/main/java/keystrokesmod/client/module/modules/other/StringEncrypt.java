@@ -5,9 +5,9 @@ import keystrokesmod.client.event.impl.RenderTextEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
-import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.module.setting.impl.TickSetting;
+import keystrokesmod.client.module.value.impl.DescriptionValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -16,10 +16,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class StringEncrypt extends Mod {
     private static int m3s = 1;
     private boolean m3t = false;
-    public TickSetting ignoreDebug = new TickSetting("Ignore debug", this, false);
-    public TickSetting ignoreAllGui = new TickSetting("Ignore all GUI", this, false);
-    public SliderSetting value = new SliderSetting("Value", this, 1.0, 1.0, 4.0, 1.0);
-    public DescriptionSetting moduleDesc = new DescriptionSetting("Mode: &k", this);
+    public BooleanValue ignoreDebug = new BooleanValue("Ignore debug", this, false);
+    public BooleanValue ignoreAllGui = new BooleanValue("Ignore all GUI", this, false);
+    public NumberValue value = new NumberValue("Value", this, 1.0, 1.0, 4.0, 1.0);
+    public DescriptionValue moduleDesc = new DescriptionValue("Mode: &k", this);
 
     @Override
     public void onEnable() {
