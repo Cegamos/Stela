@@ -1,14 +1,12 @@
 package keystrokesmod.client.module.modules.client;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.lwjgl.input.Mouse;
 
 import keystrokesmod.client.Raven;
+import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.DragEvent;
@@ -21,6 +19,7 @@ import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.ModeValue;
 import keystrokesmod.client.util.Utils;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 
 @ModuleInfo(name = "HUD", category = Category.Client)
 public class HUD extends Mod {
@@ -36,63 +35,66 @@ public class HUD extends Mod {
     public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false);
     public final BooleanValue hideRender = new BooleanValue("Hide Render", this, false);
 
-    public static final AtomicInteger hudX = new AtomicInteger(5);
-    public static final AtomicInteger hudY = new AtomicInteger(70);
-    public static final AtomicReference<PositionMode> positionMode = new AtomicReference<>(PositionMode.UPLEFT);
+    public static int hudX = 5;
+    public static int hudY = 70;
+    public static PositionMode positionMode = PositionMode.UPLEFT;
 
-    private static final AtomicBoolean draggingModuleList = new AtomicBoolean(false);
-    private static final AtomicReference<Float> dragOffsetX = new AtomicReference<>(0f);
-    private static final AtomicReference<Float> dragOffsetY = new AtomicReference<>(0f);
+    private static boolean draggingModuleList = false;
+    private static float dragOffsetX = 0f;
+    private static float dragOffsetY = 0f;
 
     @Override
     public void onEnable() {
-    	super.onEnable();
-        Raven.moduleManager.sort();
+        super.onEnable();
+        if (mc != null && mc.fontRendererObj != null) {
+            Raven.moduleManager.sort();
+        }
     }
 
     @Override
     public void guiButtonToggled(final BooleanValue setting) {
-    	super.guiButtonToggled(setting);
-        if (setting == alphabeticalSort) Raven.moduleManager.sort();
+        super.guiButtonToggled(setting);
+        if (setting == alphabeticalSort && mc != null && mc.fontRendererObj != null) {
+            Raven.moduleManager.sort();
+        }
     }
 
     @EventLink
     private Listener<PostRenderTickEvent> onDraw = event -> {
-        if (checkGame()) return;
-        if (gameSetting().showDebugInfo) return;
+        if (checkGame() || gameSetting().showDebugInfo || currentScreen() instanceof ClickGui) return;
 
         final int margin = 2;
-        int y = hudY.get();
+        int y = hudY;
         int del = 0;
 
         if (!alphabeticalSort.getValue()) {
-            if (positionMode.get().isTop()) Raven.moduleManager.sortShortLong();
+            if (positionMode.isTop()) Raven.moduleManager.sortShortLong();
             else Raven.moduleManager.sortLongShort();
         }
 
-        List<Mod> modules = Raven.moduleManager.getModules();
-        if (modules.isEmpty()) return;
+        List<Mod> activeModules = getActiveAndVisibleModules();
+        if (activeModules.isEmpty()) return;
 
-        final int textBoxWidth = Raven.moduleManager.getLongestActiveModule();
-        final int textBoxHeight = Raven.moduleManager.getBoxHeight(margin);
         final FontRenderer font = getFont();
+        
+        int textBoxWidth = activeModules.stream().mapToInt(m -> font.getStringWidth(m.getName())).max().orElse(0);
+        int textBoxHeight = activeModules.size() * (font.FONT_HEIGHT + margin);
 
-        int correctedX = Math.max(hudX.get(), margin);
-        int correctedY = Math.max(hudY.get(), margin);
-        correctedX = Math.min(correctedX, mc.displayWidth / 2 - textBoxWidth - margin);
-        correctedY = Math.min(correctedY, mc.displayHeight / 2 - textBoxHeight);
+        ScaledResolution sr = new ScaledResolution(mc);
+        int correctedX = Math.max(hudX, margin);
+        int correctedY = Math.max(hudY, margin);
+        correctedX = Math.min(correctedX, sr.getScaledWidth() - textBoxWidth - margin);
+        correctedY = Math.min(correctedY, sr.getScaledHeight() - textBoxHeight - margin);
 
-        hudX.set(correctedX);
-        hudY.set(correctedY);
+        hudX = correctedX;
+        hudY = correctedY;
 
-        final boolean rightAligned = positionMode.get().isRight();
+        final boolean rightAligned = positionMode.isRight();
 
-        for (Mod m : modules) {
-            if (!m.isEnabled() || m == this || !m.shouldDisplay(this)) continue;
-
+        for (Mod m : activeModules) {
             float drawX = rightAligned
-                    ? hudX.get() + (float) (textBoxWidth - font.getStringWidth(m.getName()))
-                    : hudX.get();
+                    ? hudX + (float) (textBoxWidth - font.getStringWidth(m.getName()))
+                    : hudX;
 
             int color = getColorForMode(mode, del);
             font.drawString(m.getName(), drawX, (float) y, color, true);
@@ -108,14 +110,11 @@ public class HUD extends Mod {
         final int mouseX = event.mouseX;
         final int mouseY = event.mouseY;
 
-        List<Mod> activeModules = Raven.moduleManager.getModules().stream()
-                .filter(m -> m.isEnabled() && m != Raven.moduleManager.getModuleByClazz(HUD.class))
-                .collect(Collectors.toList());
-
+        List<Mod> activeModules = getActiveAndVisibleModules();
         if (activeModules.isEmpty()) return;
 
         float maxWidth = (float) activeModules.stream()
-                .mapToDouble(m -> font.getStringWidth(m.getName()) + 4)
+                .mapToDouble(m -> font.getStringWidth(m.getName()))
                 .max()
                 .orElse(0);
 
@@ -123,23 +122,44 @@ public class HUD extends Mod {
         boolean mouseDown = Mouse.isButtonDown(0);
 
         if (mouseDown) {
-            boolean hovering = mouseX >= hudX.get() && mouseX <= hudX.get() + maxWidth
-                    && mouseY >= hudY.get() && mouseY <= hudY.get() + height;
+            boolean hovering = mouseX >= hudX && mouseX <= hudX + maxWidth
+                    && mouseY >= hudY && mouseY <= hudY + height;
 
-            if (hovering && !draggingModuleList.get()) {
-                draggingModuleList.set(true);
-                dragOffsetX.set(mouseX - hudX.get() * 1f);
-                dragOffsetY.set(mouseY - hudY.get() * 1f);
+            if (hovering && !draggingModuleList) {
+                draggingModuleList = true;
+                dragOffsetX = mouseX - hudX;
+                dragOffsetY = mouseY - hudY;
             }
 
-            if (draggingModuleList.get()) {
-                hudX.set((int) (mouseX - dragOffsetX.get()));
-                hudY.set((int) (mouseY - dragOffsetY.get()));
+            if (draggingModuleList) {
+                hudX = (int) (mouseX - dragOffsetX);
+                hudY = (int) (mouseY - dragOffsetY);
             }
         } else {
-            draggingModuleList.set(false);
+            draggingModuleList = false;
         }
     };
+
+    private List<Mod> getActiveAndVisibleModules() {
+        return Raven.moduleManager.getModules().stream()
+                .filter(Mod::isEnabled)
+                .filter(m -> m != this)
+                .filter(m -> m.shouldDisplay(this))
+                .filter(m -> !isCategoryHidden(m.moduleCategory()))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isCategoryHidden(Category category) {
+        switch (category) {
+            case Client: return hideClient.getValue();
+            case Combat: return hideCombat.getValue();
+            case Movement: return hideMovement.getValue();
+            case Player: return hidePlayer.getValue();
+            case Render: return hideRender.getValue();
+            case Other: return hideOther.getValue();
+            default: return false;
+        }
+    }
 
     public FontRenderer getFont() {
         return mc.fontRendererObj;

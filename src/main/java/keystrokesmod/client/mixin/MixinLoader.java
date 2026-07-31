@@ -6,6 +6,11 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.Name("StelaLoader")
 @IFMLLoadingPlugin.MCVersion("1.8.9")
 @IFMLLoadingPlugin.SortingIndex(1001)
+@IFMLLoadingPlugin.TransformerExclusions({
+    "keystrokesmod.client.stela.",
+    "keystrokesmod.client.mixin.",
+    "org.objectweb.asm."
+})
 public class MixinLoader implements IFMLLoadingPlugin {
 
     @Override
@@ -24,7 +29,9 @@ public class MixinLoader implements IFMLLoadingPlugin {
     }
 
     @Override
-    public void injectData(Map<String, Object> data) { }
+    public void injectData(Map<String, Object> data) { 
+        // No operation needed
+    }
 
     @Override
     public String getAccessTransformerClass() {

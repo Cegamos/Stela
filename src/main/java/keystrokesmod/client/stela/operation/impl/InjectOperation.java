@@ -9,8 +9,6 @@ import keystrokesmod.client.stela.util.ASMUtil;
 import keystrokesmod.client.stela.util.DescParser;
 import keystrokesmod.client.stela.util.Mapper;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -23,90 +21,20 @@ import java.util.stream.Collectors;
 import static keystrokesmod.client.stela.Stela.Logger;
 
 public class InjectOperation implements Operation {
-    private static final int ASM_API = Opcodes.ASM5;
-
-    private static AbstractInsnNode[] getBlock(AbstractInsnNode node, InsnList list) {
-        AbstractInsnNode first = null, last = null;
-        for (int i = 0; i < list.size(); i++) {
-            AbstractInsnNode abstractInsnNode = list.get(i);
-            if (abstractInsnNode instanceof LabelNode)
-                first = abstractInsnNode;
-            if (abstractInsnNode == node)
-                break;
-        }
-        boolean passed = false;
-        for (int i = 0; i < list.size(); i++) {
-            AbstractInsnNode abstractInsnNode = list.get(i);
-            if (abstractInsnNode == node)
-                passed = true;
-            if (passed) {
-                if (abstractInsnNode instanceof LabelNode) {
-                    last = abstractInsnNode;
-                    break;
-                }
-            }
-        }
-        return new AbstractInsnNode[]{first, last};
-    }
-
-    private static void processReturnLabel(MethodNode source) {
-        if (source.desc.endsWith("V")) {
-            if (source.instructions.size() > 0 && source.instructions.get(source.instructions.size() - 1) instanceof LabelNode)
-                source.instructions.remove(source.instructions.get(source.instructions.size() - 1));
-            while (source.instructions.size() > 0 && !(source.instructions.get(source.instructions.size() - 1) instanceof LabelNode))
-                source.instructions.remove(source.instructions.get(source.instructions.size() - 1));
-        }
-    }
-
-    private static void adaptReturns(MethodNode source, MethodNode target) {
-        if (!source.desc.endsWith("V")) return;
-        String returnType = target.desc.substring(target.desc.lastIndexOf(')') + 1);
-        if (returnType.equals("V")) return;
-        for (AbstractInsnNode insn : source.instructions.toArray()) {
-            if (insn.getOpcode() != Opcodes.RETURN) continue;
-            InsnList replacement = new InsnList();
-            switch (returnType.charAt(0)) {
-                case 'Z': case 'B': case 'C': case 'S': case 'I':
-                    replacement.add(new InsnNode(Opcodes.ICONST_0));
-                    replacement.add(new InsnNode(Opcodes.IRETURN));
-                    break;
-                case 'J':
-                    replacement.add(new InsnNode(Opcodes.LCONST_0));
-                    replacement.add(new InsnNode(Opcodes.LRETURN));
-                    break;
-                case 'F':
-                    replacement.add(new InsnNode(Opcodes.FCONST_0));
-                    replacement.add(new InsnNode(Opcodes.FRETURN));
-                    break;
-                case 'D':
-                    replacement.add(new InsnNode(Opcodes.DCONST_0));
-                    replacement.add(new InsnNode(Opcodes.DRETURN));
-                    break;
-                default:
-                    replacement.add(new InsnNode(Opcodes.ACONST_NULL));
-                    replacement.add(new InsnNode(Opcodes.ARETURN));
-                    break;
-            }
-            source.instructions.insertBefore(insn, replacement);
-            source.instructions.remove(insn);
-        }
-    }
-
+    
     private static int getLocalVarIndex(MethodNode node, String name) {
         try {
             return Integer.parseInt(name);
-        } catch (Exception ignored) {
-        }
-        final int[] varIndex = {-1};
-        node.accept(new MethodVisitor(ASM_API) {
-            @Override
-            public void visitLocalVariable(String varName, String descriptor, String signature, Label start, Label end, int index) {
-                if (name.equals(varName))
-                    varIndex[0] = index;
-                super.visitLocalVariable(varName, descriptor, signature, start, end, index);
+        } catch (Exception ignored) {}
+        
+        if (node.localVariables != null) {
+            for (LocalVariableNode localVar : node.localVariables) {
+                if (localVar.name.equals(name)) {
+                    return localVar.index;
+                }
             }
-        });
-        return varIndex[0];
+        }
+        return -1;
     }
 
     private static ArrayList<String[]> getLocalParameters(MethodNode node) {
@@ -136,48 +64,57 @@ public class InjectOperation implements Operation {
     }
 
     private static void processLocalValues(MethodNode source, MethodNode target) {
-        int max_index = 0;
-        for (AbstractInsnNode instruction : target.instructions.toArray()) {
-            if (instruction instanceof VarInsnNode && (isLoadOpe(instruction.getOpcode()) || isStoreOpe(instruction.getOpcode()))) {
-                VarInsnNode varInsnNode = (VarInsnNode) instruction;
-                max_index = Math.max(max_index, varInsnNode.var);
-            }
-        }
+        int shiftAmount = target.maxLocals;
 
         Map<Integer, Integer> varMap = new HashMap<>();
         ArrayList<String[]> sourceParameters = getLocalParameters(source);
+        
         for (int i = 0; i < source.instructions.size(); i++) {
             AbstractInsnNode instruction = source.instructions.get(i);
             if (instruction instanceof VarInsnNode && isStoreOpe(instruction.getOpcode())) {
                 VarInsnNode varInsnNode = (VarInsnNode) instruction;
                 boolean canChange = true;
-                for (String[] sourceParameter : sourceParameters)
-                    if (getLocalVarIndex(source, sourceParameter[0]) == varInsnNode.var)
+                for (String[] sourceParameter : sourceParameters) {
+                    if (getLocalVarIndex(source, sourceParameter[0]) == varInsnNode.var) {
                         canChange = false;
-                if (canChange)
-                    varMap.put(varInsnNode.var, varInsnNode.var += max_index);
+                        break;
+                    }
+                }
+                if (canChange && !varMap.containsKey(varInsnNode.var)) {
+                    varMap.put(varInsnNode.var, varInsnNode.var + shiftAmount);
+                }
             }
         }
+        
         for (String[] sourceParameter : sourceParameters) {
-            varMap.put(
-                    getLocalVarIndex(source, sourceParameter[0]),
-                    getLocalVarIndex(target, sourceParameter[1])
-            );
+            int sourceIndex = getLocalVarIndex(source, sourceParameter[0]);
+            int targetIndex = getLocalVarIndex(target, sourceParameter[1]);
+            if (sourceIndex != -1 && targetIndex != -1) {
+                varMap.put(sourceIndex, targetIndex);
+            }
         }
+        
+        int newMaxLocals = target.maxLocals;
         for (int i = 0; i < source.instructions.size(); i++) {
             AbstractInsnNode instruction = source.instructions.get(i);
             if (instruction instanceof VarInsnNode && (isLoadOpe(instruction.getOpcode()) || isStoreOpe(instruction.getOpcode()))) {
                 VarInsnNode varInsnNode = (VarInsnNode) instruction;
-                Integer index = varMap.get(varInsnNode.var);
-                if (index != null)
-                    varInsnNode.var = index;
+                Integer newIndex = varMap.get(varInsnNode.var);
+                if (newIndex != null) {
+                    varInsnNode.var = newIndex;
+                    newMaxLocals = Math.max(newMaxLocals, newIndex + 2);
+                }
             } else if (instruction instanceof IincInsnNode) {
                 IincInsnNode iincInsnNode = (IincInsnNode) instruction;
-                Integer index = varMap.get(iincInsnNode.var);
-                if (index != null)
-                    iincInsnNode.var = index;
+                Integer newIndex = varMap.get(iincInsnNode.var);
+                if (newIndex != null) {
+                    iincInsnNode.var = newIndex;
+                    newMaxLocals = Math.max(newMaxLocals, newIndex + 1);
+                }
             }
         }
+        
+        target.maxLocals = newMaxLocals;
     }
 
     @Override
@@ -187,18 +124,20 @@ public class InjectOperation implements Operation {
         List<MethodNode> injections = source.methods.stream()
                 .filter(m -> getInjectAnnotation(m) != null)
                 .collect(Collectors.toList());
+                
         for (MethodNode injection : injections) {
             Inject info = getInjectAnnotation(injection);
             if (info == null) continue;
+            
             MethodNode targetMethod = findTargetMethod(target.methods, mixin.getTargetName(), info.method(), info.desc());
             if (targetMethod == null) {
                 if (Logger != null)
                     Logger.error("No method found: {} in {}", info.method() + info.desc(), target.name);
                 continue;
             }
-            processReturnLabel(injection);
-            adaptReturns(injection, targetMethod);
+            
             processLocalValues(injection, targetMethod);
+            
             try {
                 insert(source.name, target.name, injection, targetMethod, info);
             } catch (Throwable e) {
@@ -269,34 +208,26 @@ public class InjectOperation implements Operation {
     }
 
     private static int getOperationCode(String ope) {
-        int opcode = -1;
         try {
-            opcode = (int) Opcodes.class.getField(ope).get(null);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-        }
-        return opcode;
+            return (int) Opcodes.class.getField(ope).get(null);
+        } catch (Exception ignored) {}
+        return -1;
     }
 
     private static String getMethodInsnNodeOperation(AbstractInsnNode node) {
-        final String[] target = {null};
-        node.accept(new MethodVisitor(ASM_API) {
-            @Override
-            public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-                target[0] = owner + "." + name + descriptor;
-            }
-        });
-        return target[0];
+        if (node instanceof MethodInsnNode) {
+            MethodInsnNode mNode = (MethodInsnNode) node;
+            return mNode.owner + "." + mNode.name + mNode.desc;
+        }
+        return null;
     }
 
     private static String getFieldInsnNodeOperation(AbstractInsnNode node) {
-        final String[] target = {null};
-        node.accept(new MethodVisitor(ASM_API) {
-            @Override
-            public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-                target[0] = owner + "." + name + " " + descriptor;
-            }
-        });
-        return target[0];
+        if (node instanceof FieldInsnNode) {
+            FieldInsnNode fNode = (FieldInsnNode) node;
+            return fNode.owner + "." + fNode.name + " " + fNode.desc;
+        }
+        return null;
     }
 
     private static String[] parseOpe(String ope) {
@@ -351,12 +282,18 @@ public class InjectOperation implements Operation {
         String targetOpe = targetInfo.target().isEmpty() ? "" : mapOperation(targetInfo.target());
         int opcode = getOperationCode(targetInfo.value());
         int index = 0;
+        
         for (AbstractInsnNode instruction : target.instructions.toArray()) {
-            if (instruction.getOpcode() == opcode && (targetOpe.isEmpty() || (targetOpe.contains(" ") ? getFieldInsnNodeOperation(instruction) : getMethodInsnNodeOperation(instruction)).equals(targetOpe))) {
-                if (index == targetInfo.ordinal()) {
-                    nodes.add(instruction);
-                    return nodes;
-                } else index++;
+            if (instruction.getOpcode() == opcode) {
+                String nodeOpe = targetOpe.contains(" ") ? getFieldInsnNodeOperation(instruction) : getMethodInsnNodeOperation(instruction);
+                if (targetOpe.isEmpty() || (nodeOpe != null && nodeOpe.equals(targetOpe))) {
+                    if (index == targetInfo.ordinal()) {
+                        nodes.add(instruction);
+                        return nodes;
+                    } else {
+                        index++;
+                    }
+                }
             }
         }
         return nodes;
@@ -387,8 +324,6 @@ public class InjectOperation implements Operation {
                 target.instructions.insertBefore(targetNode, cloneInsnList(source.instructions, sourceName, targetName));
             } else if (shift == Target.Shift.AFTER) {
                 target.instructions.insert(targetNode, cloneInsnList(source.instructions, sourceName, targetName));
-            } else {
-                target.instructions.insertBefore(targetNode, cloneInsnList(source.instructions, sourceName, targetName));
             }
         }
     }
@@ -396,33 +331,33 @@ public class InjectOperation implements Operation {
     private static InsnList cloneInsnList(InsnList source, String sourceName, String targetName) {
         InsnList clone = new InsnList();
         Map<LabelNode, LabelNode> labelMap = new HashMap<>();
+        
         for (AbstractInsnNode insn = source.getFirst(); insn != null; insn = insn.getNext()) {
             if (insn instanceof LabelNode) {
                 labelMap.put((LabelNode) insn, new LabelNode());
             }
         }
+        
         for (AbstractInsnNode insn = source.getFirst(); insn != null; insn = insn.getNext()) {
             int opcode = insn.getOpcode();
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 continue;
             }
+            
             AbstractInsnNode cloned = insn.clone(labelMap);
             if (cloned instanceof FieldInsnNode) {
                 FieldInsnNode fieldInsn = (FieldInsnNode) cloned;
-                if (fieldInsn.owner.equals(sourceName)) {
-                    fieldInsn.owner = targetName;
-                }
+                if (fieldInsn.owner.equals(sourceName)) fieldInsn.owner = targetName;
+                
             } else if (cloned instanceof MethodInsnNode) {
                 MethodInsnNode methodInsn = (MethodInsnNode) cloned;
-                if (methodInsn.owner.equals(sourceName)) {
-                    methodInsn.owner = targetName;
-                }
+                if (methodInsn.owner.equals(sourceName)) methodInsn.owner = targetName;
+                
             } else if (cloned instanceof TypeInsnNode) {
                 TypeInsnNode typeInsn = (TypeInsnNode) cloned;
-                if (typeInsn.desc.equals(sourceName)) {
-                    typeInsn.desc = targetName;
-                }
+                if (typeInsn.desc.equals(sourceName)) typeInsn.desc = targetName;
             }
+            
             clone.add(cloned);
         }
         return clone;
