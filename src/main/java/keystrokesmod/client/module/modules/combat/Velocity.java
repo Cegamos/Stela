@@ -12,7 +12,7 @@ import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
-import keystrokesmod.client.utils.system.ReflectUtil;
+import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.Packet;

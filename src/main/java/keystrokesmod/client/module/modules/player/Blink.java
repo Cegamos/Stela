@@ -9,7 +9,7 @@ import keystrokesmod.client.event.impl.PacketSendEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.timing.Clock;
+import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.client.C03PacketPlayer;

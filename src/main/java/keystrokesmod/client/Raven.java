@@ -13,7 +13,7 @@ import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PostTickEvent;
 import keystrokesmod.client.module.ModuleManager;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.input.MouseManager;
+import keystrokesmod.client.util.input.MouseManager;
 import keystrokesmod.keystroke.KeyStrokeCommand;
 import keystrokesmod.keystroke.KeyStrokeRenderer;
 import net.minecraft.client.Minecraft;

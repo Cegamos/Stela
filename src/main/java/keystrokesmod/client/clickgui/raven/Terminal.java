@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.utils.timing.Clock;
+import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

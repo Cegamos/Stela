@@ -14,7 +14,7 @@ import keystrokesmod.client.module.modules.world.AntiBot;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.system.ReflectUtil;
+import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

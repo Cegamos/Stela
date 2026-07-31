@@ -3,7 +3,7 @@ package keystrokesmod.keystroke;
 import java.io.IOException;
 
 import keystrokesmod.client.config.ClientConfig;
-import keystrokesmod.client.utils.input.MouseManager;
+import keystrokesmod.client.util.input.MouseManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 

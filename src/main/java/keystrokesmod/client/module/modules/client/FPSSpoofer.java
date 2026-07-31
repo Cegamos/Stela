@@ -10,7 +10,7 @@ import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
-import keystrokesmod.client.utils.system.ReflectUtil;
+import keystrokesmod.client.util.system.ReflectUtil;
 
 @ModuleInfo(name = "FPSSpoofer", category = Category.Client)
 public class FPSSpoofer extends Mod {

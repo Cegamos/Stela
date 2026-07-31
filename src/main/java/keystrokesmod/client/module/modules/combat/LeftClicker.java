@@ -16,7 +16,7 @@ import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.system.ReflectUtil;
+import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.entity.EntityPlayerSP;

@@ -21,8 +21,8 @@ import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.font.FontRenderer;
-import keystrokesmod.client.utils.font.Fonts;
+import keystrokesmod.client.util.font.FontRenderer;
+import keystrokesmod.client.util.font.Fonts;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
 

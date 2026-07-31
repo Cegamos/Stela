@@ -11,7 +11,7 @@ import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.modules.client.GuiModule;
-import keystrokesmod.client.utils.render.RenderUtil;
+import keystrokesmod.client.util.render.RenderUtil;
 import net.minecraft.client.gui.FontRenderer;
 
 public class CategoryComponent

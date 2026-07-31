@@ -7,7 +7,7 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.utils.input.MouseManager;
+import keystrokesmod.client.util.input.MouseManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 

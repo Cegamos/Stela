@@ -12,7 +12,7 @@ import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.timing.Clock;
+import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;

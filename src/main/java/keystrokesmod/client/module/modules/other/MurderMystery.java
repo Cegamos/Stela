@@ -12,7 +12,7 @@ import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.render.RenderUtil;
+import keystrokesmod.client.util.render.RenderUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;

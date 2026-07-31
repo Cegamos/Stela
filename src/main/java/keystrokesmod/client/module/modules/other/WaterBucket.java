@@ -4,7 +4,7 @@ import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.system.DimensionUtil;
+import keystrokesmod.client.util.system.DimensionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

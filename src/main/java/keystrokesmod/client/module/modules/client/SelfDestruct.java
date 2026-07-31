@@ -5,8 +5,8 @@ import keystrokesmod.client.event.EventBus;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.ModuleInfo;
-import keystrokesmod.client.utils.chat.ChatUtil;
-import keystrokesmod.client.utils.input.MouseManager;
+import keystrokesmod.client.util.chat.ChatUtil;
+import keystrokesmod.client.util.input.MouseManager;
 import keystrokesmod.keystroke.KeyStrokeRenderer;
 
 @ModuleInfo(name = "Self Destruct", category = Category.Client)

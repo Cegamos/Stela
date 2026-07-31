@@ -26,7 +26,7 @@ import keystrokesmod.client.module.Mod;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
-import keystrokesmod.client.utils.system.ReflectUtil;
+import keystrokesmod.client.util.system.ReflectUtil;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

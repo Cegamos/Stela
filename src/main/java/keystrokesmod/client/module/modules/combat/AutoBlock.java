@@ -8,7 +8,7 @@ import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.timing.Clock;
+import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;

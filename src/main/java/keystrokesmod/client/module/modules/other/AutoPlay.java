@@ -10,7 +10,7 @@ import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.client.utils.timing.Clock;
+import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
