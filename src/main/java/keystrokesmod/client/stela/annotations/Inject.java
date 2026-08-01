@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.METHOD)
 public @interface Inject {
-    String method();
+    String[] method() default {};
     String desc() default "";
     Target target() default @Target("HEAD");
     boolean cancellable() default false;

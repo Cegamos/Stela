@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.METHOD)
 public @interface Redirect {
-    String method();
+    String[] method() default {};
     String desc() default "";
     Target target();
     boolean remap() default true;

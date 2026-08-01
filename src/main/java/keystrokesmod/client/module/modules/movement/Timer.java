@@ -29,6 +29,7 @@ public class Timer extends Mod {
     
     @Override
     public void onDisable() {
+    	super.onDisable();
         ReflectUtil.resetTimer();
     }
 }

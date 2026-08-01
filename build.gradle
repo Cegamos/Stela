@@ -16,7 +16,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 group = "keystrokesmod"
-archivesBaseName = "Raven"
+archivesBaseName = "Kevin"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava.options.encoding = 'UTF-8'

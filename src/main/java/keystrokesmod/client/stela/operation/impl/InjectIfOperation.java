@@ -43,12 +43,14 @@ public class InjectIfOperation implements Operation {
         if (method == null) return null;
         for (AnnotationNode annotation : keystrokesmod.client.stela.util.ASMUtil.getAnnotations(method)) {
             if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/InjectIf;")) {
-                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                Object methodNameObj = ASMUtil.getAnnotationValue(annotation, "method");
+                List<String> nameList = InjectOperation.parseMethodNames(methodNameObj);
+                final String[] methodArray = nameList.toArray(new String[0]);
                 String desc = ASMUtil.getAnnotationValue(annotation, "desc");
                 String condition = ASMUtil.getAnnotationValue(annotation, "condition");
                 return new InjectIf() {
                     @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return InjectIf.class; }
-                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String[] method() { return methodArray; }
                     @Override public String desc() { return desc != null ? desc : ""; }
                     @Override public String condition() { return condition != null ? condition : ""; }
                     @Override public keystrokesmod.client.stela.annotations.Target target() { return null; }

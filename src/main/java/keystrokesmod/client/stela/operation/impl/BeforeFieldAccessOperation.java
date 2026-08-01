@@ -45,12 +45,14 @@ public class BeforeFieldAccessOperation implements Operation {
         if (method == null) return null;
         for (AnnotationNode annotation : keystrokesmod.client.stela.util.ASMUtil.getAnnotations(method)) {
             if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/BeforeFieldAccess;")) {
-                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                Object methodNameObj = ASMUtil.getAnnotationValue(annotation, "method");
+                List<String> nameList = InjectOperation.parseMethodNames(methodNameObj);
+                final String[] methodArray = nameList.toArray(new String[0]);
                 String desc = ASMUtil.getAnnotationValue(annotation, "desc");
                 String field = ASMUtil.getAnnotationValue(annotation, "field");
                 return new BeforeFieldAccess() {
                     @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return BeforeFieldAccess.class; }
-                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String[] method() { return methodArray; }
                     @Override public String desc() { return desc != null ? desc : ""; }
                     @Override public String field() { return field != null ? field : ""; }
                     @Override public boolean remap() { return true; }

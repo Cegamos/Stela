@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.modules.other;
+package keystrokesmod.client.module.modules.render;
 
 import keystrokesmod.client.clickgui.ClickGui;
 import keystrokesmod.client.event.impl.RenderTextEvent;
@@ -12,7 +12,7 @@ import keystrokesmod.client.util.Utils;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@ModuleInfo(name = "StringEncrypt", category = Category.Other)
+@ModuleInfo(name = "StringEncrypt", category = Category.Render)
 public class StringEncrypt extends Mod {
     private static int m3s = 1;
     private boolean m3t = false;

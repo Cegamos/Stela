@@ -1,7 +1,10 @@
 package keystrokesmod.client.stela;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +16,7 @@ import org.objectweb.asm.tree.ClassNode;
 import keystrokesmod.client.stela.operation.Operation;
 import keystrokesmod.client.stela.operation.impl.*;
 import keystrokesmod.client.stela.util.ASMUtil;
+import keystrokesmod.client.stela.util.Mapper;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 
@@ -75,6 +79,20 @@ public class StelaTransformer implements IClassTransformer {
         );
 
         ClassBytesProvider provider = StelaTransformer::getClassBytes;
+
+        try (InputStream is = getSrgStream()) {
+            if (is != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    Mapper.readMappingsFromReader(reader);
+                    Mapper.setMode(Mapper.Mode.Vanilla);
+                    Stela.Logger.info("Loaded forge.srg mappings successfully! ({} entries)", Mapper.getVanilla().size());
+                }
+            } else {
+                Stela.Logger.warn("Could not find /forge.srg in resources!");
+            }
+        } catch (Throwable t) {
+            Stela.Logger.error("Failed to load /forge.srg mappings: {}", t.getMessage());
+        }
 
         String[] mixinClassNames = new String[] {
             "keystrokesmod.client.mixin.mixins.MixinEntityPlayer",
@@ -183,5 +201,22 @@ public class StelaTransformer implements IClassTransformer {
         }
 
         return basicClass;
+    }
+
+    private static InputStream getSrgStream() {
+        String[] paths = new String[] {"/stela.srg", "stela.srg", "/forge.srg", "forge.srg"};
+        for (String path : paths) {
+            InputStream is = StelaTransformer.class.getResourceAsStream(path);
+            if (is != null) return is;
+            if (StelaTransformer.class.getClassLoader() != null) {
+                is = StelaTransformer.class.getClassLoader().getResourceAsStream(path);
+                if (is != null) return is;
+            }
+            if (Thread.currentThread().getContextClassLoader() != null) {
+                is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+                if (is != null) return is;
+            }
+        }
+        return null;
     }
 }

@@ -40,7 +40,7 @@ public class Mixin {
         }
         if (target == null) {
             if (Logger != null)
-                Logger.error("Failed to load target class {} for mixin {}", targetClassName, source.name);
+                Logger.info("Target class {} for mixin {} registered for lazy transformation", targetClassName, source.name);
         } else {
             if (Logger != null)
                 Logger.info("Loaded target class {} for mixin {}", targetClassName, source.name);

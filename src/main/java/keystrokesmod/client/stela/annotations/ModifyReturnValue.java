@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.METHOD)
 public @interface ModifyReturnValue {
-    String method();
+    String[] method() default {};
     String desc() default "";
     boolean remap() default true;
 }

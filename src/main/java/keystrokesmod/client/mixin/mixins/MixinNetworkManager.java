@@ -27,6 +27,6 @@ public class MixinNetworkManager {
     private void onReceivePacket(ChannelHandlerContext ctx, Packet<?> packet) {
     	PacketReceiveEvent event = new PacketReceiveEvent(packet);
     	EventBus.INSTANCE.post(new PacketReceiveEvent(packet));
-    	if (event.isCancelled()) return;    	
+    	if (event.isCancelled()) return;
     }
 }

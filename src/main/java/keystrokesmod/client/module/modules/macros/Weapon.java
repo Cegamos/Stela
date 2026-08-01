@@ -3,43 +3,77 @@ package keystrokesmod.client.module.modules.macros;
 import keystrokesmod.client.module.*;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.util.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import java.util.Collection;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 @ModuleInfo(name = "Weapon", category = Category.Macros)
 public class Weapon extends Mod {
 
     @Override
     public void onEnable() {
-        if (!Utils.Player.isPlayerInGame()) {
+        super.onEnable();
+        
+        if (checkGame()) {
             this.disable();
             return;
         }
 
         int bestSlot = -1;
-        double highestDamage = Double.NEGATIVE_INFINITY;
+        float highestDamage = Float.NEGATIVE_INFINITY;
 
-        for (int slot = 0; slot <= 8; slot++) {
-            ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
-            if (stack == null) continue;
+        for (int slot = 0; slot < 9; slot++) {
+            final ItemStack stack = getPlayer().inventory.getStackInSlot(slot);
+            
+            if (stack == null) {
+                continue;
+            }
 
-            Collection<AttributeModifier> modifiers = stack.getAttributeModifiers().values();
-            for (AttributeModifier modifier : modifiers) {
-                double amount = modifier.getAmount();
-                if (amount > highestDamage) {
-                    highestDamage = amount;
-                    bestSlot = slot;
-                }
+            final float damage = calculateItemDamage(stack);
+
+            if (damage > highestDamage) {
+                highestDamage = damage;
+                bestSlot = slot;
             }
         }
 
-        if (bestSlot != -1 && mc.thePlayer.inventory.currentItem != bestSlot) {
+        if (bestSlot != -1 && getPlayer().inventory.currentItem != bestSlot) {
             Utils.Player.hotkeyToSlot(bestSlot);
         }
 
         this.onDisable();
         this.disable();
+    }
+
+    private float calculateItemDamage(final ItemStack stack) {
+        float damage = 1f;
+        final Item item = stack.getItem();
+
+        if (item instanceof ItemSword) {
+            damage += ((ItemSword) item).getDamageVsEntity();
+        } else if (item instanceof ItemTool) {
+            damage += ((ItemTool) item).getToolMaterial().getDamageVsEntity();
+        }
+
+        final NBTTagList enchantments = stack.getEnchantmentTagList();
+        
+        if (enchantments != null) {
+            final int tagCount = enchantments.tagCount();
+            
+            for (int i = 0; i < tagCount; i++) {
+                final NBTTagCompound nbt = enchantments.getCompoundTagAt(i);
+                
+                if (nbt != null && nbt.getShort("id") == 16) {
+                    final int level = nbt.getShort("lvl");
+                    damage += 1.25f * level; 
+                    break;
+                }
+            }
+        }
+
+        return damage;
     }
 }

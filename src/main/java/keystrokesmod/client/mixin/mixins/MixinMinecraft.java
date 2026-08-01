@@ -61,6 +61,11 @@ public class MixinMinecraft {
 		FontUtil.checkInit();
 	}
 
+	@Inject(method = "shutdownMinecraftApplet", desc = "()V", target = @Target("HEAD"))
+	private void injectShutdown() {
+		Kevin.shutdown();
+	}
+
 	@Inject(method = "runTick", desc = "()V", target = @Target(value = "INVOKEVIRTUAL", target = "isUsingItem", shift = Target.Shift.BEFORE))
 	private void injectMouseStateUpdate() {
 		MouseStateUpdateEvent mouseStateUpdateEvent = new MouseStateUpdateEvent();

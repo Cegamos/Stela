@@ -13,7 +13,6 @@ import keystrokesmod.client.module.modules.client.*;
 import keystrokesmod.client.module.modules.combat.*;
 import keystrokesmod.client.module.modules.macros.*;
 import keystrokesmod.client.module.modules.movement.*;
-import keystrokesmod.client.module.modules.other.*;
 import keystrokesmod.client.module.modules.player.*;
 import keystrokesmod.client.module.modules.render.*;
 import net.minecraft.client.gui.FontRenderer;
@@ -42,13 +41,13 @@ public class ModuleManager {
             new WTap(), new STap(), new Velocity(),
             new Armour(), new Blocks(), new Healing(), new Ladders(), new Pearl(),
             new Trajectories(), new Weapon(),
-            new MurderMystery(), new AutoHeader(), new Fly(), new Freeze(), new InvMove(),
-            new KeepSprint(), new NoSlow(), new Speed(), new Sprint(), new StopMotion(),
-            new Timer(), new VClip(),
-            new NameHider(), new AutoPlay(), new MiddleClick(), new WaterBucket(), new StringEncrypt(),
-            new AutoJump(), new AutoPlace(), new AutoTool(), new BedAura(), new Blink(),
-            new BridgeAssist(), new FallSpeed(), new FastBreak(), new FastPlace(), new Freecam(),
-            new NoFall(), new RightClicker(),
+            new MurderMystery(), new AutoHeader(), new Freeze(), new InvMove(),
+            new KeepSprint(), new NoSlow(),new Sprint(),
+            new Timer(), 
+            new AutoPlay(), new MiddleClick(), new StringEncrypt(),
+            new AutoJump(), new AutoTool(), new BedAura(), new Blink(),
+            new BridgeAssist(), new FastBreak(), new FastPlace(),
+            new RightClicker(),
             new BedPlates(), new Chams(), new ChestESP(), new TimeChanger(), new NameTags(),
             new NameTagsV2(), new Fullbright(), new PlayerESP(), new Tracers(), new Xray()
         );

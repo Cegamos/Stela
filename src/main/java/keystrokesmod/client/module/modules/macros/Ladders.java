@@ -3,9 +3,10 @@ package keystrokesmod.client.module.modules.macros;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
-import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.module.value.impl.BooleanValue;
-import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.module.value.impl.NumberValue;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 @ModuleInfo(name = "Ladders", category = Category.Macros)
@@ -15,7 +16,8 @@ public class Ladders extends Mod {
 
     @Override
     public void onEnable() {
-        if (!Utils.Player.isPlayerInGame()) {
+    	super.onEnable();
+        if (checkGame()) {
             this.disable();
             return;
         }
@@ -27,7 +29,9 @@ public class Ladders extends Mod {
             if (isLadder(preferredSlot)) {
                 slot = preferredSlot;
             }
-        } else {
+        } 
+        
+        if (slot == -1) {
             for (int i = 0; i <= 8; i++) {
                 if (isLadder(i)) {
                     slot = i;
@@ -36,16 +40,18 @@ public class Ladders extends Mod {
             }
         }
 
-        if (slot != -1 && mc.thePlayer.inventory.currentItem != slot) {
-            mc.thePlayer.inventory.currentItem = slot;
+        if (slot != -1 && getPlayer().inventory.currentItem != slot) {
+        	getPlayer().inventory.currentItem = slot;
         }
 
-        this.onDisable();
-        this.disable();
+        this.disable(); 
     }
 
     private boolean isLadder(int slot) {
-        ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
-        return stack != null && "ladder".equalsIgnoreCase(stack.getDisplayName());
+        ItemStack stack = getPlayer().inventory.getStackInSlot(slot);
+        if (stack != null && stack.getItem() != null) {
+            return stack.getItem() == Item.getItemFromBlock(Blocks.ladder);
+        }
+        return false;
     }
 }

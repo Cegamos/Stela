@@ -33,13 +33,26 @@ public class Kevin extends Wrapper {
     public static ClientConfig clientConfig;
     public static ClickGui clickGui;
 
-    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2, r -> {
+        Thread thread = new Thread(r, "Kevin-Worker");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     public static void init() {
         initSystems();
         registerEvents();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(Kevin::shutdown));
+    }
+
+    public static void shutdown() {
+        try {
+            ConfigManager.saveConfigByName(ConfigManager.getCurrentProfileName());
+        } catch (Throwable ignored) {}
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdownNow();
+        }
     }
 
     private static void initSystems() {

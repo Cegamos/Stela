@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.METHOD)
 public @interface Overwrite {
-    String method() default "";
+    String[] method() default {};
     String desc() default "";
     boolean remap() default true;
 }

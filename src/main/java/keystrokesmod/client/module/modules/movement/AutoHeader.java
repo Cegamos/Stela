@@ -3,15 +3,17 @@ package keystrokesmod.client.module.modules.movement;
 import org.lwjgl.input.Keyboard;
 
 import io.netty.util.internal.ThreadLocalRandom;
+import keystrokesmod.client.event.EventLink;
+import keystrokesmod.client.event.Listener;
+import keystrokesmod.client.event.impl.PostRenderTickEvent;
+import keystrokesmod.client.event.impl.PreRenderTickEvent;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
+import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.NumberValue;
-import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.util.Utils;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @ModuleInfo(name = "AutoHeader", category = Category.Movement)
 public class AutoHeader extends Mod {
@@ -23,12 +25,17 @@ public class AutoHeader extends Mod {
     
     @Override
     public void onEnable() {
+    	super.onEnable();
         this.startWait = (double)System.currentTimeMillis();
-        super.onEnable();
     }
     
-    @SubscribeEvent
-    public void onTick(final TickEvent.RenderTickEvent e) {
+    @EventLink
+    private final Listener<PreRenderTickEvent> preRenderTick = event -> both();
+
+    @EventLink
+    private final Listener<PostRenderTickEvent> postRenderTick = event -> both();
+
+    private void both() {
         if (!Utils.Player.isPlayerInGame() || mc.currentScreen != null) {
             return;
         }

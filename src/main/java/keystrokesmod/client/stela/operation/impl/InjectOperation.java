@@ -132,7 +132,7 @@ public class InjectOperation implements Operation {
             MethodNode targetMethod = findTargetMethod(target.methods, mixin.getTargetName(), info.method(), info.desc());
             if (targetMethod == null) {
                 if (Logger != null)
-                    Logger.error("No method found: {} in {}", info.method() + info.desc(), target.name);
+                    Logger.error("No method found: {} in {}", java.util.Arrays.toString(info.method()) + info.desc(), target.name);
                 continue;
             }
             
@@ -146,11 +146,39 @@ public class InjectOperation implements Operation {
         }
     }
 
+    public static List<String> parseMethodNames(Object methodNameObj) {
+        List<String> result = new ArrayList<>();
+        if (methodNameObj instanceof List) {
+            for (Object item : (List<?>) methodNameObj) {
+                if (item != null) {
+                    for (String part : item.toString().split("[,|\\s]+")) {
+                        if (!part.trim().isEmpty()) result.add(part.trim());
+                    }
+                }
+            }
+        } else if (methodNameObj instanceof String[]) {
+            for (String s : (String[]) methodNameObj) {
+                if (s != null) {
+                    for (String part : s.split("[,|\\s]+")) {
+                        if (!part.trim().isEmpty()) result.add(part.trim());
+                    }
+                }
+            }
+        } else if (methodNameObj != null) {
+            for (String part : methodNameObj.toString().split("[,|\\s]+")) {
+                if (!part.trim().isEmpty()) result.add(part.trim());
+            }
+        }
+        return result;
+    }
+
     public static Inject getInjectAnnotation(MethodNode method) {
         if (method == null) return null;
         for (AnnotationNode annotation : ASMUtil.getAnnotations(method)) {
             if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/Inject;")) {
-                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                Object methodNameObj = ASMUtil.getAnnotationValue(annotation, "method");
+                List<String> nameList = parseMethodNames(methodNameObj);
+                final String[] methodArray = nameList.toArray(new String[0]);
                 String desc = ASMUtil.getAnnotationValue(annotation, "desc");
                 AnnotationNode targetNode = ASMUtil.getAnnotationValue(annotation, "target");
                 
@@ -187,7 +215,7 @@ public class InjectOperation implements Operation {
 
                 return new Inject() {
                     @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return Inject.class; }
-                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String[] method() { return methodArray; }
                     @Override public String desc() { return desc != null ? desc : ""; }
                     @Override public Target target() { return targetAnno; }
                     @Override public boolean cancellable() { return false; }
@@ -198,13 +226,40 @@ public class InjectOperation implements Operation {
         return null;
     }
 
-    public static MethodNode findTargetMethod(List<MethodNode> methods, String targetOwner, String methodName, String desc) {
-        for (MethodNode method : methods) {
-            if (method.name.equals(methodName) && (desc == null || desc.isEmpty() || method.desc.equals(desc))) {
-                return method;
+    public static MethodNode findTargetMethod(List<MethodNode> methods, String targetOwner, Object methodNameObj, String desc) {
+        List<String> possibleNames = parseMethodNames(methodNameObj);
+        List<String> allNames = new ArrayList<>(possibleNames);
+        
+        for (String name : possibleNames) {
+            String directMap = Mapper.map(targetOwner, name, desc, Mapper.Type.Method);
+            if (directMap != null && !directMap.isEmpty() && !allNames.contains(directMap)) {
+                allNames.add(directMap);
+            }
+            String globalMap = Mapper.map(null, name, desc, Mapper.Type.Method);
+            if (globalMap != null && !globalMap.isEmpty() && !allNames.contains(globalMap)) {
+                allNames.add(globalMap);
+            }
+        }
+
+        for (String name : allNames) {
+            for (MethodNode method : methods) {
+                if (method.name.equals(name) && (desc == null || desc.isEmpty() || method.desc.equals(desc))) {
+                    return method;
+                }
+            }
+        }
+        for (String name : allNames) {
+            for (MethodNode method : methods) {
+                if (method.name.equals(name)) {
+                    return method;
+                }
             }
         }
         return null;
+    }
+
+    public static MethodNode findTargetMethod(List<MethodNode> methods, String targetOwner, String methodName, String desc) {
+        return findTargetMethod(methods, targetOwner, (Object) methodName, desc);
     }
 
     private static int getOperationCode(String ope) {
@@ -265,6 +320,14 @@ public class InjectOperation implements Operation {
             return "";
         }
         if (!ope.contains(".")) {
+            String mappedMethod = Mapper.map(null, ope, null, Mapper.Type.Method);
+            if (mappedMethod != null && !mappedMethod.isEmpty() && !mappedMethod.equals(ope)) {
+                return mappedMethod;
+            }
+            String mappedField = Mapper.map(null, ope, null, Mapper.Type.Field);
+            if (mappedField != null && !mappedField.isEmpty() && !mappedField.equals(ope)) {
+                return mappedField;
+            }
             return ope;
         }
         boolean isMethod = !ope.contains(" ");
@@ -373,21 +436,75 @@ public class InjectOperation implements Operation {
             }
             
             AbstractInsnNode cloned = insn.clone(labelMap);
-            if (cloned instanceof FieldInsnNode) {
-                FieldInsnNode fieldInsn = (FieldInsnNode) cloned;
-                if (fieldInsn.owner.equals(sourceName)) fieldInsn.owner = targetName;
-                
-            } else if (cloned instanceof MethodInsnNode) {
-                MethodInsnNode methodInsn = (MethodInsnNode) cloned;
-                if (methodInsn.owner.equals(sourceName)) methodInsn.owner = targetName;
-                
-            } else if (cloned instanceof TypeInsnNode) {
-                TypeInsnNode typeInsn = (TypeInsnNode) cloned;
-                if (typeInsn.desc.equals(sourceName)) typeInsn.desc = targetName;
-            }
-            
+            remapInstruction(cloned, sourceName, targetName);
             clone.add(cloned);
         }
         return clone;
+    }
+
+    public static void remapInstruction(AbstractInsnNode insn, String sourceName, String targetName) {
+        if (insn instanceof FieldInsnNode) {
+            FieldInsnNode fieldInsn = (FieldInsnNode) insn;
+            if (fieldInsn.owner.equals(sourceName)) {
+                fieldInsn.owner = targetName;
+                String mappedField = Mapper.map(targetName, fieldInsn.name, fieldInsn.desc, Mapper.Type.Field);
+                if (mappedField != null && !mappedField.isEmpty()) {
+                    fieldInsn.name = mappedField;
+                }
+                String mappedDesc = DescParser.mapDesc(fieldInsn.desc);
+                if (mappedDesc != null && !mappedDesc.isEmpty()) {
+                    fieldInsn.desc = mappedDesc;
+                }
+            } else {
+                String mappedField = Mapper.map(fieldInsn.owner, fieldInsn.name, fieldInsn.desc, Mapper.Type.Field);
+                if (mappedField != null && !mappedField.isEmpty()) {
+                    fieldInsn.name = mappedField;
+                }
+                String mappedOwner = Mapper.map(null, fieldInsn.owner, null, Mapper.Type.Class);
+                if (mappedOwner != null && !mappedOwner.isEmpty()) {
+                    fieldInsn.owner = mappedOwner;
+                }
+                String mappedDesc = DescParser.mapDesc(fieldInsn.desc);
+                if (mappedDesc != null && !mappedDesc.isEmpty()) {
+                    fieldInsn.desc = mappedDesc;
+                }
+            }
+        } else if (insn instanceof MethodInsnNode) {
+            MethodInsnNode methodInsn = (MethodInsnNode) insn;
+            if (methodInsn.owner.equals(sourceName)) {
+                methodInsn.owner = targetName;
+                String mappedMethod = Mapper.map(targetName, methodInsn.name, methodInsn.desc, Mapper.Type.Method);
+                if (mappedMethod != null && !mappedMethod.isEmpty()) {
+                    methodInsn.name = mappedMethod;
+                }
+                String mappedDesc = DescParser.mapDesc(methodInsn.desc);
+                if (mappedDesc != null && !mappedDesc.isEmpty()) {
+                    methodInsn.desc = mappedDesc;
+                }
+            } else {
+                String mappedMethod = Mapper.map(methodInsn.owner, methodInsn.name, methodInsn.desc, Mapper.Type.Method);
+                if (mappedMethod != null && !mappedMethod.isEmpty()) {
+                    methodInsn.name = mappedMethod;
+                }
+                String mappedOwner = Mapper.map(null, methodInsn.owner, null, Mapper.Type.Class);
+                if (mappedOwner != null && !mappedOwner.isEmpty()) {
+                    methodInsn.owner = mappedOwner;
+                }
+                String mappedDesc = DescParser.mapDesc(methodInsn.desc);
+                if (mappedDesc != null && !mappedDesc.isEmpty()) {
+                    methodInsn.desc = mappedDesc;
+                }
+            }
+        } else if (insn instanceof TypeInsnNode) {
+            TypeInsnNode typeInsn = (TypeInsnNode) insn;
+            if (typeInsn.desc.equals(sourceName)) {
+                typeInsn.desc = targetName;
+            } else {
+                String mappedType = Mapper.map(null, typeInsn.desc, null, Mapper.Type.Class);
+                if (mappedType != null && !mappedType.isEmpty()) {
+                    typeInsn.desc = mappedType;
+                }
+            }
+        }
     }
 }

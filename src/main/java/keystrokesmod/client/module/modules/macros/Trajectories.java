@@ -30,7 +30,9 @@ public class Trajectories extends Mod {
             if (isThrowable(preferredSlot)) {
                 targetSlot = preferredSlot;
             }
-        } else {
+        } 
+        
+        if (targetSlot == -1) {
             for (int i = 0; i <= 8; i++) {
                 if (isThrowable(i)) {
                     targetSlot = i;
@@ -39,20 +41,22 @@ public class Trajectories extends Mod {
             }
         }
 
-        if (targetSlot != -1 && mc.thePlayer.inventory.currentItem != targetSlot) {
-            mc.thePlayer.inventory.currentItem = targetSlot;
+        if (targetSlot != -1 && getPlayer().inventory.currentItem != targetSlot) {
+        	getPlayer().inventory.currentItem = targetSlot;
         }
 
-        this.onDisable();
         this.disable();
     }
 
     private boolean isThrowable(int slot) {
-        ItemStack item = mc.thePlayer.inventory.getStackInSlot(slot);
-        return item != null && (
-            item.getItem() instanceof ItemSnowball ||
-            item.getItem() instanceof ItemEgg ||
-            item.getItem() instanceof ItemFishingRod
-        );
+        ItemStack item = getPlayer().inventory.getStackInSlot(slot);
+        
+        if (item != null && item.getItem() != null) {
+            return item.getItem() instanceof ItemSnowball || 
+                   item.getItem() instanceof ItemEgg || 
+                   item.getItem() instanceof ItemFishingRod;
+        }
+        
+        return false;
     }
 }

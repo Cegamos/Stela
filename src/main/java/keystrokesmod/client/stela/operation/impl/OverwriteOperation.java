@@ -34,7 +34,7 @@ public class OverwriteOperation implements Operation {
         for (MethodNode overwrite : overwrites) {
             Overwrite info = getOverwriteAnnotation(overwrite);
             if (info == null) continue;
-            String targetName = info.method().isEmpty() ? overwrite.name : info.method();
+            Object targetName = info.method().length == 0 ? overwrite.name : info.method();
             String targetDesc = info.desc().isEmpty() ? overwrite.desc : info.desc();
 
             MethodNode targetMethod = InjectOperation.findTargetMethod(target.methods, mixin.getTargetName(), targetName, targetDesc);
@@ -48,7 +48,7 @@ public class OverwriteOperation implements Operation {
                     Logger.info("Overwrote method {} in {}", targetMethod.name, target.name);
                 }
             } else if (Logger != null) {
-                Logger.error("Failed to find target method {} for overwrite in {}", targetName, target.name);
+                Logger.error("Failed to find target method {} for overwrite in {}", java.util.Arrays.toString(info.method()), target.name);
             }
         }
     }
@@ -63,22 +63,7 @@ public class OverwriteOperation implements Operation {
         }
         for (AbstractInsnNode insn = source.getFirst(); insn != null; insn = insn.getNext()) {
             AbstractInsnNode cloned = insn.clone(labelMap);
-            if (cloned instanceof FieldInsnNode) {
-                FieldInsnNode fieldInsn = (FieldInsnNode) cloned;
-                if (fieldInsn.owner.equals(sourceName)) {
-                    fieldInsn.owner = targetName;
-                }
-            } else if (cloned instanceof MethodInsnNode) {
-                MethodInsnNode methodInsn = (MethodInsnNode) cloned;
-                if (methodInsn.owner.equals(sourceName)) {
-                    methodInsn.owner = targetName;
-                }
-            } else if (cloned instanceof TypeInsnNode) {
-                TypeInsnNode typeInsn = (TypeInsnNode) cloned;
-                if (typeInsn.desc.equals(sourceName)) {
-                    typeInsn.desc = targetName;
-                }
-            }
+            InjectOperation.remapInstruction(cloned, sourceName, targetName);
             clone.add(cloned);
         }
         return clone;
@@ -88,11 +73,13 @@ public class OverwriteOperation implements Operation {
         if (method == null) return null;
         for (AnnotationNode annotation : ASMUtil.getAnnotations(method)) {
             if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/Overwrite;")) {
-                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                Object methodNameObj = ASMUtil.getAnnotationValue(annotation, "method");
+                List<String> nameList = InjectOperation.parseMethodNames(methodNameObj);
+                final String[] methodArray = nameList.toArray(new String[0]);
                 String desc = ASMUtil.getAnnotationValue(annotation, "desc");
                 return new Overwrite() {
                     @Override public Class<? extends Annotation> annotationType() { return Overwrite.class; }
-                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String[] method() { return methodArray; }
                     @Override public String desc() { return desc != null ? desc : ""; }
                     @Override public boolean remap() { return true; }
                 };

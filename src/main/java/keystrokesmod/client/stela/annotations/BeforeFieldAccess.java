@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(ElementType.METHOD)
 public @interface BeforeFieldAccess {
-    String method();
+    String[] method() default {};
     String desc() default "";
     String field();
     boolean remap() default true;

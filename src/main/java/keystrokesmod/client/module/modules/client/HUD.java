@@ -36,7 +36,6 @@ public class HUD extends Mod {
     public final NumberValue bgOpacity = new NumberValue("Bg Opacity", this, 160.0, 0.0, 255.0, 5.0, () -> showBackground.getValue());
     public final NumberValue padding = new NumberValue("Padding", this, 4.0, 1.0, 10.0, 0.5, () -> showBackground.getValue());
 
-    // Accent bar settings
     public final ModeValue accentBar = new ModeValue("Accent Bar", this, "Right", new String[]{"Right", "Left", "None"});
     public final NumberValue barWidth = new NumberValue("Bar Width", this, 2.0, 1.0, 5.0, 0.5, () -> !accentBar.is("None"));
 
@@ -46,7 +45,6 @@ public class HUD extends Mod {
     public final BooleanValue hideClient = new BooleanValue("Hide Client", this, false);
     public final BooleanValue hideCombat = new BooleanValue("Hide Combat", this, false);
     public final BooleanValue hideMovement = new BooleanValue("Hide Movement", this, false);
-    public final BooleanValue hideOther = new BooleanValue("Hide Other", this, false);
     public final BooleanValue hidePlayer = new BooleanValue("Hide Player", this, false);
     public final BooleanValue hideRender = new BooleanValue("Hide Render", this, false);
 
@@ -257,7 +255,6 @@ public class HUD extends Mod {
             case Movement: return hideMovement.getValue();
             case Player: return hidePlayer.getValue();
             case Render: return hideRender.getValue();
-            case Other: return hideOther.getValue();
             default: return false;
         }
     }

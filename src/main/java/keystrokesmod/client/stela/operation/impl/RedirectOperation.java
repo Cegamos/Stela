@@ -67,7 +67,9 @@ public class RedirectOperation implements Operation {
         if (method == null) return null;
         for (AnnotationNode annotation : keystrokesmod.client.stela.util.ASMUtil.getAnnotations(method)) {
             if (annotation.desc.equals("Lkeystrokesmod/client/stela/annotations/Redirect;")) {
-                String methodName = ASMUtil.getAnnotationValue(annotation, "method");
+                Object methodNameObj = ASMUtil.getAnnotationValue(annotation, "method");
+                List<String> nameList = InjectOperation.parseMethodNames(methodNameObj);
+                final String[] methodArray = nameList.toArray(new String[0]);
                 String desc = ASMUtil.getAnnotationValue(annotation, "desc");
                 AnnotationNode targetNode = ASMUtil.getAnnotationValue(annotation, "target");
                 
@@ -93,7 +95,7 @@ public class RedirectOperation implements Operation {
 
                 return new Redirect() {
                     @Override public Class<? extends java.lang.annotation.Annotation> annotationType() { return Redirect.class; }
-                    @Override public String method() { return methodName != null ? methodName : ""; }
+                    @Override public String[] method() { return methodArray; }
                     @Override public String desc() { return desc != null ? desc : ""; }
                     @Override public Target target() { return targetAnno; }
                     @Override public boolean remap() { return true; }

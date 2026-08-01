@@ -301,7 +301,7 @@ public class CategoryPanel {
             case Render: return FontAwesome.eye;
             case Client: return FontAwesome.sliders;
             case Macros: return FontAwesome.gear;
-            case Other: default: return FontAwesome.folder;
+            default: return FontAwesome.folder;
         }
     }
 }

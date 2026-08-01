@@ -2,6 +2,9 @@ package keystrokesmod.client.stela.util;
 
 import keystrokesmod.client.stela.Stela;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,59 +66,60 @@ public class Mapper {
         return vanilla;
     }
 
-    public static void readMapping(String content, ArrayList<Map> dest) {
-        content = content.replace("\r", "\n");
-        dest.clear();
-        for (String line : content.split("\n")) {
-            line = line.replace("\n", "");
-            if (line.length() <= 4) continue;
-            String[] values = line.substring(4).split(" ");
-            String[] obf, friendly;
-            switch (line.substring(0, 2)) {
-                case "CL":
-                    dest.add(new Map(null, values[1], null, values[0], Type.Class));
-                    break;
-                case "FD":
-                    if (values.length == 4) {
-                        obf = ASMUtil.split(values[0], "/");
-                        friendly = ASMUtil.split(values[2], "/");
-                        dest.add(new Map(
-                                values[2].replace("/" + friendly[friendly.length - 1], ""),
-                                friendly[friendly.length - 1],
-                                values[3],
-                                obf[obf.length - 1],
-                                Mapper.Type.Field
-                        ));
-                    } else if (values.length == 2) {
-                        obf = ASMUtil.split(values[0], "/");
-                        friendly = ASMUtil.split(values[1], "/");
-                        dest.add(new Map(
-                                values[1].replace("/" + friendly[friendly.length - 1], ""),
-                                friendly[friendly.length - 1],
-                                null,
-                                obf[obf.length - 1],
-                                Mapper.Type.Field
-                        ));
+    public static void readMappingsFromReader(BufferedReader reader) {
+        vanilla.clear();
+        cache.clear();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.length() <= 4) continue;
+                try {
+                    String typeStr = line.substring(0, 2);
+                    String rest = line.substring(3).trim();
+                    String[] values = rest.split("\\s+");
+                    if (values.length < 2) continue;
+
+                    switch (typeStr) {
+                        case "CL":
+                            if (values.length >= 2) {
+                                vanilla.add(new Map(null, values[1], null, values[0], Type.Class));
+                            }
+                            break;
+                        case "FD":
+                            if (values.length >= 4) {
+                                String[] obf = values[0].split("/");
+                                String[] friendly = values[2].split("/");
+                                String owner = values[2].contains("/") ? values[2].substring(0, values[2].lastIndexOf('/')) : "";
+                                vanilla.add(new Map(owner, friendly[friendly.length - 1], values[3], obf[obf.length - 1], Type.Field));
+                            } else if (values.length >= 2) {
+                                String[] obf = values[0].split("/");
+                                String[] friendly = values[1].split("/");
+                                String owner = values[1].contains("/") ? values[1].substring(0, values[1].lastIndexOf('/')) : "";
+                                vanilla.add(new Map(owner, friendly[friendly.length - 1], null, obf[obf.length - 1], Type.Field));
+                            }
+                            break;
+                        case "MD":
+                            if (values.length >= 4) {
+                                String[] obf = values[0].split("/");
+                                String[] friendly = values[2].split("/");
+                                String owner = values[2].contains("/") ? values[2].substring(0, values[2].lastIndexOf('/')) : "";
+                                vanilla.add(new Map(owner, friendly[friendly.length - 1], values[3], obf[obf.length - 1], Type.Method));
+                            }
+                            break;
                     }
-                    break;
-                case "MD":
-                    obf = ASMUtil.split(values[0], "/");
-                    friendly = ASMUtil.split(values[2], "/");
-                    dest.add(
-                            new Map(
-                                    values[2].replace("/" + friendly[friendly.length - 1], ""),
-                                    friendly[friendly.length - 1],
-                                    values[3],
-                                    obf[obf.length - 1],
-                                    Type.Method
-                            )
-                    );
+                } catch (Throwable ignored) {
+                }
             }
+        } catch (Throwable ignored) {
         }
     }
 
     public static void readMappings(String vanillaContent) {
-        readMapping(vanillaContent, getVanilla());
+        if (vanillaContent == null || vanillaContent.isEmpty()) return;
+        try (BufferedReader reader = new BufferedReader(new StringReader(vanillaContent))) {
+            readMappingsFromReader(reader);
+        } catch (Throwable ignored) {}
     }
 
     private static final java.util.Map<String, String> cache = new HashMap<>();
@@ -125,18 +129,21 @@ public class Mapper {
     }
 
     public static String map(String owner, String name, String desc, Type type) {
+        if (name == null || name.isEmpty()) return "";
         if (owner != null) owner = owner.replace('.', '/');
-        String identifier = owner + "." + name + " " + desc;
+        String identifier = (owner != null ? owner : "") + "." + name + " " + (desc != null ? desc : "");
         String value = cache.get(identifier);
         if (value != null) return value;
+
         String finalOwner = owner;
         Map map = mappings.stream().filter(m ->
                 m.type == type &&
-                        (type == Type.Class || finalOwner == null || m.owner.equals(finalOwner.replace('.', '/'))) &&
-                        (m.name.equals(name.replace('.', '/'))) &&
-                        (type == Type.Class || desc == null || m.desc.equals(desc))
-        ).findFirst().orElse(new Map(owner, name, "null", name, type));
-        String result = applyMode(map);
+                        (type == Type.Class || finalOwner == null || m.owner == null || m.owner.isEmpty() || m.owner.equals(finalOwner)) &&
+                        (m.name.equals(name)) &&
+                        (type == Type.Class || desc == null || desc.isEmpty() || m.desc == null || m.desc.isEmpty() || m.desc.equals(desc))
+        ).findFirst().orElse(null);
+
+        String result = (map != null) ? applyMode(map) : name;
         cache.put(identifier, result);
         return result;
     }

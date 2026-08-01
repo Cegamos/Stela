@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.modules.other;
+package keystrokesmod.client.module.modules.player;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@ModuleInfo(name = "AutoPlay", category = Category.Other)
+@ModuleInfo(name = "AutoPlay", category = Category.Player)
 public class AutoPlay extends Mod {
 	
 	private final DescriptionValue desc = new DescriptionValue("Only for Universocraft", this);

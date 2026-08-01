@@ -1,5 +1,8 @@
-echo off
+@echo off
 cls
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-8.0.482.8-hotspot
+set PATH=%JAVA_HOME%\bin;%PATH%
+
 echo A Java 8 or 11 installation is required to build.
 echo If you have a Java 8 installation, but your JAVA_HOME is set to something else,
 echo please set it to your Java 8 installation.

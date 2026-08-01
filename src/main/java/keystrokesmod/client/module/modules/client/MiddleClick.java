@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.modules.other;
+package keystrokesmod.client.module.modules.client;
 
 import org.lwjgl.input.Mouse;
 
@@ -19,7 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 
-@ModuleInfo(name = "MiddleClick", category = Category.Other)
+@ModuleInfo(name = "MiddleClick", category = Category.Client)
 public class MiddleClick extends Mod {
     
     public final ModeValue mode = new ModeValue("On click", this, "Add Friend", "Add Friend", "Remove Friend", "Throw Pearl");

@@ -1,4 +1,4 @@
-package keystrokesmod.client.module.modules.other;
+package keystrokesmod.client.module.modules.render;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBow;
 import net.minecraft.util.EnumChatFormatting;
 
-@ModuleInfo(name = "MurderMystery", category = Category.Other)
+@ModuleInfo(name = "MurderMystery", category = Category.Render)
 public class MurderMystery extends Mod {
 	private final BooleanValue alertMurder = new BooleanValue("Alert murder", this, true);
 	private final BooleanValue alertDetective = new BooleanValue("Alert detective", this, true);
