@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-group = "keystrokesmod"
+group = "wtf"
 archivesBaseName = "Kevin"
 
 sourceCompatibility = targetCompatibility = '1.8'
@@ -30,12 +30,13 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    clientJvmArgs += ["-Dfml.coreMods.load=keystrokesmod.client.mixin.MixinLoader"]
+    clientJvmArgs += ["-Dfml.coreMods.load=wtf.mixin.MixinLoader"]
 }
 
 repositories {
     mavenCentral()
     maven { url = 'https://plugins.gradle.org/m2/' }
+    maven { url = 'https://jitpack.io/' }
 }
 
 configurations {
@@ -89,7 +90,7 @@ tasks.reobfJar.dependsOn(shadowJar)
 jar {
     manifest {
         attributes(
-                "FMLCorePlugin": "keystrokesmod.client.mixin.MixinLoader",
+                "FMLCorePlugin": "wtf.mixin.MixinLoader",
                 'ForceLoadAsMod': 'true',
                 'FMLCorePluginContainsFMLMod': 'true',
                 "ModSide": "CLIENT"
