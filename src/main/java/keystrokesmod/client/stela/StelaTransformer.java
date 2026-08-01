@@ -21,6 +21,8 @@ public class StelaTransformer implements IClassTransformer {
     private static final Map<String, List<Mixin>> mixinsByTarget = new ConcurrentHashMap<>();
     
     private static final Operation[] operations = new Operation[] {
+        new ShadowOperation(),
+        new UniqueOperation(),
         new InjectOperation(), new OverwriteOperation(), new ModifyOperation(),
         new RedirectOperation(), new ModifyConstantOperation(), new ModifyArgOperation(),
         new AccessorOperation(), new ModifyReturnValueOperation(), new InjectIfOperation(),

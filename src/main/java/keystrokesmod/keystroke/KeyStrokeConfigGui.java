@@ -3,7 +3,7 @@ package keystrokesmod.keystroke;
 import java.io.IOException;
 
 import keystrokesmod.client.config.ClientConfig;
-import keystrokesmod.client.util.input.MouseManager;
+import keystrokesmod.client.util.system.CPSTracker;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -63,7 +63,6 @@ public class KeyStrokeConfigGui extends GuiScreen {
         }
         catch (IOException ex) {}
         if (button == 0) {
-            MouseManager.addLeftClick();
             final KeyStroke st = KeyStrokeMod.getKeyStroke();
             final int startX = KeyStroke.x;
             final int startY = KeyStroke.y;
@@ -76,7 +75,6 @@ public class KeyStrokeConfigGui extends GuiScreen {
             }
         }
         else if (button == 1) {
-            MouseManager.addRightClick();
         }
     }
     

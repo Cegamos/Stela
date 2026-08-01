@@ -7,7 +7,7 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.util.input.MouseManager;
+import keystrokesmod.client.util.system.CPSTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -63,8 +63,8 @@ public class KeyStrokeMouse {
             Gui.drawRect(o + this.d + 33, p + this.e, o + this.d + 34, p + this.e + 22, c);
         }
         this.b.fontRendererObj.drawString(s, o + this.d + 8, p + this.e + 4, -16777216 + ((int)(t * j) << 16) + ((int)(u * j) << 8) + (int)(v * j));
-        final String w = MouseManager.getLeftClickCounter() + " CPS";
-        final String x = MouseManager.getRightClickCounter() + " CPS";
+        final String w = CPSTracker.getLeftClicks() + " CPS";
+        final String x = CPSTracker.getRightClicks() + " CPS";
         final int y = this.b.fontRendererObj.getStringWidth(w);
         final int z = this.b.fontRendererObj.getStringWidth(x);
         final boolean a2 = this.c == 0;

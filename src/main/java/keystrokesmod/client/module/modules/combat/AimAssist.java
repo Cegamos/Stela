@@ -12,6 +12,8 @@ import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
 import keystrokesmod.client.util.combat.Rotation;
 import keystrokesmod.client.util.combat.RotationUtil;
+import keystrokesmod.client.util.player.PointFinder;
+import keystrokesmod.client.util.player.prediction.PredictionEngine;
 import keystrokesmod.client.util.timing.Clock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -19,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -31,6 +34,7 @@ public class AimAssist extends Mod {
     private final NumberValue compliment = new NumberValue("Speed 2", this, 15.0, 2.0, 97.0, 1.0);
     private final NumberValue fov = new NumberValue("FOV", this, 90.0, 15.0, 360.0, 1.0);
     private final NumberValue distance = new NumberValue("Distance", this, 4.5, 1.0, 10.0, 0.5);
+    private final BooleanValue predictTarget = new BooleanValue("Predict movement", this, true);
     private final BooleanValue clickAim = new BooleanValue("Click aim", this, true);
     private final BooleanValue weaponOnly = new BooleanValue("Weapon only", this, false);
     private final BooleanValue aimInvis = new BooleanValue("Aim invis", this, false);
@@ -46,6 +50,7 @@ public class AimAssist extends Mod {
     private final NumberValue maxAngle = new NumberValue("Max angle", this, 6.0, 1.0, 90.0, 0.5);
 
     private final Clock clock = new Clock(0);
+    private final PredictionEngine predictionEngine = new PredictionEngine();
     
     private final HashSet<String> friends = new HashSet<>();
     
@@ -73,6 +78,8 @@ public class AimAssist extends Mod {
             final Entity en = this.getEnemy();
             if (en != null) {
                 this.assist(en);
+            } else {
+                predictionEngine.reset();
             }
         }
     }
@@ -91,6 +98,33 @@ public class AimAssist extends Mod {
         targetRot.setYaw(currentRot.getYaw());
         targetRot.setPitch(currentRot.getPitch());
 
+        AxisAlignedBB targetBB = en.getEntityBoundingBox();
+        if (predictTarget.getValue() && en instanceof EntityLivingBase) {
+            AxisAlignedBB predictedBB = predictionEngine.simulatePredictions((EntityLivingBase) en, (float) distance.getValue(), true, new float[]{2.0f, 4.0f});
+            if (predictedBB != null) {
+                targetBB = predictedBB;
+            }
+        }
+
+        PointFinder.findPoints(targetBB);
+        Vec3 eyes = new Vec3(getPlayer().posX, getPlayer().posY + getPlayer().getEyeHeight(), getPlayer().posZ);
+        Vec3 bestPoint = new Vec3(en.posX, en.posY + en.getEyeHeight(), en.posZ);
+        double bestDist = Double.MAX_VALUE;
+
+        for (Vec3 point : PointFinder.hitboxPoints) {
+            if (visibleOnly.getValue()) {
+                MovingObjectPosition hit = getWorld().rayTraceBlocks(eyes, point, false, true, false);
+                if (hit != null && eyes.distanceTo(hit.hitVec) < eyes.distanceTo(point) - 0.5) {
+                    continue;
+                }
+            }
+            double dist = eyes.distanceTo(point);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestPoint = point;
+            }
+        }
+
         final double n = Utils.Player.fovFromEntity(en);
         if (n > 1.0 || n < -1.0) {
             final double complimentSpeed = n * (random.nextDouble(compliment.getValue() - 1.47328, compliment.getValue() + 2.48293) / 100.0);
@@ -102,17 +136,20 @@ public class AimAssist extends Mod {
         }
 
         if (vertical.getValue()) {
-            final float[] rotations = Utils.Player.getTargetRotations(en);
-            if (rotations != null) {
-                final double p = MathHelper.wrapAngleTo180_float(rotations[1] - currentRot.getPitch());
-                if (p > 1.0 || p < -1.0) {
-                    final double pCompliment = p * (random.nextDouble(verticalCompliment.getValue() - 1.0, verticalCompliment.getValue() + 1.5) / 100.0);
-                    final double pStep = pCompliment + p / (101.0 - random.nextDouble(verticalSpeed.getValue() - 4.0, verticalSpeed.getValue()));
-                    
-                    final double pMag = Math.abs(pStep);
-                    final float stepPitch = (float) (pMag > max ? (pStep > 0 ? max : -max) : pStep);
-                    targetRot.setPitch(currentRot.getPitch() + stepPitch);
-                }
+            double diffX = bestPoint.xCoord - getPlayer().posX;
+            double diffY = bestPoint.yCoord - (getPlayer().posY + getPlayer().getEyeHeight());
+            double diffZ = bestPoint.zCoord - getPlayer().posZ;
+            double dist = MathHelper.sqrt_double(diffX * diffX + diffZ * diffZ);
+            float targetPitchVal = (float) -(Math.atan2(diffY, dist) * 180.0D / Math.PI);
+
+            final double p = MathHelper.wrapAngleTo180_float(targetPitchVal - currentRot.getPitch());
+            if (p > 1.0 || p < -1.0) {
+                final double pCompliment = p * (random.nextDouble(verticalCompliment.getValue() - 1.0, verticalCompliment.getValue() + 1.5) / 100.0);
+                final double pStep = pCompliment + p / (101.0 - random.nextDouble(verticalSpeed.getValue() - 4.0, verticalSpeed.getValue()));
+                
+                final double pMag = Math.abs(pStep);
+                final float stepPitch = (float) (pMag > max ? (pStep > 0 ? max : -max) : pStep);
+                targetRot.setPitch(currentRot.getPitch() + stepPitch);
             }
         }
 

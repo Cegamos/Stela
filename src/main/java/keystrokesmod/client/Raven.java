@@ -13,7 +13,12 @@ import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PostTickEvent;
 import keystrokesmod.client.module.ModuleManager;
 import keystrokesmod.client.util.Wrapper;
-import keystrokesmod.client.util.input.MouseManager;
+import keystrokesmod.client.util.player.ClickHandler;
+import keystrokesmod.client.util.player.JitterHandler;
+import keystrokesmod.client.util.player.ScaffoldClickHandler;
+import keystrokesmod.client.util.system.CPSTracker;
+import keystrokesmod.client.util.system.LagTracker;
+import keystrokesmod.client.util.system.PingTracker;
 import keystrokesmod.keystroke.KeyStrokeCommand;
 import keystrokesmod.keystroke.KeyStrokeRenderer;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -51,12 +56,16 @@ public class Raven extends Wrapper {
     }
 
     private static void registerEvents() {
-        MouseManager mouseManager = new MouseManager();
         KeyStrokeRenderer keyStrokeRenderer = new KeyStrokeRenderer();
 
         EventBus.INSTANCE.register(INSTANCE);
-        EventBus.INSTANCE.register(mouseManager);
         EventBus.INSTANCE.register(keyStrokeRenderer);
+        EventBus.INSTANCE.register(new CPSTracker());
+        EventBus.INSTANCE.register(new LagTracker());
+        EventBus.INSTANCE.register(new PingTracker());
+        EventBus.INSTANCE.register(new JitterHandler());
+        EventBus.INSTANCE.register(new ClickHandler());
+        EventBus.INSTANCE.register(new ScaffoldClickHandler());
 
         ClientCommandHandler.instance.registerCommand(new KeyStrokeCommand());
     }

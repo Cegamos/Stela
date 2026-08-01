@@ -231,21 +231,49 @@ public class InjectOperation implements Operation {
     }
 
     private static String[] parseOpe(String ope) {
-        String[] owner_name$desc = ASMUtil.split(ope, ".");
-        String owner = owner_name$desc[0];
-        String name = ope.contains(" ") ? ASMUtil.split(owner_name$desc[1], " ")[0] : ASMUtil.split(owner_name$desc[1], "(")[0];
-        String desc = owner_name$desc[1].replace(name, "").replace(" ", "");
+        if (ope == null || ope.isEmpty()) {
+            return new String[]{"", "", ""};
+        }
+        if (!ope.contains(".")) {
+            return new String[]{"", ope, ""};
+        }
+        
+        int lastDot = ope.lastIndexOf('.');
+        String owner = ope.substring(0, lastDot);
+        String nameAndDesc = ope.substring(lastDot + 1);
+        
+        String name;
+        String desc;
+        if (nameAndDesc.contains("(")) {
+            int openParen = nameAndDesc.indexOf('(');
+            name = nameAndDesc.substring(0, openParen);
+            desc = nameAndDesc.substring(openParen);
+        } else if (nameAndDesc.contains(" ")) {
+            int space = nameAndDesc.indexOf(' ');
+            name = nameAndDesc.substring(0, space);
+            desc = nameAndDesc.substring(space + 1);
+        } else {
+            name = nameAndDesc;
+            desc = "";
+        }
+        
         return new String[]{owner, name, desc};
     }
 
     private static String mapOperation(String ope) {
+        if (ope == null || ope.isEmpty()) {
+            return "";
+        }
+        if (!ope.contains(".")) {
+            return ope;
+        }
         boolean isMethod = !ope.contains(" ");
         String[] values = parseOpe(ope);
         String[] res = new String[3];
-        res[0] = Mapper.map(null, values[0], null, Mapper.Type.Class);
+        res[0] = values[0].isEmpty() ? "" : Mapper.map(null, values[0], null, Mapper.Type.Class);
         res[1] = isMethod ? Mapper.mapMethodWithSuper(values[0], values[1], values[2]) : Mapper.mapFieldWithSuper(values[0], values[1], values[2]);
         res[2] = DescParser.mapDesc(values[2]);
-        return res[0] + "." + res[1] + (isMethod ? "" : " ") + res[2];
+        return (res[0].isEmpty() ? "" : res[0] + ".") + res[1] + (isMethod ? "" : " ") + res[2];
     }
 
     private static List<AbstractInsnNode> findTargetInsnNodes(MethodNode target, Inject info) {
@@ -286,7 +314,7 @@ public class InjectOperation implements Operation {
         for (AbstractInsnNode instruction : target.instructions.toArray()) {
             if (instruction.getOpcode() == opcode) {
                 String nodeOpe = targetOpe.contains(" ") ? getFieldInsnNodeOperation(instruction) : getMethodInsnNodeOperation(instruction);
-                if (targetOpe.isEmpty() || (nodeOpe != null && nodeOpe.equals(targetOpe))) {
+                if (targetOpe.isEmpty() || (nodeOpe != null && (nodeOpe.equals(targetOpe) || nodeOpe.contains(targetOpe)))) {
                     if (index == targetInfo.ordinal()) {
                         nodes.add(instruction);
                         return nodes;

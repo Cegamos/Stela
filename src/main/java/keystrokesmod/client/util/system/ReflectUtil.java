@@ -71,6 +71,7 @@ public class ReflectUtil implements IMinecraft {
     }
 
     public static void setBlockHitDelay(int val) { setPrivateField(PlayerControllerMP.class, mc.playerController, val, "blockHitDelay", "field_78781_i"); }
+    public static int getRightClickDelayTimer() { return getPrivateField(Minecraft.class, mc, "rightClickDelayTimer", "field_71467_ac"); }
     public static void setRightClickDelayTimer(int val) { setPrivateField(Minecraft.class, mc, val, "rightClickDelayTimer", "field_71467_ac"); }
     public static void setLeftClickCounter(int val) { setPrivateField(Minecraft.class, mc, val, "leftClickCounter", "field_71429_W"); }
     public static void setRightClickCounter(int val) { setPrivateField(Minecraft.class, mc, val, "rightClickCounter", "field_71429_W"); }

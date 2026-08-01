@@ -39,6 +39,7 @@ public class RedirectOperation implements Operation {
                         MethodInsnNode minsn = (MethodInsnNode) insn;
                         String full = minsn.owner + "." + minsn.name + minsn.desc;
                         if (targetSub.isEmpty() || full.contains(targetSub)) {
+                            redirectMethod.access = (redirectMethod.access & ~Opcodes.ACC_PRIVATE & ~Opcodes.ACC_PROTECTED) | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC;
                             targetMethod.instructions.set(insn, new MethodInsnNode(
                                     Opcodes.INVOKESTATIC,
                                     source.name,
