@@ -19,16 +19,13 @@ import keystrokesmod.client.util.player.ScaffoldClickHandler;
 import keystrokesmod.client.util.system.CPSTracker;
 import keystrokesmod.client.util.system.LagTracker;
 import keystrokesmod.client.util.system.PingTracker;
-import keystrokesmod.keystroke.KeyStrokeCommand;
-import keystrokesmod.keystroke.KeyStrokeRenderer;
-import net.minecraftforge.client.ClientCommandHandler;
 
-public class Raven extends Wrapper {
+public class Kevin extends Wrapper {
 
-    public static final String NAME = "Raven b+";
-    public static final String VERSION = "1.0.27";
+    public static final String NAME = "Kevin";
+    public static final String VERSION = "1.2";
 
-    public static final Raven INSTANCE = new Raven();
+    public static final Kevin INSTANCE = new Kevin();
 
     public static ModuleManager moduleManager;
     public static CommandManager commandManager;
@@ -56,20 +53,14 @@ public class Raven extends Wrapper {
     }
 
     private static void registerEvents() {
-        KeyStrokeRenderer keyStrokeRenderer = new KeyStrokeRenderer();
-
         EventBus.INSTANCE.register(INSTANCE);
-        EventBus.INSTANCE.register(keyStrokeRenderer);
         EventBus.INSTANCE.register(new CPSTracker());
         EventBus.INSTANCE.register(new LagTracker());
         EventBus.INSTANCE.register(new PingTracker());
         EventBus.INSTANCE.register(new JitterHandler());
         EventBus.INSTANCE.register(new ClickHandler());
         EventBus.INSTANCE.register(new ScaffoldClickHandler());
-
-        ClientCommandHandler.instance.registerCommand(new KeyStrokeCommand());
     }
-
 
     @EventLink
     public final Listener<PostTickEvent> onTick = event -> {

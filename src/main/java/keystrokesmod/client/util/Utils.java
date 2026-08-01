@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.modules.combat.LeftClicker;
 import keystrokesmod.client.module.value.impl.RangeValue;
@@ -404,7 +404,7 @@ public class Utils implements IMinecraft {
 		}
 
 		public static boolean autoClickerClicking() {
-			final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+			final Mod autoClicker = Kevin.moduleManager.getModuleByClazz(LeftClicker.class);
 			return autoClicker != null && autoClicker.isEnabled() && autoClicker.isEnabled() && Mouse.isButtonDown(0);
 		}
 

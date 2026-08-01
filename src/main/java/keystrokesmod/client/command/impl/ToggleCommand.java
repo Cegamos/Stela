@@ -1,6 +1,6 @@
 package keystrokesmod.client.command.impl;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.command.Command;
 import keystrokesmod.client.command.CommandInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -22,7 +22,7 @@ public class ToggleCommand extends Command {
         }
 
         String moduleName = args[0];
-        Mod module = Raven.moduleManager.getModuleByName(moduleName);
+        Mod module = Kevin.moduleManager.getModuleByName(moduleName);
 
         if (module == null) {
             Utils.Player.sendMessageToSelf("&cModule &e" + moduleName + " &cnot found!");

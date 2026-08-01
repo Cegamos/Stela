@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -48,7 +48,7 @@ public class AutoTool extends Mod {
             }
             return;
         }
-        final LeftClicker autoClicker = (LeftClicker)Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        final LeftClicker autoClicker = (LeftClicker)Kevin.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker.isEnabled() && !autoClicker.breakBlocks.getValue()) {
             return;
         }

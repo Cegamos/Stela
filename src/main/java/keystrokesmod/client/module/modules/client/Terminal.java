@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.client;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.ClickGui;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
@@ -22,22 +22,22 @@ public class Terminal extends Mod {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		Raven.clickGui.terminal.show();
+		Kevin.clickGui.terminal.show();
 		(animation = new TimeAnimation(500.0f)).start();
 	}
 
 	@EventLink
 	public final Listener<PreTickEvent> onTick = e -> {
 		if (Utils.Player.isPlayerInGame() && this.enabled && mc.currentScreen instanceof ClickGui
-				&& Raven.clickGui.terminal.hidden()) {
-			Raven.clickGui.terminal.show();
+				&& Kevin.clickGui.terminal.hidden()) {
+			Kevin.clickGui.terminal.show();
 		}
 	};
 
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		Raven.clickGui.terminal.hide();
+		Kevin.clickGui.terminal.hide();
 		if (Terminal.animation != null) {
 			Terminal.animation.start();
 		}

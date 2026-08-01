@@ -1,9 +1,10 @@
 package keystrokesmod.client.mixin.mixins;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.event.EventBus;
 import keystrokesmod.client.event.impl.*;
 import keystrokesmod.client.stela.annotations.*;
+import keystrokesmod.client.util.font.FontUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.Timer;
@@ -18,18 +19,7 @@ public class MixinMinecraft {
 	
 	@Shadow
 	private static Minecraft theMinecraft;
-	
-	@Unique
-	public static Timer staticTimer;
 
-	@Unique
-	public static Timer getStaticTimer() {
-		if (staticTimer == null) {
-			staticTimer = new Timer(20.0F);
-		}
-		return staticTimer;
-	}
-	
 	@Shadow
 	private void clickMouse() {}
 	
@@ -39,40 +29,6 @@ public class MixinMinecraft {
 	@Shadow
 	private void middleClickMouse() {}
 
-	@Redirect(method = "runGameLoop", desc = "()V", target = @Target(value = "INVOKEVIRTUAL", target = "updateTimer"))
-	public static void redirectUpdateTimer(Timer timerInstance) {
-		Minecraft mc = Minecraft.getMinecraft();
-		if (mc != null && mc.isGamePaused() && mc.theWorld != null) {
-			if (timerInstance != null) {
-				float f = timerInstance.renderPartialTicks;
-				timerInstance.updateTimer();
-				timerInstance.renderPartialTicks = f;
-			}
-
-			Timer sTimer = getStaticTimer();
-			if (sTimer != null) {
-				float f2 = sTimer.renderPartialTicks;
-				sTimer.updateTimer();
-				sTimer.renderPartialTicks = f2;
-			}
-		} else {
-			if (timerInstance != null) {
-				timerInstance.updateTimer();
-			}
-			Timer sTimer = getStaticTimer();
-			if (sTimer != null) {
-				sTimer.updateTimer();
-			}
-		}
-	}
-
-	@Inject(method = "runGameLoop", desc = "()V", target = @Target(value = "INVOKEVIRTUAL", target = "runTick", shift = Target.Shift.BEFORE))
-	private void injectStaticTick() {
-		Timer sTimer = getStaticTimer();
-		for (int j = 0; j < sTimer.elapsedTicks; ++j) {
-			EventBus.INSTANCE.post(new StaticTickEvent());
-		}
-	}
 
 	@Inject(method = "runGameLoop", desc = "()V", target = @Target(value = "INVOKEVIRTUAL", target = "net/minecraftforge/fml/common/FMLCommonHandler.onRenderTickStart(F)V", shift = Target.Shift.BEFORE))
 	private void injectSkipWorld() {
@@ -99,9 +55,10 @@ public class MixinMinecraft {
 		EventBus.INSTANCE.post(new PostTickEvent());
 	}
 
-	@Inject(method = "startGame", desc = "()V", target = @Target("HEAD"))
+	@Inject(method = "startGame", desc = "()V", target = @Target("TAIL"))
 	private void injectStartGame() {
-		Raven.init();
+		Kevin.init();
+		FontUtil.checkInit();
 	}
 
 	@Inject(method = "runTick", desc = "()V", target = @Target(value = "INVOKEVIRTUAL", target = "isUsingItem", shift = Target.Shift.BEFORE))

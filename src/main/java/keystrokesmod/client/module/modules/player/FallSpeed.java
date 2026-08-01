@@ -1,6 +1,6 @@
 package keystrokesmod.client.module.modules.player;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -18,8 +18,8 @@ public class FallSpeed extends Mod {
     @Override
     public void update() {
         if (mc.thePlayer.fallDistance >= 2.5) {
-            final Mod fly = Raven.moduleManager.getModuleByClazz(Fly.class);
-            final Mod noFall = Raven.moduleManager.getModuleByClazz(NoFall.class);
+            final Mod fly = Kevin.moduleManager.getModuleByClazz(Fly.class);
+            final Mod noFall = Kevin.moduleManager.getModuleByClazz(NoFall.class);
             if ((fly != null && fly.isEnabled()) || (noFall != null && noFall.isEnabled())) {
                 return;
             }

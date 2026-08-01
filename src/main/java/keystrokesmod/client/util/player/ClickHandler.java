@@ -1,18 +1,17 @@
 package keystrokesmod.client.util.player;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.MouseStateUpdateEvent;
-import keystrokesmod.client.event.impl.StaticTickEvent;
+import keystrokesmod.client.event.impl.PreTickEvent;
 import keystrokesmod.client.util.IMinecraft;
 import keystrokesmod.client.util.math.PerlinNoise;
 import keystrokesmod.client.util.system.ReflectUtil;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 
@@ -20,13 +19,10 @@ public class ClickHandler implements IMinecraft {
     private static boolean rayTrace;
     private static float cps;
     private static float attackRange;
-    private static boolean ignoreItemUse;
     private static EntityLivingBase target;
     private static boolean initialized;
     private static boolean failSwing;
     private static ClickMode clickMode = ClickMode.PlayerController;
-    private static List<Integer> clickPattern = new LinkedList<>();
-    private static float swingRange;
     public static boolean clickingNow;
     private int cachedClicks;
     private static boolean respectHitDelay;
@@ -45,56 +41,37 @@ public class ClickHandler implements IMinecraft {
     private static final PerlinNoise perlin = new PerlinNoise();
     private static final Random rand = new Random();
 
+    private static final int TICKS = 20;
+    private static final int[] clickPattern = new int[TICKS];
+    private static final int[] cyclePattern = new int[TICKS];
+    private static final int[] randomSlots = new int[TICKS];
+    private static final int[] backupPattern = new int[TICKS];
+    private static int currentTickIndex = TICKS; 
+
     public enum ClickMode {
-        Legit,
-        Packet,
-        PlayerController
+        Legit, Packet, PlayerController
     }
 
-    public static void initHandler(float cps,
-                                   double perlinRandAdd,
-                                   boolean rayTrace,
-                                   boolean ignoreItemUse,
-                                   boolean failSwing,
-                                   boolean respectHitDelay,
-                                   int maxDelay,
-                                   float attackRange,
-                                   float swingRange,
-                                   boolean doubleClick,
-                                   float maxClickAmount,
-                                   int maxSkipsInARow,
-                                   int maxConcentrationDiff,
-                                   float consistency,
-                                   ClickMode clickMode,
-                                   EntityLivingBase target) {
-        initHandler(cps, perlinRandAdd, rayTrace, ignoreItemUse, failSwing, respectHitDelay, maxDelay, attackRange, swingRange, doubleClick, maxClickAmount, maxSkipsInARow, maxConcentrationDiff, consistency, clickMode, target, 0.0f);
+    public static void initHandler(float cps, double perlinRandAdd, boolean rayTrace, boolean failSwing,
+            boolean respectHitDelay, int maxDelay, float attackRange, boolean doubleClick, float maxClickAmount,
+            int maxSkipsInARow, int maxConcentrationDiff, float consistency, ClickMode clickMode,
+            EntityLivingBase target) {
+        initHandler(cps, perlinRandAdd, rayTrace, failSwing, respectHitDelay, maxDelay, attackRange, doubleClick,
+                maxClickAmount, maxSkipsInARow, maxConcentrationDiff, consistency, clickMode, target, 0.0f);
     }
 
-    public static void initHandler(float cps,
-                                   double perlinRandAdd,
-                                   boolean rayTrace,
-                                   boolean ignoreItemUse,
-                                   boolean failSwing,
-                                   boolean respectHitDelay,
-                                   int maxDelay,
-                                   float attackRange,
-                                   float swingRange,
-                                   boolean doubleClick,
-                                   float maxClickAmount,
-                                   int maxSkipsInARow,
-                                   int maxConcentrationDiff,
-                                   float consistency,
-                                   ClickMode clickMode,
-                                   EntityLivingBase target,
-                                   float jitterStrength) {
+    private static long lastClickTime;
+
+    public static void initHandler(float cps, double perlinRandAdd, boolean rayTrace, boolean failSwing,
+            boolean respectHitDelay, int maxDelay, float attackRange, boolean doubleClick, float maxClickAmount,
+            int maxSkipsInARow, int maxConcentrationDiff, float consistency, ClickMode clickMode,
+            EntityLivingBase target, float jitterStrength) {
         ClickHandler.cps = cps;
         ClickHandler.rayTrace = rayTrace;
         ClickHandler.attackRange = attackRange;
         ClickHandler.target = target;
-        ClickHandler.ignoreItemUse = ignoreItemUse;
         ClickHandler.failSwing = failSwing;
         ClickHandler.clickMode = clickMode;
-        ClickHandler.swingRange = swingRange;
         ClickHandler.respectHitDelay = respectHitDelay;
         ClickHandler.maxDelay = maxDelay;
         ClickHandler.doubleClick = doubleClick;
@@ -105,15 +82,12 @@ public class ClickHandler implements IMinecraft {
         ClickHandler.perlinRandAdd = perlinRandAdd;
         ClickHandler.jitterStrength = jitterStrength;
 
+        lastClickTime = System.currentTimeMillis();
         initialized = true;
     }
 
     private void generateBasePattern(double clicks, int ticks) {
-        clickPattern.clear();
-
-        for (int i = 0; i < ticks; i++) {
-            clickPattern.add(0);
-        }
+        Arrays.fill(clickPattern, 0);
 
         if (cycles == 10) {
             perlin.setSeed(rand.nextGaussian() * 255);
@@ -128,41 +102,39 @@ public class ClickHandler implements IMinecraft {
         int cyclesVal = (int) Math.ceil(clicks / ticks);
 
         for (int j = 0; j < cyclesVal; j++) {
-            List<Integer> cyclePattern = new ArrayList<>();
-            for (int i = 0; i < ticks; i++) {
-                cyclePattern.add(0);
-            }
-
-            List<Integer> randomSlots = new ArrayList<>();
+            Arrays.fill(cyclePattern, 0);
+            
+            int slotsCount = 0;
             double normClicks = Math.min(clicks, 20);
             double clicksToDistribute = normClicks;
 
             for (int i = 0; i < ticks && clicksToDistribute > 0; i++) {
                 double probability = clicksToDistribute / (ticks - i);
                 if (ThreadLocalRandom.current().nextDouble() < probability) {
-                    randomSlots.add(i);
+                    randomSlots[slotsCount++] = i;
                     clicksToDistribute--;
                 }
             }
 
             double interval = (double) ticks / normClicks;
 
-            for (int i = 0; i < randomSlots.size(); i++) {
-                double blended = randomSlots.get(i) * (1.0 - consistency) + (int) Math.round(i * interval) * consistency;
+            for (int i = 0; i < slotsCount; i++) {
+                double blended = randomSlots[i] * (1.0 - consistency)
+                        + (int) Math.round(i * interval) * consistency;
                 int index = (int) Math.round(blended);
                 index = Math.max(0, Math.min(ticks - 1, index));
 
                 int attempts = 0;
-                while (cyclePattern.get(index) > 0 && attempts < ticks) {
+                while (cyclePattern[index] > 0 && attempts < ticks) {
                     index = (index + 1) % ticks;
                     attempts++;
                 }
 
-                cyclePattern.set(index, cyclePattern.get(index) + 1);
+                cyclePattern[index]++;
             }
 
             for (int i = 0; i < ticks; i++) {
-                clickPattern.set(i, clickPattern.get(i) + cyclePattern.get(i));
+                clickPattern[i] += cyclePattern[i];
             }
 
             clicks -= 20;
@@ -171,24 +143,26 @@ public class ClickHandler implements IMinecraft {
         if (doubleClick) {
             for (int j = 0; j < maxClickAmount; j++) {
                 int from = ThreadLocalRandom.current().nextInt(ticks);
-                if (clickPattern.get(from) == 0) continue;
+                if (clickPattern[from] == 0)
+                    continue;
 
                 int to = (int) Math.min(ticks - 1, Math.max(0, from + (rand.nextInt(3) - 1)));
-                if (from == to) continue;
+                if (from == to)
+                    continue;
 
-                clickPattern.set(from, clickPattern.get(from) - 1);
-                clickPattern.set(to, clickPattern.get(to) + 1);
+                clickPattern[from]--;
+                clickPattern[to]++;
             }
         }
     }
 
     private void generateClickPattern() {
-        generateBasePattern(cps, 20);
+        generateBasePattern(cps, TICKS);
 
         int skipsInARow = 0;
 
-        for (int i = 0; i < clickPattern.size(); i++) {
-            int click = clickPattern.get(i);
+        for (int i = 0; i < TICKS; i++) {
+            int click = clickPattern[i];
 
             if (click == 0) {
                 skipsInARow++;
@@ -197,12 +171,12 @@ public class ClickHandler implements IMinecraft {
             }
 
             if (skipsInARow > maxSkipsInARow) {
-                if (i + 1 < clickPattern.size() - 1) {
-                    int nextClick = clickPattern.get(i + 1);
+                if (i + 1 < TICKS - 1) {
+                    int nextClick = clickPattern[i + 1];
 
                     if (nextClick != 0) {
-                        clickPattern.set(i, nextClick);
-                        clickPattern.set(i + 1, 0);
+                        clickPattern[i] = nextClick;
+                        clickPattern[i + 1] = 0;
                     }
                 }
             }
@@ -212,15 +186,15 @@ public class ClickHandler implements IMinecraft {
 
         if (cps == lastCPS) {
             int i = 0;
-            List<Integer> originalPattern = clickPattern;
+            System.arraycopy(clickPattern, 0, backupPattern, 0, TICKS);
 
             while (Math.abs(concentration - lastConcentration) > maxConcentrationDiff && i < 10) {
-                generateBasePattern(cps, 20);
+                generateBasePattern(cps, TICKS);
                 concentration = maxRunLength();
                 i++;
             }
             if (i >= 10) {
-                clickPattern = originalPattern;
+                System.arraycopy(backupPattern, 0, clickPattern, 0, TICKS);
             }
         }
 
@@ -232,8 +206,8 @@ public class ClickHandler implements IMinecraft {
         int maxRun = 1;
         int currentRun = 1;
 
-        for (int i = 1; i < clickPattern.size(); i++) {
-            if (clickPattern.get(i).equals(clickPattern.get(i - 1))) {
+        for (int i = 1; i < TICKS; i++) {
+            if (clickPattern[i] == clickPattern[i - 1]) {
                 currentRun++;
                 maxRun = Math.max(maxRun, currentRun);
             } else {
@@ -244,35 +218,28 @@ public class ClickHandler implements IMinecraft {
     }
 
     @EventLink
-    public final Listener<StaticTickEvent> staticTick = e -> {
+    public final Listener<PreTickEvent> staticTick = e -> {
         if (mc.thePlayer == null || mc.theWorld == null) {
             return;
         }
 
         if (target != null && initialized && mc.currentScreen == null) {
-            if (clickPattern.isEmpty()) {
+            if (currentTickIndex >= TICKS) {
                 generateClickPattern();
+                currentTickIndex = 0;
             }
 
-            Integer next = clickPattern.get(0);
-            clickPattern.remove(0);
-
-            if (next != null) {
-                cachedClicks += next;
-            }
+            cachedClicks += clickPattern[currentTickIndex++];
         } else {
             cachedClicks = 0;
+            currentTickIndex = TICKS;
         }
     };
-    
+
     @EventLink
     public final Listener<MouseStateUpdateEvent> mouseStateUpdate = event -> {
         leftClickCounter = Math.max(0, leftClickCounter - 1);
         clickingNow = false;
-        finalizeHandler();
-    };
-
-    private void finalizeHandler() {
         if (mc.thePlayer == null || mc.theWorld == null) {
             return;
         }
@@ -307,51 +274,75 @@ public class ClickHandler implements IMinecraft {
             }
 
             cachedClicks = 0;
-            initialized = false;
+            if (System.currentTimeMillis() - lastClickTime > 200) {
+                initialized = false;
+            }
         } else if (initialized) {
             if (cachedClicks > 0 && mc.currentScreen == null) {
+                ReflectUtil.setLeftClickCounter(0);
                 for (int i = 0; i < cachedClicks; i++) {
-                    ReflectUtil.clickMouse();
+                    attack();
                 }
                 clickingNow = true;
             }
             cachedClicks = 0;
-            initialized = false;
+            if (System.currentTimeMillis() - lastClickTime > 200) {
+                initialized = false;
+            }
         } else {
             clickingNow = false;
         }
-    }
+    };
 
     private static boolean hasHitDelayPassed() {
         return !respectHitDelay || leftClickCounter <= 0;
     }
 
     private void handleFailSwing() {
-        if (mc.currentScreen == null) {
-            ReflectUtil.clickMouse();
+        if (itemUseAttack() && mc.currentScreen == null) {
+            switch (clickMode) {
+                case Legit:
+                	ReflectUtil.clickMouse();
+                    break;
+			default:
+				break;
+            }
         }
+
         leftClickCounter = maxDelay;
     }
 
     public static void attack() {
-        if (mc.currentScreen == null) {
+        if (itemUseAttack() && mc.currentScreen == null) {
             switch (clickMode) {
                 case Legit:
                     ReflectUtil.clickMouse();
                     break;
-                case Packet:
-                    mc.thePlayer.swingItem();
-                    if (mc.getNetHandler() != null && target != null) {
-                        mc.getNetHandler().addToSendQueue(new C02PacketUseEntity(target, C02PacketUseEntity.Action.ATTACK));
-                    }
-                    break;
-                case PlayerController:
-                    if (mc.playerController != null && target != null) {
-                        mc.playerController.attackEntity(mc.thePlayer, target);
-                        mc.thePlayer.swingItem();
-                    }
-                    break;
+			default:
+				break;
             }
         }
     }
+
+    private static boolean lastUsingItem;
+    private static int releaseTicks = 0;
+
+    private static boolean itemUseAttack() {
+ 
+        boolean usingItem = mc.thePlayer.isUsingItem();
+        boolean released = !usingItem && lastUsingItem;
+        lastUsingItem = usingItem;
+
+        if (released) {
+            releaseTicks = 2;
+        }
+
+        if (releaseTicks > 0) {
+            releaseTicks--;
+            return false;
+        }
+
+        return !usingItem;
+    }
+
 }

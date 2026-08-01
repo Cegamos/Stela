@@ -1,6 +1,6 @@
 package keystrokesmod.client.config;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.Value;
 import keystrokesmod.client.module.value.impl.*;
@@ -20,12 +20,12 @@ public class ConfigManager {
 
     public static void saveConfigByName(String name) {
         currentProfileName = name;
-        saveConfig(new File(PROFILES_DIR, name + ".stela"), Raven.moduleManager.getModules());
+        saveConfig(new File(PROFILES_DIR, name + ".stela"), Kevin.moduleManager.getModules());
     }
 
     public static void loadConfigByName(String name) {
         currentProfileName = name;
-        loadConfig(new File(PROFILES_DIR, name + ".stela"), Raven.moduleManager.getModules());
+        loadConfig(new File(PROFILES_DIR, name + ".stela"), Kevin.moduleManager.getModules());
     }
 
     public static void saveConfig(File destination, List<Mod> modules) {

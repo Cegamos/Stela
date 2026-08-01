@@ -7,13 +7,16 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.component.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.command.CommandManager;
 import keystrokesmod.client.config.ConfigManager;
 import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.util.chat.ChatUtil;
+import keystrokesmod.client.util.font.CustomFontRenderer;
+import keystrokesmod.client.util.font.FontAwesome;
+import keystrokesmod.client.util.font.FontUtil;
 import keystrokesmod.client.util.render.RoundedUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -85,7 +88,7 @@ public class TerminalWindow extends Component {
         this.inputText = "";
 
         if (out.isEmpty()) {
-            printWrapped("Raven B+ Console [v" + Raven.VERSION + "]", textSuccess);
+            printWrapped("Raven B+ Console [v" + Kevin.VERSION + "]", textSuccess);
             printWrapped("Type 'help' or 'list' for commands.", textDefault);
         }
     }
@@ -168,9 +171,13 @@ public class TerminalWindow extends Component {
         // Header Bar
         RoundedUtil.drawRound(this.x, this.y, this.width, this.barHeight, 6f, headerDark);
         RoundedUtil.drawRound(this.x + 2, this.y + this.barHeight - 1, this.width - 4, 1.5f, 0.75f, accentColor);
-
+     
+        CustomFontRenderer iconFont = FontUtil.faSolid14;
+        iconFont.drawStringWithShadow(FontAwesome.terminal, this.x + 8, this.y + 4, titleColor);
+        fr.drawStringWithShadow("Terminal", this.x + 20, this.y + 4, titleColor);
+        //fr.drawStringWithShadow(textToDraw, this.x + 20, this.y + 4, Color.WHITE.getRGB());
         // Header Title
-        fr.drawStringWithShadow(">_ Terminal", this.x + 8, this.y + 4, titleColor);
+        //fr.drawStringWithShadow(">_ Terminal", this.x + 8, this.y + 4, titleColor);
 
         // Header Toggle Button (- / +)
         String toggleSymbol = this.opened ? "−" : "+";
@@ -263,7 +270,6 @@ public class TerminalWindow extends Component {
             this.x = (int) (this.windowStartDragX + (mouseX - this.mouseStartDragX));
             this.y = (int) (this.windowStartDragY + (mouseY - this.mouseStartDragY));
         } else if (this.resizing && this.opened) {
-            Minecraft mc = Minecraft.getMinecraft();
             int scaleFactor = getScaleFactor(mc);
             int scaledWidth = (int) Math.ceil((double) mc.displayWidth / scaleFactor);
             int scaledHeight = (int) Math.ceil((double) mc.displayHeight / scaleFactor);
@@ -393,7 +399,7 @@ public class TerminalWindow extends Component {
         if (this.inputText.isEmpty()) return;
         String query = this.inputText.toLowerCase();
 
-        for (Mod mod : Raven.moduleManager.getModules()) {
+        for (Mod mod : Kevin.moduleManager.getModules()) {
             if (mod.getName().toLowerCase().startsWith(query)) {
                 this.inputText = mod.getName();
                 return;
@@ -423,9 +429,9 @@ public class TerminalWindow extends Component {
                 scrollOffset = 0;
                 break;
             case "list":
-                printWrapped("Registered Modules (" + Raven.moduleManager.numberOfModules() + "):", textSuccess);
+                printWrapped("Registered Modules (" + Kevin.moduleManager.numberOfModules() + "):", textSuccess);
                 StringBuilder sb = new StringBuilder();
-                for (Mod m : Raven.moduleManager.getModules()) {
+                for (Mod m : Kevin.moduleManager.getModules()) {
                     sb.append(m.isEnabled() ? "§a" : "§7").append(m.getName()).append("§r, ");
                 }
                 if (sb.length() > 2) {
@@ -436,7 +442,7 @@ public class TerminalWindow extends Component {
             case "toggle":
             case "t":
                 if (parts.length > 1) {
-                    Mod mod = Raven.moduleManager.getModuleByName(parts[1]);
+                    Mod mod = Kevin.moduleManager.getModuleByName(parts[1]);
                     if (mod != null) {
                         mod.toggle();
                         printWrapped("Success: Toggled " + mod.getName() + " -> " + (mod.isEnabled() ? "ENABLED" : "DISABLED"), textSuccess);
@@ -449,7 +455,7 @@ public class TerminalWindow extends Component {
                 break;
             case "bind":
                 if (parts.length > 2) {
-                    Mod mod = Raven.moduleManager.getModuleByName(parts[1]);
+                    Mod mod = Kevin.moduleManager.getModuleByName(parts[1]);
                     if (mod != null) {
                         int key = Keyboard.getKeyIndex(parts[2].toUpperCase());
                         mod.setKeycode(key);

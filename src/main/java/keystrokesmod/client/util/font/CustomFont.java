@@ -1,12 +1,16 @@
 package keystrokesmod.client.util.font;
 
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-import java.awt.font.FontRenderContext;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.texture.DynamicTexture;
 
 public class CustomFont {
     protected final Font font;
@@ -124,15 +128,21 @@ public class CustomFont {
     }
 
     public int getFontHeight() {
-        return (this.fontHeight - 8) / 2;
+        return (this.fontHeight - 2) / 2;
     }
 
     public int getStringWidth(String text) {
         if (text == null) return 0;
         int width = 0;
-        for (char c : text.toCharArray()) {
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == '\u00a7' && i + 1 < chars.length) {
+                i++;
+                continue;
+            }
             if (c < this.charData.length && this.charData[c] != null) {
-                width += this.charData[c].width - 8 + this.charOffset;
+                width += this.charData[c].width - 2 + this.charOffset;
             }
         }
         return width / 2;

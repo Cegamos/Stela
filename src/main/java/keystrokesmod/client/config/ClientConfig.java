@@ -1,23 +1,19 @@
 package keystrokesmod.client.config;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.component.CategoryPanel;
 import keystrokesmod.client.module.modules.client.HUD;
 import keystrokesmod.client.module.modules.client.Terminal;
 import keystrokesmod.client.util.IMinecraft;
 import keystrokesmod.client.util.Utils;
-import keystrokesmod.keystroke.KeyStroke;
 
 public class ClientConfig implements IMinecraft {
     private final File configFile;
@@ -38,78 +34,17 @@ public class ClientConfig implements IMinecraft {
             }
         }
     }
-    
-    public static void saveKeyStrokeSettingsToConfigFile() {
-        try {
-            final File file = new File(ClientConfig.mc.mcDataDir + File.separator + "keystrokesmod", "config");
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            final FileWriter writer = new FileWriter(file, false);
-            writer.write(KeyStroke.x + "\n" + KeyStroke.y + "\n" + KeyStroke.enabled + "\n" + KeyStroke.showMouseButtons + "\n" + KeyStroke.currentColorNumber + "\n" + KeyStroke.outline);
-            writer.close();
-        }
-        catch (Throwable var2) {
-            var2.printStackTrace();
-        }
-    }
-    
-    public static void applyKeyStrokeSettingsFromConfigFile() {
-        try {
-            final File file = new File(ClientConfig.mc.mcDataDir + File.separator + "keystrokesmod", "config");
-            if (!file.exists()) {
-                return;
-            }
-            final BufferedReader reader = new BufferedReader(new FileReader(file));
-            int i = 0;
-            String line;
-            while ((line = reader.readLine()) != null) {
-                switch (i) {
-                    case 0: {
-                        KeyStroke.x = Integer.parseInt(line);
-                        break;
-                    }
-                    case 1: {
-                        KeyStroke.y = Integer.parseInt(line);
-                        break;
-                    }
-                    case 2: {
-                        KeyStroke.enabled = Boolean.parseBoolean(line);
-                        break;
-                    }
-                    case 3: {
-                        KeyStroke.showMouseButtons = Boolean.parseBoolean(line);
-                        break;
-                    }
-                    case 4: {
-                        KeyStroke.currentColorNumber = Integer.parseInt(line);
-                        break;
-                    }
-                    case 5: {
-                        KeyStroke.outline = Boolean.parseBoolean(line);
-                        break;
-                    }
-                }
-                ++i;
-            }
-            reader.close();
-        }
-        catch (Throwable var4) {
-            var4.printStackTrace();
-        }
-    }
-    
+
     public void saveConfig() {
         final List<String> config = new ArrayList<String>();
         config.add("clickgui-pos~ " + this.getClickGuiPos());
         config.add("loaded-cfg~ " + ConfigManager.getCurrentProfileName());
         config.add("HUDX~ " + HUD.hudX);
         config.add("HUDY~ " + HUD.hudY);
-        config.add("terminal-pos~ " + Raven.clickGui.terminal.getX() + "," + Raven.clickGui.terminal.getY());
-        config.add("terminal-size~ " + Raven.clickGui.terminal.getWidth() + "," + Raven.clickGui.terminal.height());
-        config.add("terminal-opened~ " + Raven.clickGui.terminal.opened);
-        config.add("terminal-hidden~ " + Raven.clickGui.terminal.hidden);
+        config.add("terminal-pos~ " + Kevin.clickGui.terminal.getX() + "," + Kevin.clickGui.terminal.getY());
+        config.add("terminal-size~ " + Kevin.clickGui.terminal.getWidth() + "," + Kevin.clickGui.terminal.height());
+        config.add("terminal-opened~ " + Kevin.clickGui.terminal.opened);
+        config.add("terminal-hidden~ " + Kevin.clickGui.terminal.hidden);
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(this.configFile);
@@ -153,7 +88,7 @@ public class ClientConfig implements IMinecraft {
                     final String[] split_up = line.replace("terminal-pos~ ", "").split(",");
                     final int i1 = Integer.parseInt(split_up[0]);
                     final int i2 = Integer.parseInt(split_up[1]);
-                    Raven.clickGui.terminal.setLocation(i1, i2);
+                    Kevin.clickGui.terminal.setLocation(i1, i2);
                 }
                 catch (Exception ex) {}
             }
@@ -162,13 +97,13 @@ public class ClientConfig implements IMinecraft {
                     final String[] split_up = line.replace("terminal-size~ ", "").split(",");
                     final int i1 = Integer.parseInt(split_up[0]);
                     final int i2 = Integer.parseInt(split_up[1]);
-                    Raven.clickGui.terminal.setSize(i1, i2);
+                    Kevin.clickGui.terminal.setSize(i1, i2);
                 }
                 catch (Exception ex2) {}
             }
             else if (line.startsWith("terminal-opened~ ")) {
                 try {
-                    Raven.clickGui.terminal.opened = Boolean.parseBoolean(line.replace("terminal-opened~ ", ""));
+                    Kevin.clickGui.terminal.opened = Boolean.parseBoolean(line.replace("terminal-opened~ ", ""));
                 }
                 catch (Exception ex3) {}
             }
@@ -177,7 +112,7 @@ public class ClientConfig implements IMinecraft {
                     continue;
                 }
                 try {
-                    final Terminal terminalModule = (Terminal)Raven.moduleManager.getModuleByClazz(Terminal.class);
+                    final Terminal terminalModule = (Terminal)Kevin.moduleManager.getModuleByClazz(Terminal.class);
                     terminalModule.setToggled(!Boolean.parseBoolean(line.replace("terminal-hidden~ ", "")));
                 }
                 catch (Exception ex4) {}
@@ -202,7 +137,7 @@ public class ClientConfig implements IMinecraft {
     
     private void loadClickGuiCoords(final String decryptedString) {
         for (final String what : decryptedString.split("/")) {
-            for (final CategoryPanel cat : Raven.clickGui.getCategoryList()) {
+            for (final CategoryPanel cat : Kevin.clickGui.getCategoryList()) {
                 if (what.startsWith(cat.categoryName.name())) {
                     final List<String> cfg = Utils.Java.StringListToList(what.split("~"));
                     cat.setX(Integer.parseInt(cfg.get(1)));
@@ -215,7 +150,7 @@ public class ClientConfig implements IMinecraft {
     
     public String getClickGuiPos() {
         final StringBuilder posConfig = new StringBuilder();
-        for (final CategoryPanel cat : Raven.clickGui.getCategoryList()) {
+        for (final CategoryPanel cat : Kevin.clickGui.getCategoryList()) {
             posConfig.append(cat.categoryName.name());
             posConfig.append("~");
             posConfig.append(cat.getX());

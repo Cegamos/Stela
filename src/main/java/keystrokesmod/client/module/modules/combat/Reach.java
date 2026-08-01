@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PostRenderTickEvent;
@@ -41,7 +41,7 @@ public class Reach extends Mod {
     private void both() {
         if (checkGame()) return;
         
-        final Mod autoClicker = Raven.moduleManager.getModuleByClazz(LeftClicker.class);
+        final Mod autoClicker = Kevin.moduleManager.getModuleByClazz(LeftClicker.class);
         if (autoClicker == null || !autoClicker.isEnabled()) {
             return;
         }
@@ -81,8 +81,8 @@ public class Reach extends Mod {
     }
     
     private Object[] zz(double zzD, final double zzE) {
-        final Reach reach = (Reach) Raven.moduleManager.getModuleByClazz(Reach.class);
-        final HitBox boxhit = (HitBox) Raven.moduleManager.getModuleByClazz(HitBox.class);
+        final Reach reach = (Reach) Kevin.moduleManager.getModuleByClazz(Reach.class);
+        final HitBox boxhit = (HitBox) Kevin.moduleManager.getModuleByClazz(HitBox.class);
         if (reach != null && !isEnabled()) {
             zzD = (mc.playerController.extendedReach() ? 6.0 : 3.0);
         }

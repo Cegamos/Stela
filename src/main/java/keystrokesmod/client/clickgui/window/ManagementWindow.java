@@ -8,11 +8,14 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.component.Component;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.config.ConfigManager;
 import keystrokesmod.client.module.modules.client.GuiModule;
+import keystrokesmod.client.util.font.CustomFontRenderer;
+import keystrokesmod.client.util.font.FontAwesome;
+import keystrokesmod.client.util.font.FontUtil;
 import keystrokesmod.client.util.render.RoundedUtil;
 import keystrokesmod.client.util.system.EnemyManager;
 import keystrokesmod.client.util.system.FriendManager;
@@ -40,8 +43,8 @@ public class ManagementWindow extends Component {
     private int scrollOffset = 0;
     private int maxScroll = 0;
 
-    private int activeTab = 0; // 0: Themes, 1: Configs, 2: Friends/Enemies
-    private final String[] tabs = new String[] { "Themes", "Configs", "Social" };
+    private int activeTab = 0; // 0: Themes, 1: Configs, 2: Friends/Enemies, 3: Accounts
+    private final String[] tabs = new String[] { "Themes", "Configs", "Social", "Accounts" };
 
     private double windowStartDragX;
     private double windowStartDragY;
@@ -90,9 +93,9 @@ public class ManagementWindow extends Component {
     public ManagementWindow() {
         this.x = 310;
         this.y = 15;
-        this.width = 240;
+        this.width = 280;
         this.height = 180;
-        this.minWidth = 200;
+        this.minWidth = 240;
         this.minHeight = 130;
         this.barHeight = 16;
         this.resizeHandleSize = 12;
@@ -108,7 +111,7 @@ public class ManagementWindow extends Component {
 
     private GuiModule getGuiModule() {
         if (guiModule == null) {
-            guiModule = (GuiModule) Raven.moduleManager.getModuleByClazz(GuiModule.class);
+            guiModule = (GuiModule) Kevin.moduleManager.getModuleByClazz(GuiModule.class);
         }
         return guiModule;
     }
@@ -148,24 +151,22 @@ public class ManagementWindow extends Component {
         Color accentColor = Theme.getMainColor();
         final int accentColorRgb = accentColor.getRGB();
 
-        // Independent Floating Window Frame with Shader Outline
         if (this.opened) {
             RoundedUtil.drawRoundOutline(this.x, this.y, this.width, this.height, 6f, 1f, bgDarkColor, outlineColor);
         }
 
-        // Header Bar
         RoundedUtil.drawRound(this.x, this.y, this.width, this.barHeight, 6f, headerDarkColor);
         RoundedUtil.drawRound(this.x + 2, this.y + this.barHeight - 1, this.width - 4, 1.5f, 0.75f, accentColor);
 
-        // Window Title
-        fr.drawStringWithShadow("Management", this.x + 8, this.y + 4, titleColorRgb);
+        CustomFontRenderer iconFont = FontUtil.faSolid14;
+        iconFont.drawStringWithShadow(FontAwesome.gears, this.x + 8, this.y + 6, titleColorRgb);
+        fr.drawStringWithShadow("Management", this.x + 20, this.y + 4, titleColorRgb);
 
-        // Header Toggle Button (- / +)
         String toggleSymbol = this.opened ? "−" : "+";
         fr.drawStringWithShadow(toggleSymbol, this.x + this.width - 14, this.y + 4, toggleColorRgb);
 
         if (this.opened) {
-            // Render Tab Navigation Bar
+            // Renderización adaptada para 4 pestañas
             int tabWidth = (this.width - 16) / tabs.length;
             int tabY = this.y + this.barHeight + 4;
 
@@ -188,7 +189,6 @@ public class ManagementWindow extends Component {
             int contentY = tabY + 18;
             int contentHeight = (this.y + this.height - 10) - contentY;
 
-            // Content Area with Scissor Test
             if (contentHeight > 0) {
                 int totalContentHeight = 0;
                 if (activeTab == 0) {
@@ -198,6 +198,8 @@ public class ManagementWindow extends Component {
                     totalContentHeight = cachedProfiles.size() * 16;
                 } else if (activeTab == 2) {
                     totalContentHeight = 28 + (FriendManager.getFriends().size() * 16) + 28 + (EnemyManager.getEnemies().size() * 16);
+                } else if (activeTab == 3) {
+                    totalContentHeight = 60; // Alt Manager requiere poco espacio vertical
                 }
 
                 maxScroll = Math.max(0, totalContentHeight - contentHeight);
@@ -222,11 +224,12 @@ public class ManagementWindow extends Component {
                     drawConfigsTab(fr, startY, accentColorRgb);
                 } else if (activeTab == 2) {
                     drawSocialTab(fr, startY);
+                } else if (activeTab == 3) {
+                    drawAccountsTab(fr, startY, accentColor);
                 }
 
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-                // Draw Scrollbar
                 if (maxScroll > 0) {
                     int trackX = this.x + this.width - 7;
                     int trackY = contentY;
@@ -243,7 +246,6 @@ public class ManagementWindow extends Component {
                 }
             }
 
-            // Resize Handle Grip
             int gripX = this.x + this.width - this.resizeHandleSize;
             int gripY = this.y + this.height - this.resizeHandleSize;
             Color gripColor = this.resizing ? accentColor : gripInactive;
@@ -335,6 +337,21 @@ public class ManagementWindow extends Component {
         }
     }
 
+    private void drawAccountsTab(FontRenderer fr, int startY, Color accentColor) {
+        int currentY = startY;
+        String sessionName = Minecraft.getMinecraft().getSession().getUsername();
+
+        fr.drawStringWithShadow("Current Account:", this.x + 8, currentY, tabTextInactiveRgb);
+        currentY += 12;
+        fr.drawStringWithShadow(sessionName, this.x + 8, currentY, Color.WHITE.getRGB());
+        currentY += 18;
+
+        // Botón "Open Alt Manager"
+        RoundedUtil.drawRound(this.x + 8, currentY, this.width - 16, 16f, 3f, cardNormalColor);
+        String btnText = "Open Alt Manager";
+        fr.drawStringWithShadow(btnText, this.x + (this.width / 2f) - (fr.getStringWidth(btnText) / 2f), currentY + 4, Color.WHITE.getRGB());
+    }
+
     @Override
     public void update(int mouseX, int mouseY) {
         if (this.hidden) return;
@@ -417,7 +434,7 @@ public class ManagementWindow extends Component {
 
             int contentY = tabY + 18;
 
-            if (activeTab == 0 && b == 0) { // Themes
+            if (activeTab == 0 && b == 0) {
                 int currentY = contentY - scrollOffset;
                 GuiModule gui = getGuiModule();
                 for (int i = 0; i < availableThemes.size(); i++) {
@@ -431,7 +448,7 @@ public class ManagementWindow extends Component {
                     }
                     currentY += 16;
                 }
-            } else if (activeTab == 1 && b == 0) { // Configs
+            } else if (activeTab == 1 && b == 0) {
                 updateProfilesCache();
                 int currentY = contentY - scrollOffset;
                 for (int i = 0; i < cachedProfiles.size(); i++) {
@@ -441,6 +458,12 @@ public class ManagementWindow extends Component {
                         return;
                     }
                     currentY += 16;
+                }
+            } else if (activeTab == 3 && b == 0) { // Lógica click pestaña Accounts
+                int currentY = contentY - scrollOffset + 30; // Posición del botón "Open Alt Manager"
+                if (x >= this.x + 8 && x <= this.x + this.width - 16 && y >= currentY && y <= currentY + 16) {
+                    Minecraft mc = Minecraft.getMinecraft();
+                    mc.displayGuiScreen(new GuiAltManager(mc.currentScreen));
                 }
             }
         }

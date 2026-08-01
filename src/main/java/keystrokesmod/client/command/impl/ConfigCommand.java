@@ -1,6 +1,6 @@
 package keystrokesmod.client.command.impl;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.command.Command;
 import keystrokesmod.client.command.CommandInfo;
 import keystrokesmod.client.command.SubCommand;
@@ -26,7 +26,7 @@ public class ConfigCommand extends Command {
                     return;
                 }
                 File dest = new File(ConfigManager.PROFILES_DIR, args[0] + ".stela");
-                ConfigManager.saveConfig(dest, Raven.moduleManager.getModules());
+                ConfigManager.saveConfig(dest, Kevin.moduleManager.getModules());
                 Utils.Player.sendMessageToSelf("&aSaved profile &e" + args[0] + ".stela");
             }
         });
@@ -43,7 +43,7 @@ public class ConfigCommand extends Command {
                     Utils.Player.sendMessageToSelf("&cProfile &e" + args[0] + ".stela &cnot found!");
                     return;
                 }
-                ConfigManager.loadConfig(source, Raven.moduleManager.getModules());
+                ConfigManager.loadConfig(source, Kevin.moduleManager.getModules());
                 Utils.Player.sendMessageToSelf("&aLoaded profile &e" + args[0] + ".stela");
             }
         });

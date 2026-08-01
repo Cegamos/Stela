@@ -23,7 +23,7 @@ public class ModeSetting extends Component {
 	@Override
 	public void draw() {
 		int labelX = this.module.getCategory().getX() + 8;
-		int labelY = this.module.getCategory().getY() + this.offset + 3;
+		int labelY = this.module.getCategory().getY() + this.offset + 6;
 
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 0.5);

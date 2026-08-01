@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.modules.client.GuiModule;
 
 public class Theme {
@@ -31,7 +31,7 @@ public class Theme {
 
 	public static Color getMainColor() {
 		if (cachedGuiModule == null) {
-			cachedGuiModule = (GuiModule) Raven.moduleManager.getModuleByClazz(GuiModule.class);
+			cachedGuiModule = (GuiModule) Kevin.moduleManager.getModuleByClazz(GuiModule.class);
 
 			if (cachedGuiModule == null) {
 				return defaultColor;

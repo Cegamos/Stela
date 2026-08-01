@@ -2,7 +2,7 @@ package keystrokesmod.client.module.modules.other;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PreUpdateEvent;
@@ -39,7 +39,7 @@ public class MiddleClick extends Mod {
         this.prevSlot = -1;
         
         if (cachedAimAssist == null) {
-            cachedAimAssist = (AimAssist) Raven.moduleManager.getModuleByClazz(AimAssist.class);
+            cachedAimAssist = (AimAssist) Kevin.moduleManager.getModuleByClazz(AimAssist.class);
         }
     }
 

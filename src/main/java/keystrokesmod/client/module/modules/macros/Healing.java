@@ -17,7 +17,10 @@ import net.minecraft.item.ItemStack;
 public class Healing extends Mod {
     private final BooleanValue preferSlot = new BooleanValue("Prefer a slot", this, false);
     private final NumberValue hotbarSlotPreference = new NumberValue("Preferred slot", this, 8.0, 1.0, 9.0, 1.0);
-    private final NumberValue itemMode = new NumberValue("Healing item", this, 1.0, 1.0, HealingItems.values().length, 1.0);
+    
+    private static final HealingItems[] cachedHealingItems = HealingItems.values();
+    
+    private final NumberValue itemMode = new NumberValue("Healing item", this, 1.0, 1.0, cachedHealingItems.length, 1.0);
     private final DescriptionValue modeDesc = new DescriptionValue("Mode: SOUP", this);
 
     @Override
@@ -27,17 +30,19 @@ public class Healing extends Mod {
 
     @Override
     public void onEnable() {
+        super.onEnable();
+        
         if (!Utils.Player.isPlayerInGame()) {
             this.disable();
             return;
         }
 
-        HealingItems mode = getCurrentHealingItem();
+        final HealingItems mode = getCurrentHealingItem();
 
         if (preferSlot.getValue()) {
-            int preferredSlot = (int) hotbarSlotPreference.getValue() - 1;
+            final int preferredSlot = (int) hotbarSlotPreference.getValue() - 1;
             if (isValidHealingItem(preferredSlot, mode)) {
-                Healing.mc.thePlayer.inventory.currentItem = preferredSlot;
+                getPlayer().inventory.currentItem = preferredSlot;
                 this.disable();
                 return;
             }
@@ -45,23 +50,23 @@ public class Healing extends Mod {
 
         for (int slot = 0; slot <= 8; ++slot) {
             if (isValidHealingItem(slot, mode)) {
-                Healing.mc.thePlayer.inventory.currentItem = slot;
+                getPlayer().inventory.currentItem = slot;
                 break;
             }
         }
 
-        this.onDisable();
         this.disable();
     }
 
     private HealingItems getCurrentHealingItem() {
-        return HealingItems.values()[(int) itemMode.getValue() - 1];
+        return cachedHealingItems[(int) itemMode.getValue() - 1];
     }
 
     private boolean isValidHealingItem(int slot, HealingItems type) {
-        ItemStack stack = Healing.mc.thePlayer.inventory.getStackInSlot(slot);
+        final ItemStack stack = getPlayer().inventory.getStackInSlot(slot);
         if (stack == null) return false;
-        Item item = stack.getItem();
+        
+        final Item item = stack.getItem();
 
         switch (type) {
             case SOUP:
@@ -69,9 +74,8 @@ public class Healing extends Mod {
             case GAPPLE:
                 return item instanceof ItemAppleGold;
             case FOOD:
-                return item instanceof ItemFood;
             case ALL:
-                return item instanceof ItemSoup || item instanceof ItemAppleGold || item instanceof ItemFood;
+                return item instanceof ItemFood;
             default:
                 return false;
         }

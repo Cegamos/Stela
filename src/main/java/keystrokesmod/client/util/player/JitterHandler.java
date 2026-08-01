@@ -86,8 +86,8 @@ public class JitterHandler implements IMinecraft {
     }
 
     @EventLink
-    public final Listener<PacketSendEvent> onPacketSend = e -> {
-        if (e.getPacket() instanceof C0APacketAnimation) {
+    public final Listener<PacketSendEvent> onPacketSend = event -> {
+        if (event.getPacket() instanceof C0APacketAnimation) {
             clicks.add(System.currentTimeMillis());
         }
     };

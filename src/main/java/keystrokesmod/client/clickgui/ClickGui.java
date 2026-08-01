@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.component.CategoryPanel;
 import keystrokesmod.client.clickgui.component.Component;
 import keystrokesmod.client.clickgui.window.ManagementWindow;
@@ -47,7 +47,7 @@ public class ClickGui extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        this.cachedWatermark = "Raven B+ v" + Raven.VERSION + " | Config: " + ConfigManager.getCurrentProfileName();
+        this.cachedWatermark = Kevin.NAME + " v" + Kevin.VERSION + " | Config: " + ConfigManager.getCurrentProfileName();
         
         try {
             if (this.mc != null && this.mc.theWorld != null) {
@@ -169,8 +169,8 @@ public class ClickGui extends GuiScreen {
         } catch (Exception ignored) {}
 
         ConfigManager.saveConfigByName(ConfigManager.getCurrentProfileName());
-        if (Raven.clientConfig != null) {
-            Raven.clientConfig.saveConfig();
+        if (Kevin.clientConfig != null) {
+            Kevin.clientConfig.saveConfig();
         }
     }
 

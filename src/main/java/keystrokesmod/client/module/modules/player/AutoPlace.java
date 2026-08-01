@@ -2,7 +2,7 @@ package keystrokesmod.client.module.modules.player;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.ModuleInfo;
 import keystrokesmod.client.module.modules.Mod;
@@ -52,7 +52,7 @@ public class AutoPlace extends Mod {
     
     @Override
     public void update() {
-        final FastPlace fastPlace = (FastPlace) Raven.moduleManager.getModuleByClazz(FastPlace.class);
+        final FastPlace fastPlace = (FastPlace) Kevin.moduleManager.getModuleByClazz(FastPlace.class);
         if (a.getValue() && Mouse.isButtonDown(1) && !mc.thePlayer.capabilities.isFlying && fastPlace != null && !fastPlace.isEnabled()) {
             final ItemStack i = mc.thePlayer.getHeldItem();
             if (i == null || !(i.getItem() instanceof ItemBlock)) {

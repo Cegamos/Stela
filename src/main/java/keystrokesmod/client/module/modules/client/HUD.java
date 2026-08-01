@@ -1,12 +1,11 @@
 package keystrokesmod.client.module.modules.client;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.lwjgl.input.Mouse;
-
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.ClickGui;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
@@ -18,14 +17,29 @@ import keystrokesmod.client.module.modules.Mod;
 import keystrokesmod.client.module.value.impl.BooleanValue;
 import keystrokesmod.client.module.value.impl.DescriptionValue;
 import keystrokesmod.client.module.value.impl.ModeValue;
+import keystrokesmod.client.module.value.impl.NumberValue;
 import keystrokesmod.client.util.Utils;
+import keystrokesmod.client.util.render.ColorUtil;
+import keystrokesmod.client.util.render.RenderUtil;
+import keystrokesmod.client.util.render.RoundedUtil;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.settings.GameSettings;
 
 @ModuleInfo(name = "HUD", category = Category.Client)
 public class HUD extends Mod {
 
-    public final ModeValue mode = new ModeValue("Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
+    public final ModeValue mode = new ModeValue("Color Mode", this, ColourModes.ASTOLFO2, ColourModes.values());
+    
+    public final BooleanValue showBackground = new BooleanValue("Background", this, true);
+    public final ModeValue backgroundColor = new ModeValue("Bg Mode", this, () -> showBackground.getValue(), "Dark Glass", "Dark Glass", "Glass", "Gradient", "Outline", "Flat");
+    public final NumberValue bgOpacity = new NumberValue("Bg Opacity", this, 160.0, 0.0, 255.0, 5.0, () -> showBackground.getValue());
+    public final NumberValue padding = new NumberValue("Padding", this, 4.0, 1.0, 10.0, 0.5, () -> showBackground.getValue());
+
+    // Accent bar settings
+    public final ModeValue accentBar = new ModeValue("Accent Bar", this, "Right", new String[]{"Right", "Left", "None"});
+    public final NumberValue barWidth = new NumberValue("Bar Width", this, 2.0, 1.0, 5.0, 0.5, () -> !accentBar.is("None"));
+
     public final BooleanValue alphabeticalSort = new BooleanValue("Alphabetical sort", this, false);
 
     protected final DescriptionValue desc = new DescriptionValue("Hide Category", this);
@@ -46,29 +60,29 @@ public class HUD extends Mod {
 
     private final List<Mod> renderList = new ArrayList<>(64);
     
-    private int cachedMaxWidth = 0;
-    private int cachedTotalHeight = 0;
+    private float cachedMaxWidth = 0;
+    private float cachedTotalHeight = 0;
 
     private ScaledResolution cachedSR;
     private int lastDisplayWidth = -1, lastDisplayHeight = -1, lastGuiScale = -1;
 
-    private final Comparator<Mod> sortLongShort = (m1, m2) -> getFont().getStringWidth(m2.getName()) - getFont().getStringWidth(m1.getName());
-    private final Comparator<Mod> sortShortLong = (m1, m2) -> getFont().getStringWidth(m1.getName()) - getFont().getStringWidth(m2.getName());
+    private final Comparator<Mod> sortLongShort = (m1, m2) -> Float.compare(getStringWidth(m2.getName()), getStringWidth(m1.getName()));
+    private final Comparator<Mod> sortShortLong = (m1, m2) -> Float.compare(getStringWidth(m1.getName()), getStringWidth(m2.getName()));
     private final Comparator<Mod> sortAlphabetical = Comparator.comparing(Mod::getName);
 
     @Override
     public void onEnable() {
         super.onEnable();
-        if (mc != null && mc.fontRendererObj != null) {
-            Raven.moduleManager.sort();
+        if (mc != null && getFont() != null) {
+            Kevin.moduleManager.sort();
         }
     }
 
     @Override
     public void guiButtonToggled(final BooleanValue setting) {
         super.guiButtonToggled(setting);
-        if (setting == alphabeticalSort && mc != null && mc.fontRendererObj != null) {
-            Raven.moduleManager.sort();
+        if (setting == alphabeticalSort && mc != null && getFont() != null) {
+            Kevin.moduleManager.sort();
         }
     }
 
@@ -76,11 +90,8 @@ public class HUD extends Mod {
     private Listener<PostRenderTickEvent> onDraw = event -> {
         if (checkGame() || gameSetting().showDebugInfo || currentScreen() instanceof ClickGui) return;
 
-        final FontRenderer font = getFont();
-        if (font == null) return;
-
         renderList.clear();
-        for (Mod m : Raven.moduleManager.getModules()) {
+        for (Mod m : Kevin.moduleManager.getModules()) {
             if (m.isEnabled() && m != this && !isCategoryHidden(m.moduleCategory())) {
                 renderList.add(m);
             }
@@ -94,45 +105,94 @@ public class HUD extends Mod {
             renderList.sort(positionMode.isTop() ? sortLongShort : sortShortLong);
         }
 
-        final int margin = 2;
-        int maxWidth = 0;
+        final float fontHeight = getFontHeight();
+        final float pad = showBackground.getValue() ? (float) padding.getValue() : 0.0f;
+        final float lineHeight = fontHeight + 2f;
+        final int alpha = (int) bgOpacity.getValue();
+        final boolean rightAligned = positionMode.isRight();
 
+        float maxWidth = 0;
         for (int i = 0; i < renderList.size(); i++) {
-            int width = font.getStringWidth(renderList.get(i).getName());
+            float width = getStringWidth(renderList.get(i).getName());
             if (width > maxWidth) maxWidth = width;
         }
 
-        int totalHeight = renderList.size() * (font.FONT_HEIGHT + margin);
+        float totalHeight = renderList.size() * lineHeight;
         
-        cachedMaxWidth = maxWidth;
+        cachedMaxWidth = maxWidth + pad * 2;
         cachedTotalHeight = totalHeight;
 
         ScaledResolution sr = getScaledResolution();
+        int margin = 2;
         int correctedX = Math.max(hudX, margin);
         int correctedY = Math.max(hudY, margin);
-        correctedX = Math.min(correctedX, sr.getScaledWidth() - maxWidth - margin);
-        correctedY = Math.min(correctedY, sr.getScaledHeight() - totalHeight - margin);
+        correctedX = (int) Math.min(correctedX, sr.getScaledWidth() - cachedMaxWidth - margin);
+        correctedY = (int) Math.min(correctedY, sr.getScaledHeight() - cachedTotalHeight - margin);
 
         hudX = correctedX;
         hudY = correctedY;
 
-        final boolean rightAligned = positionMode.isRight();
-        int y = hudY;
+        float y = hudY;
         int del = 0;
 
         for (int i = 0; i < renderList.size(); i++) {
             Mod m = renderList.get(i);
-            float drawX = rightAligned
-                    ? hudX + (float) (maxWidth - font.getStringWidth(m.getName()))
-                    : hudX;
-
+            float textW = getStringWidth(m.getName());
+            
+            float lineBgW = textW + pad * 2;
+            float lineBgX = rightAligned ? hudX + (maxWidth - textW) - pad : hudX;
+            float textX = lineBgX + pad;
+            float textY = y + 1f;
             int color = getColorForMode(mode, del);
-            font.drawString(m.getName(), drawX, (float) y, color, true);
 
-            y += font.FONT_HEIGHT + margin;
+            if (showBackground.getValue()) {
+                renderPerModuleBg(lineBgX, y, lineBgW, lineHeight, alpha, del);
+
+                if (!accentBar.is("None")) {
+                    float bWidth = (float) barWidth.getValue();
+                    Color accentCol = new Color(color);
+                    if (accentBar.is("Right")) {
+                        RenderUtil.drawRect(lineBgX + lineBgW, y, lineBgX + lineBgW + bWidth, y + lineHeight, accentCol.getRGB());
+                    } else if (accentBar.is("Left")) {
+                        RenderUtil.drawRect(lineBgX - bWidth, y, lineBgX, y + lineHeight, accentCol.getRGB());
+                    }
+                }
+            }
+
+            drawString(m.getName(), textX, textY, color, true);
+
+            y += lineHeight;
             del -= getDeltaForMode(mode);
         }
     };
+
+    private void renderPerModuleBg(float x, float y, float w, float h, int alpha, int del) {
+        switch (backgroundColor.getMode()) {
+            case "Glass":
+                Color glassBg = new Color(20, 20, 25, Math.min(255, alpha));
+                RenderUtil.drawRect(x, y, x + w, y + h, glassBg.getRGB());
+                break;
+            case "Dark Glass":
+                Color darkBg = new Color(12, 13, 18, Math.min(255, alpha));
+                RenderUtil.drawRect(x, y, x + w, y + h, darkBg.getRGB());
+                break;
+            case "Gradient":
+                Color topCol = ColorUtil.reAlpha(new Color(getColorForMode(mode, del)), Math.min(255, alpha));
+                Color botCol = ColorUtil.reAlpha(new Color(getColorForMode(mode, del - 20)), Math.min(255, alpha));
+                RoundedUtil.drawGradientVertical(x, y, w, h, 0f, topCol, botCol);
+                break;
+            case "Outline":
+                Color outlineBg = new Color(15, 15, 20, Math.min(255, alpha));
+                Color strokeCol = new Color(getColorForMode(mode, del));
+                RenderUtil.drawRect(x, y, x + w, y + h, outlineBg.getRGB());
+                RenderUtil.drawRect(x, y, x + 1, y + h, strokeCol.getRGB());
+                break;
+            default:
+                Color defaultBg = new Color(0, 0, 0, Math.min(255, alpha));
+                RenderUtil.drawRect(x, y, x + w, y + h, defaultBg.getRGB());
+                break;
+        }
+    }
 
     @EventLink
     private Listener<DragEvent> onDrag = event -> {
@@ -140,7 +200,7 @@ public class HUD extends Mod {
 
         final int mouseX = event.mouseX;
         final int mouseY = event.mouseY;
-        boolean mouseDown = Mouse.isButtonDown(0);
+        boolean mouseDown = GameSettings.isKeyDown(gameSetting().keyBindAttack);
 
         if (mouseDown) {
             boolean hovering = mouseX >= hudX && mouseX <= hudX + cachedMaxWidth
@@ -160,9 +220,27 @@ public class HUD extends Mod {
             draggingModuleList = false;
         }
     };
+    
+    public FontRenderer getFont() {
+    	return mc.fontRendererObj;
+    }
+
+    public float getStringWidth(String text) {
+        return getFont() != null ? getFont().getStringWidth(text) : 0;
+    }
+
+    public float getFontHeight() {
+        return getFont() != null ? getFont().FONT_HEIGHT : 9;
+    }
+
+    public void drawString(String text, float x, float y, int color, boolean shadow) {
+        if (getFont() != null) {
+            getFont().drawString(text, x, y, color, shadow);
+        }
+    }
 
     private ScaledResolution getScaledResolution() {
-        int scale = mc.gameSettings.guiScale;
+        int scale = gameSetting().guiScale;
         if (cachedSR == null || lastDisplayWidth != mc.displayWidth || lastDisplayHeight != mc.displayHeight || lastGuiScale != scale) {
             cachedSR = new ScaledResolution(mc);
             lastDisplayWidth = mc.displayWidth;
@@ -182,10 +260,6 @@ public class HUD extends Mod {
             case Other: return hideOther.getValue();
             default: return false;
         }
-    }
-
-    public FontRenderer getFont() {
-        return mc.fontRendererObj;
     }
 
     private int getColorForMode(ModeValue mode, int del) {

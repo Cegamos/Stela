@@ -2,7 +2,7 @@ package keystrokesmod.client.module.modules.player;
 
 import org.lwjgl.input.Mouse;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.event.EventLink;
 import keystrokesmod.client.event.Listener;
 import keystrokesmod.client.event.impl.PostRenderTickEvent;
@@ -121,7 +121,7 @@ public class RightClicker extends Mod {
             }
         }
         if (preferFastPlace.getValue()) {
-            final Mod fastplace = Raven.moduleManager.getModuleByClazz(FastPlace.class);
+            final Mod fastplace = Kevin.moduleManager.getModuleByClazz(FastPlace.class);
             if (fastplace != null && fastplace.isEnabled()) {
                 return false;
             }

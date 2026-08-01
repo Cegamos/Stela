@@ -5,10 +5,13 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import keystrokesmod.client.Raven;
+import keystrokesmod.client.Kevin;
 import keystrokesmod.client.clickgui.theme.Theme;
 import keystrokesmod.client.module.Category;
 import keystrokesmod.client.module.modules.Mod;
+import keystrokesmod.client.util.font.CustomFontRenderer;
+import keystrokesmod.client.util.font.FontAwesome;
+import keystrokesmod.client.util.font.FontUtil;
 import keystrokesmod.client.util.render.RoundedUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -29,7 +32,10 @@ public class CategoryPanel {
     public String pvp;
     public boolean pin;
 
-    // Scrolling & Viewport Cache
+    private static final int MAX_VISIBLE_MODULES = 12;
+    private static final int MODULE_HEIGHT = 16;
+    private static final int MAX_VISIBLE_HEIGHT = MAX_VISIBLE_MODULES * MODULE_HEIGHT;
+
     private int scrollOffset = 0;
     private int maxScroll = 0;
     private int lastDisplayWidth = -1;
@@ -51,7 +57,7 @@ public class CategoryPanel {
         this.inUse = false;
 
         int tY = this.bh + 3;
-        for (final Mod mod : Raven.moduleManager.getModulesInCategory(this.categoryName)) {
+        for (final Mod mod : Kevin.moduleManager.getModulesInCategory(this.categoryName)) {
             final ModuleButton b = new ModuleButton(mod, this, tY);
             this.modulesInCategory.add(b);
             tY += 16;
@@ -64,15 +70,15 @@ public class CategoryPanel {
 
     public void setX(final int n) {
         this.x = n;
-        if (Raven.clientConfig != null) {
-            Raven.clientConfig.saveConfig();
+        if (Kevin.clientConfig != null) {
+            Kevin.clientConfig.saveConfig();
         }
     }
 
     public void setY(final int y) {
         this.y = y;
-        if (Raven.clientConfig != null) {
-            Raven.clientConfig.saveConfig();
+        if (Kevin.clientConfig != null) {
+            Kevin.clientConfig.saveConfig();
         }
     }
 
@@ -94,8 +100,8 @@ public class CategoryPanel {
 
     public void setOpened(final boolean on) {
         this.categoryOpened = on;
-        if (Raven.clientConfig != null) {
-            Raven.clientConfig.saveConfig();
+        if (Kevin.clientConfig != null) {
+            Kevin.clientConfig.saveConfig();
         }
     }
 
@@ -112,9 +118,8 @@ public class CategoryPanel {
             totalModulesHeight += this.modulesInCategory.get(i).height();
         }
 
-        int maxVisibleHeight = 260;
-        if (totalModulesHeight > maxVisibleHeight) {
-            this.maxScroll = totalModulesHeight - maxVisibleHeight;
+        if (totalModulesHeight > MAX_VISIBLE_HEIGHT) {
+            this.maxScroll = totalModulesHeight - MAX_VISIBLE_HEIGHT;
         } else {
             this.maxScroll = 0;
         }
@@ -148,7 +153,7 @@ public class CategoryPanel {
             }
         }
 
-        int maxPanelHeight = Math.min(totalModulesHeight, 260);
+        int maxPanelHeight = Math.min(totalModulesHeight, MAX_VISIBLE_HEIGHT);
         int totalPanelHeight = this.bh + (this.categoryOpened ? maxPanelHeight + 4 : 4);
 
         Color accentColor = Theme.getMainColor();
@@ -165,23 +170,32 @@ public class CategoryPanel {
         // Header Accent Underline
         RoundedUtil.drawRound(this.x + 2, this.y + this.bh + 1, this.width - 4, 1.5f, 0.75f, accentColor);
 
-        // Category Name (Clean Enterprise Typography)
-        String textToDraw = this.n4m ? this.pvp : this.categoryName.name();
-        renderer.drawStringWithShadow(
-            textToDraw,
-            this.x + 8,
-            this.y + 4,
-            Color.WHITE.getRGB()
-        );
+        // Header Name & FontAwesome Icons using FontUtil.faSolid14
+        FontUtil.checkInit();
+        CustomFontRenderer iconFont = FontUtil.faSolid14;
 
-        // Toggle Indicator (− / +)
+        String textToDraw = this.n4m ? this.pvp : this.categoryName.name();
+        String iconStr = getCategoryIcon(this.categoryName);
+
+        if (iconFont != null && iconStr != null) {
+            iconFont.drawStringWithShadow(iconStr, this.x + 6, this.y + 6, accentColor.getRGB());
+            renderer.drawStringWithShadow(textToDraw, this.x + 20, this.y + 4, Color.WHITE.getRGB());
+        } else {
+            renderer.drawStringWithShadow(textToDraw, this.x + 8, this.y + 4, Color.WHITE.getRGB());
+        }
+
         if (!this.n4m) {
-            renderer.drawStringWithShadow(
-                this.categoryOpened ? "−" : "+",
-                this.x + this.width - 12,
-                this.y + 4,
-                accentColor.getRGB()
-            );
+            String toggleIcon = this.categoryOpened ? FontAwesome.minus : FontAwesome.plus;
+            if (iconFont != null) {
+                iconFont.drawStringWithShadow(toggleIcon, this.x + this.width - 14, this.y + 6, accentColor.getRGB());
+            } else {
+                renderer.drawStringWithShadow(
+                    this.categoryOpened ? "−" : "+",
+                    this.x + this.width - 12,
+                    this.y + 4,
+                    accentColor.getRGB()
+                );
+            }
         }
 
         // Render Modules inside GL Scissor Viewport when opened
@@ -260,7 +274,7 @@ public class CategoryPanel {
             for (int i = 0; i < size; i++) {
                 modulesHeight += this.modulesInCategory.get(i).height();
             }
-            totalHeight += Math.min(modulesHeight, 260) + 4;
+            totalHeight += Math.min(modulesHeight, MAX_VISIBLE_HEIGHT) + 4;
         }
         return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + totalHeight;
     }
@@ -276,5 +290,18 @@ public class CategoryPanel {
 
     public int getScrollOffset() {
         return scrollOffset;
+    }
+
+    private String getCategoryIcon(Category category) {
+        if (category == null) return FontAwesome.gear;
+        switch (category) {
+            case Combat: return FontAwesome.leaf;
+            case Movement: return FontAwesome.compass;
+            case Player: return FontAwesome.user;
+            case Render: return FontAwesome.eye;
+            case Client: return FontAwesome.sliders;
+            case Macros: return FontAwesome.gear;
+            case Other: default: return FontAwesome.folder;
+        }
     }
 }
